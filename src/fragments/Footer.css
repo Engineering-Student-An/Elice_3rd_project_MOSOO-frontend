@@ -1,0 +1,17 @@
+html, body {
+    height: 100%; /* 전체 높이를 100%로 설정 */
+    margin: 0; /* 기본 여백 제거 */
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* 최소 높이를 100vh로 설정하여 푸터가 아래로 고정되도록 함 */
+}
+
+footer {
+    margin-top: auto; /* 푸터를 자동으로 하단으로 밀어내기 */
+}
+footer p {
+    font-size: 12px;
+}
