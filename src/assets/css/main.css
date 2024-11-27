@@ -122,19 +122,19 @@ h6 a {
 }
 
 h1 {
-  font-size: 50px;
-}
-
-h2 {
   font-size: 40px;
 }
 
-h3 {
+h2 {
   font-size: 30px;
 }
 
+h3 {
+  font-size: 20px;
+}
+
 h4 {
-  font-size: 25px;
+  font-size: 15px;
 }
 
 h5 {
@@ -1917,7 +1917,7 @@ ol {
     Hero Area CSS
 ========================================*/
 .hero-area {
-  background-image: url("../images/hero/hero-bg.jpg");
+  /*background-image: url("../images/hero/hero-bg.jpg");*/
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -1936,7 +1936,7 @@ ol {
 .hero-area.style2 {
   padding-top: 150px;
   padding-bottom: 100px;
-  background-image: url("../images/hero/hero-bg2.jpg");
+  /*background-image: url("../images/hero/hero-bg2.jpg");*/
 }
 
 .hero-area.style2 .hero-text {
@@ -1957,7 +1957,7 @@ ol {
 .hero-area.style3 {
   padding-top: 250px;
   padding-bottom: 0;
-  background-image: url("../images/hero/hero-bg3.jpg");
+  /*background-image: url("../images/hero/hero-bg3.jpg");*/
 }
 
 .hero-area.style3 .search-form {
@@ -4187,7 +4187,7 @@ blockquote .shape {
 .newsletter {
   padding: 80px;
   background-color: #5830E0;
-  background-image: url(../images/newsletter/newsletter-bg.png);
+  /*background-image: url(../images/newsletter/newsletter-bg.png);*/
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -4424,7 +4424,7 @@ blockquote .shape {
     Call Action CSS
 ========================================*/
 .call-action {
-  background-image: url("../images/call-action/cat-bg.jpg");
+  /*background-image: url("../images/call-action/cat-bg.jpg");*/
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
