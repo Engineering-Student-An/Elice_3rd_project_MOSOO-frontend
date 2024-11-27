@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@portone/browser-sdk": "^0.0.11",
     "@stomp/stompjs": "^7.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -11,7 +12,9 @@
     "bootstrap": "^5.3.3",
     "browserify-zlib": "^0.2.0",
     "https-browserify": "^1.0.0",
+    "i": "^0.3.7",
     "jwt-decode": "^4.0.0",
+    "npm": "^10.9.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
     "react-datepicker": "^7.4.0",
