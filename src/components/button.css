@@ -1,0 +1,14 @@
+.purple-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #200080;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+    border: none;
+}
+
+.purple-button:hover {
+    background-color: #0e00d3;
+}
