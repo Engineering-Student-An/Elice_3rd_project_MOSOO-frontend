@@ -81,7 +81,7 @@ const ChatRoomList = () => {
                             <li>
                                 <div className="d-flex flex-row justify-content-between">
                                     <h3 className="mb-2">{chatRoom.opponentFullName}</h3>
-                                    <button className="three-dots-button">
+                                    <button className="three-dots-button mb-3">
                                         <span></span>
                                         <span></span>
                                         <span></span>

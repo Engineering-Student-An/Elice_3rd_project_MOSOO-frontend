@@ -22,7 +22,6 @@
     width: 10px; /* 버튼 너비 */
     height: 40px; /* 버튼 높이 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
-    margin-bottom: 20px;
 }
 
 .three-dots-button span {
