@@ -82,6 +82,7 @@ const ChatRoom = () => {
                 sourceUserId: loginUserId,
                 type: selectedFile ? "FILE" : "MESSAGE",
                 base64File: selectedFile ? await toBase64(selectedFile) : null, // Base64로 변환
+                fileName: selectedFile ? selectedFile.name : null,
                 content: messageContent ? messageContent : null
             };
 
@@ -237,7 +238,7 @@ const ChatRoom = () => {
                                                     </video>
                                                 ) : message.type === "FILE" ? (
                                                     <a href={message.content} download className="file-download-link">
-                                                        Download File
+                                                        {message.fileName}
                                                     </a>
                                                 ) : (
                                                     <span>{message.content}</span>
