@@ -7,6 +7,7 @@ import './ChatRoom.css';
 import '../../components/button.css';
 import PostInfo from "./PostInfo";
 import OpponentInfo from "./OpponentInfo";
+import ChatSettingModal from "./ChatSettingModal";
 
 const ChatRoom = () => {
     const {chatRoomId} = useParams();
@@ -17,10 +18,8 @@ const ChatRoom = () => {
     const [post, setPost] = useState(null);
     const [price, setPrice] = useState(0);
     const [selectedComponent, setSelectedComponent] = useState('postInfo');
-
-    const handleCompButtonClick = (component) => {
-        setSelectedComponent(component);
-    };
+    const [modalOpenIndex, setModalOpenIndex] = useState(null); // 모달이 열려 있는 인덱스
+    const buttonRefs = useRef([]); // 버튼 참조를 위한 배열
 
     // TODO: 실제 로그인한 유저의 id 반영할 것
     const [loginUserId] = useState(4);
@@ -161,10 +160,23 @@ const ChatRoom = () => {
         );
     }
 
+    const handleCompButtonClick = (component) => {
+        setSelectedComponent(component);
+    };
+
     const formatDate = (date) => {
         const options = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
         return new Date(date).toLocaleTimeString('ko-KR', options);
     };
+
+    const handleOpenModal = (index) => {
+        setModalOpenIndex(index); // 클릭한 버튼의 인덱스를 설정
+    };
+
+    const handleCloseModal = () => {
+        setModalOpenIndex(null); // 모달 닫기
+    };
+
 
     return (
         <div className="chat-container">
@@ -175,11 +187,20 @@ const ChatRoom = () => {
 
                         <a href="/" className="purple-button me-5">결제하기</a>
 
-                        <button className="three-dots-button">
+                        <button ref={el => buttonRefs.current[0] = el} // 각 버튼을 refs 배열에 저장
+                                className="three-dots-button"
+                                onClick={() => handleOpenModal(0)} // 인덱스를 인자로 전달
+                        >
                             <span></span>
                             <span></span>
                             <span></span>
                         </button>
+                        <ChatSettingModal
+                            isOpen={modalOpenIndex === 0} // 해당 인덱스와 비교하여 모달 열기
+                            onRequestClose={handleCloseModal}
+                            chatRoomId={chatRoomId}
+                            buttonRef={buttonRefs.current[0]} // 해당 버튼의 참조 전달
+                        />
                     </div>
                 </div>
 
