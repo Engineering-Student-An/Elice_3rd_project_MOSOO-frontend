@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const PostInfo = ({ post, price, chatRoomId }) => {
+const PostInfo = ({ post, price, chatRoomId, isGosu }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [inputPrice, setInputPrice] = useState(price); // 입력값을 위한 상태
     const [originalPrice, setOriginalPrice] = useState(price); // 원래 가격을 저장하는 상태
@@ -59,11 +59,6 @@ const PostInfo = ({ post, price, chatRoomId }) => {
                         value={inputPrice} // 입력 필드의 값은 이제 inputPrice
                         className="form-control"
                         onChange={(e) => setInputPrice(e.target.value)} // 입력값 상태만 업데이트
-                        style={{
-                            MozAppearance: 'textfield', // Firefox에서 스피너 숨기기
-                            WebkitAppearance: 'none', // Chrome, Safari에서 스피너 숨기기
-                            appearance: 'none', // 기본 appearance 속성 제거
-                        }}
                     />
                     <button className="btn btn-sm p-0" onClick={handlePriceChange}>
                         <span className="material-icons" style={{ color: 'green' }}>check</span>
@@ -75,9 +70,11 @@ const PostInfo = ({ post, price, chatRoomId }) => {
             ) : (
                 <div className="d-flex flex-row justify-content-between align-items-center">
                     <p style={{ fontSize: '30px', color:'#272727FF'}}>{new Intl.NumberFormat('ko-KR').format(inputPrice)} 원</p> {/* 가격 형식화 */}
-                    <button className="btn btn-sm p-0" onClick={handleEditClick}>
-                        <span className="material-icons" style={{ color: 'purple' }}>edit</span>
-                    </button>
+                    {isGosu && ( // isGosu가 true인 경우에만 edit 버튼을 표시
+                        <button className="btn btn-sm p-0" onClick={handleEditClick}>
+                            <span className="material-icons" style={{ color: 'purple' }}>edit</span>
+                        </button>
+                    )}
                 </div>
             )}
             <div className="mb-30"></div>
