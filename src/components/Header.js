@@ -1,4 +1,6 @@
 import React from 'react';
+import logo from '../assets/images/logo/logo.png'; // Header.js의 위치에 따라 경로 조정
+
 
 const Header = () => {
     return (
@@ -11,7 +13,8 @@ const Header = () => {
                             <div className="nav-inner">
                                 <nav className="navbar navbar-expand-lg" style={{height: '95px'}}>
                                     <a className="navbar-brand" href="">
-                                        <img src="/assets/images/logo/logo.png" style={{width:'130px'}} alt="Logo" />
+                                        <img src={logo}
+                                             style={{width:'130px'}} alt="Logo" />
                                     </a>
                                     <button
                                         className="navbar-toggler mobile-menu-btn"
@@ -45,7 +48,7 @@ const Header = () => {
                                                    aria-label="Toggle navigation">이용내역</a>
                                             </li>
                                             <li className="nav-item ms-auto"> {/* 여기에서 ms-auto 사용 */}
-                                                <a href="javascript:void(0)" aria-label="Toggle navigation">채팅</a>
+                                                <a href="/chatrooms" aria-label="Toggle navigation">채팅</a>
                                             </li>
                                             {/*<li className="nav-item">*/}
                                             {/*    <a*/}
