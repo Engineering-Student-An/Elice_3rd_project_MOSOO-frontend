@@ -17,6 +17,7 @@ const ChatRoom = () => {
     const [error, setError] = useState(null);
     const [post, setPost] = useState(null);
     const [price, setPrice] = useState(0);
+    const [isGosu, setIsGosu] = useState(null);
     const [selectedComponent, setSelectedComponent] = useState('postInfo');
     const [modalOpenIndex, setModalOpenIndex] = useState(null); // 모달이 열려 있는 인덱스
     const buttonRefs = useRef([]); // 버튼 참조를 위한 배열
@@ -116,6 +117,7 @@ const ChatRoom = () => {
             setOpponentFullName(response.data.opponentFullName);
             setPost(response.data.postResponseDto);
             setPrice(response.data.price);
+            setIsGosu(response.data.isGosu);
         } catch (err) {
             setError(err);
             console.error('Failed to load messages:', err);
@@ -333,7 +335,7 @@ const ChatRoom = () => {
                 </div>
 
                 <div className="info-container">
-                    {selectedComponent === 'postInfo' && <PostInfo post={post} price={price} chatRoomId={chatRoomId}/>}
+                    {selectedComponent === 'postInfo' && <PostInfo post={post} price={price} chatRoomId={chatRoomId} isGosu={isGosu} />}
                     {selectedComponent === 'opponentInfo' && <OpponentInfo opponentFullName={opponentFullName}/>}
                 </div>
             </div>
