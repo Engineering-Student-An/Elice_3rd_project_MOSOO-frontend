@@ -15,9 +15,6 @@ const ChatRoom = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [post, setPost] = useState(null);
-    const [price, setPrice] = useState(0);
-    const [isGosu, setIsGosu] = useState(null);
     const [selectedComponent, setSelectedComponent] = useState('postInfo');
     const [modalOpenIndex, setModalOpenIndex] = useState(null); // 모달이 열려 있는 인덱스
     const buttonRefs = useRef([]); // 버튼 참조를 위한 배열
@@ -116,9 +113,6 @@ const ChatRoom = () => {
             const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}`);
             setMessages(response.data.chatMessageResponseDtoList);
             setOpponentFullName(response.data.opponentFullName);
-            setPost(response.data.postResponseDto);
-            setPrice(response.data.price);
-            setIsGosu(response.data.isGosu);
         } catch (err) {
             setError(err);
             console.error('Failed to load messages:', err);
@@ -187,8 +181,6 @@ const ChatRoom = () => {
                 <div className="d-flex flex-row justify-content-between">
                     <h2>{opponentFullName}</h2>
                     <div className="d-flex flex-row justify-content-between align-items-center">
-
-                        <a href="/" className="purple-button me-5">결제하기</a>
 
                         <button ref={el => buttonRefs.current[0] = el} // 각 버튼을 refs 배열에 저장
                                 className="three-dots-button"
@@ -336,8 +328,8 @@ const ChatRoom = () => {
                 </div>
 
                 <div className="info-container">
-                    {selectedComponent === 'postInfo' && <PostInfo post={post} price={price} chatRoomId={chatRoomId} isGosu={isGosu} />}
-                    {selectedComponent === 'opponentInfo' && <OpponentInfo opponentFullName={opponentFullName}/>}
+                    {selectedComponent === 'postInfo' && <PostInfo chatRoomId={chatRoomId} />}
+                    {selectedComponent === 'opponentInfo' && <OpponentInfo chatRoomId={chatRoomId} />}
                 </div>
             </div>
         </div>
