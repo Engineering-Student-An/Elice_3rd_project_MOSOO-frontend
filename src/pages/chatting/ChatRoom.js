@@ -18,6 +18,7 @@ const ChatRoom = () => {
     const [modalOpenIndex, setModalOpenIndex] = useState(null); // 모달이 열려 있는 인덱스
     const buttonRefs = useRef([]); // 버튼 참조를 위한 배열
     const [hasMore, setHasMore] = useState(true);   // 로드할 메시지가 더 있는지 여부
+    const [lastIndex, setLastIndex] = useState();   // 불러온 채팅의 마지막 인덱스 (id)
 
     // TODO: 실제 로그인한 유저의 id 반영할 것
     const [loginUserId] = useState(4);
@@ -118,9 +119,19 @@ const ChatRoom = () => {
 
         try {
             const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}`);
-            setMessages(response.data.chatMessageResponseDtoList);
+            const initialMessages = response.data.chatMessageResponseDtoList;
+            setMessages(initialMessages);
             setOpponentFullName(response.data.opponentFullName);
-            scrollToBottom();
+
+            const lastMessage = initialMessages[initialMessages.length - 1];
+            if (lastMessage) {
+                setLastIndex(lastMessage.chatMessageId);
+            }
+
+            setTimeout(() => {
+                scrollToBottom();
+            }, 300);
+
         } catch (err) {
             setError(err);
             console.error('Failed to load messages:', err);
@@ -131,13 +142,16 @@ const ChatRoom = () => {
         if (!hasMore) return;
 
         try {
-            const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}?offset=` + messages.length);
+            const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}?index=` + lastIndex);
             const newMessages = response.data.chatMessageResponseDtoList;
             setMessages(prevMessages => [...prevMessages, ...newMessages]); // 가장 아래에 추가
             setHasMore(newMessages.length > 0); // 더 이상 메시지가 없으면 false
 
             // 스크롤을 조정
             if (newMessages.length > 0) {
+
+                setLastIndex(newMessages[newMessages.length - 1].chatMessageId);
+
                 // 추가된 메시지 중 마지막 메시지의 위치로 스크롤 이동
                 setTimeout(() => {
                     scrollToMessage(newMessages.length - 1); // 마지막 추가된 메시지로 스크롤
@@ -170,7 +184,6 @@ const ChatRoom = () => {
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        console.log("fileNAme: " + file.name);
         setSelectedFile(file); // 파일 선택 시 상태 업데이트
         messageRef.current.value = ''; // 메시지 입력 필드 초기화
         if (file) {
