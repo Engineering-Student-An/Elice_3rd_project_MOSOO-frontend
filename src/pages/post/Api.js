@@ -8,7 +8,7 @@ const API_BASE_URL = 'http://localhost:8080/api/post'; // 실제 API URL로 교�
  * @param {boolean} isOffer - 요청 유형 (true: 고수, false: 일반)
  * @returns {Promise<Object>} - 게시글 데이터
  */
-export const fetchPostList = async (page = 1, isOffer = false) => {
+export const fetchPostList = async (page = 1, isOffer) => {
     try {
         const response = await axios.get(`${API_BASE_URL}`, {
             params: {

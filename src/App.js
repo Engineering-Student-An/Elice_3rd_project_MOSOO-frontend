@@ -11,7 +11,7 @@ import './assets/css/main.css';
 
 import {Header, Footer} from "./components";
 import {ChatRoomList, ChatRoom} from "./pages/chatting";
-import {RequestPostList} from "./pages/post";
+import {CreatePost, OfferPostList, RequestPostList} from "./pages/post";
 
 const App = () => {
     return (
@@ -21,6 +21,8 @@ const App = () => {
                 <main className="flex-grow-1">
                     <Routes>
                         <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
+                        <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
+                        <Route path="/createPost" element={<CreatePost/>}/> {/* 게시글 목록 화면 */}
 
                         <Route path="/chatrooms" element={<ChatRoomList/>}/> {/* 채팅방 목록 화면 */}
                         <Route path="/chatroom/:chatRoomId" element={<ChatRoom/>}/> {/* 채팅방 화면 */}

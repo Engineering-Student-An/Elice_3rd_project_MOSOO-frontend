@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './PostList.css';
 import { fetchPostList } from './Api'; // API 호출 함수
 
-const RequestPostList = () => {
+const OfferPostList = () => {
     const [posts, setPosts] = useState([]); // 게시글 목록
     const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
@@ -15,7 +15,7 @@ const RequestPostList = () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchPostList(page, false);
+            const data = await fetchPostList(page, true);
             setPosts(data.postList);
             setTotalPages(data.totalPages);
         } catch (err) {
@@ -112,4 +112,4 @@ const RequestPostList = () => {
     );
 };
 
-export default RequestPostList;
+export default OfferPostList;
