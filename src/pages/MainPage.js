@@ -1,5 +1,6 @@
 import React from 'react';
-import {Category, Search} from "../components"; 
+import {Category, Search} from "../components";
+import './MainPage.css';
 
 const MainPage = () => {
   return (
