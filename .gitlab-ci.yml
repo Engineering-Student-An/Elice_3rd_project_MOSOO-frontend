@@ -18,7 +18,7 @@ build:
 # Deploy Stage: 프론트엔드 배포
 deploy:
   stage: deploy
-  image: docker:latest
+  image: nginx:latest
   services:
     - name: docker:dind
       alias: docker
