@@ -9,3 +9,9 @@ services:
       - 80:80
     environment:
       REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+    networks:
+      - shared-network
+
+networks:
+  shared-network:
+    external: true
