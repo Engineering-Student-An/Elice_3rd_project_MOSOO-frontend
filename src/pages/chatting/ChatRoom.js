@@ -13,7 +13,7 @@ const ChatRoom = () => {
     const {chatRoomId} = useParams();
     const [opponentFullName, setOpponentFullName] = useState([]);
     const [messages, setMessages] = useState([]);
-    const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [selectedComponent, setSelectedComponent] = useState('postInfo');
     const [modalOpenIndex, setModalOpenIndex] = useState(null); // 모달이 열려 있는 인덱스
     const buttonRefs = useRef([]); // 버튼 참조를 위한 배열
@@ -133,7 +133,7 @@ const ChatRoom = () => {
             }, 300);
 
         } catch (err) {
-            setError(err);
+            setErrorMessage(err);
             console.error('Failed to load messages:', err);
         }
     };
@@ -158,7 +158,7 @@ const ChatRoom = () => {
                 }, 0);
             }
         } catch (err) {
-            setError(err);
+            setErrorMessage(err.response ? err.response.data.message : err.message);
             console.error('Failed to load more messages:', err);
         }
     };
@@ -213,12 +213,8 @@ const ChatRoom = () => {
         }
     };
 
-    if (error) {
-        return (
-            <div>
-                Error loading messages: {error.response ? error.response.data.message : error.message}
-            </div>
-        );
+    if (errorMessage) {
+        return <div> {errorMessage} </div>;
     }
 
     const handleCompButtonClick = (component) => {
