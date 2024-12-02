@@ -28,7 +28,7 @@ const Category = () => {
               <div className="category-slider">
                 {categories.length > 0 ? (
                   categories.map((category, index) => (
-                    <a href="" className="single-cat" key={index}>
+                    <a href="#" className="single-cat" key={index}>
                       <div className="icon">
                         <img src={category.icon} alt={category.name} />
                       </div>
