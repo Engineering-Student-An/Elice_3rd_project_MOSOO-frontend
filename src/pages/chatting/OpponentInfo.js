@@ -3,8 +3,7 @@ import axios from "axios";
 
 const OpponentInfo = ({chatRoomId}) => {
 
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [opponent, setOpponent] = useState(null);
 
     useEffect(() => {
@@ -18,23 +17,13 @@ const OpponentInfo = ({chatRoomId}) => {
             const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}/user-info`);
             setOpponent(response.data.opponentFullName);
         } catch (err) {
-            setError(err);
+            setErrorMessage(err.response ? err.response.data.message : err.message);
             console.error('Failed to load infos:', err);
-        } finally {
-            setLoading(false);
         }
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return (
-            <div>
-                Error loading infos: {error.response ? error.response.data.message : error.message}
-            </div>
-        );
+    if (errorMessage) {
+        return <div> {errorMessage} </div>;
     }
 
     return (
