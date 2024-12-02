@@ -35,7 +35,7 @@ deploy:
     - ssh-keyscan -H $GCP_VM_IP >> ~/.ssh/known_hosts
   script:
     - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
-    - docker build -t $DOCKER_USER/mosoo_react:latest ./build
+    - docker build -t $DOCKER_USER/mosoo_react:latest .
     - docker push $DOCKER_USER/mosoo_react:latest
     # .env 파일 생성
     - echo "REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL" > .env
