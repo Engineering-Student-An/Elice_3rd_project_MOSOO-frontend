@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 import axios from 'axios';
 import './ChatRoomList.css';
+import ChatSettingModal from "./ChatSettingModal";
 
 const ChatRoomList = () => {
     const [chatRooms, setChatRooms] = useState([]);
@@ -9,11 +10,14 @@ const ChatRoomList = () => {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [modalOpenIndex, setModalOpenIndex] = useState(null); // 모달이 열려 있는 인덱스
+    const buttonRefs = useRef([]); // 버튼 참조를 위한 배열
+
 
     useEffect(() => {
         const fetchChatRooms = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/chatrooms');
+                const response = await axios.get(`http://localhost:8080/api/chatrooms?page=${currentPage}`);
                 setChatRooms(response.data.chatRoomResponseDtoList); // DTO에서 채팅방 목록 가져오기
                 setTotalPages(response.data.totalPages);
             } catch (err) {
@@ -38,6 +42,14 @@ const ChatRoomList = () => {
     const formatDate = (date) => {
         const options = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
         return new Date(date).toLocaleTimeString('ko-KR', options);
+    };
+
+    const handleOpenModal = (index) => {
+        setModalOpenIndex(index); // 클릭한 버튼의 인덱스를 설정
+    };
+
+    const handleCloseModal = () => {
+        setModalOpenIndex(null); // 모달 닫기
     };
 
     const handleNextPage = () => {
@@ -75,17 +87,26 @@ const ChatRoomList = () => {
                 </div>
 
                 <ul>
-                    {chatRooms.map(chatRoom => (
+                    {chatRooms.map((chatRoom, index) => (
                         <div className="chat-room-inner-container" key={chatRoom.chatRoomId}>
 
                             <li>
                                 <div className="d-flex flex-row justify-content-between">
                                     <h3 className="mb-2">{chatRoom.opponentFullName}</h3>
-                                    <button className="three-dots-button">
+                                    <button ref={el => buttonRefs.current[index] = el} // 각 버튼을 refs 배열에 저장
+                                            className="three-dots-button mb-3"
+                                            onClick={() => handleOpenModal(index)} // 인덱스를 인자로 전달
+                                    >
                                         <span></span>
                                         <span></span>
                                         <span></span>
                                     </button>
+                                    <ChatSettingModal
+                                        isOpen={modalOpenIndex === index} // 해당 인덱스와 비교하여 모달 열기
+                                        onRequestClose={handleCloseModal}
+                                        chatRoomId={chatRoom.chatRoomId}
+                                        buttonRef={buttonRefs.current[index]} // 해당 버튼의 참조 전달
+                                    />
                                 </div>
                                 <div className="d-flex flex-row justify-content-between">
                                     {/*채팅 메시지 15자리까지 보여주고 나머지는 ... 으로 치환*/}
