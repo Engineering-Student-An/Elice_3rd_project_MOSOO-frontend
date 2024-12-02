@@ -7,7 +7,7 @@ import ChatSettingModal from "./ChatSettingModal";
 const ChatRoomList = () => {
     const [chatRooms, setChatRooms] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [modalOpenIndex, setModalOpenIndex] = useState(null); // 모달이 열려 있는 인덱스
@@ -21,7 +21,7 @@ const ChatRoomList = () => {
                 setChatRooms(response.data.chatRoomResponseDtoList); // DTO에서 채팅방 목록 가져오기
                 setTotalPages(response.data.totalPages);
             } catch (err) {
-                setError(err);
+                setErrorMessage(err.response ? err.response.data.message : err.message);
                 console.error('Failed to load chat rooms:', err);
             } finally {
                 setLoading(false);
@@ -35,8 +35,8 @@ const ChatRoomList = () => {
         return <div>Loading...</div>;
     }
 
-    if (error) {
-        return <div>Error loading chat rooms: {error.message}</div>;
+    if (errorMessage) {
+        return <div> {errorMessage} </div>;
     }
 
     const formatDate = (date) => {
