@@ -9,25 +9,27 @@ import './assets/css/tiny-slider.css';
 import './assets/css/glightbox.min.css';
 import './assets/css/main.css';
 
-import { Header, Footer } from "./components";
-import { ChatRoomList, ChatRoom } from "./pages/chatting";
+import {Header, Footer} from "./components";
+import {ChatRoomList, ChatRoom} from "./pages/chatting";
+import {RequestPostList} from "./pages/post";
 
 const App = () => {
-  return (
-      <Router>
-        <div id="root">
-            <Header />
-            <main className="flex-grow-1">
-                <Routes>
+    return (
+        <Router>
+            <div id="root">
+                <Header/>
+                <main className="flex-grow-1">
+                    <Routes>
+                        <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
 
-                    <Route path="/chatrooms" element={<ChatRoomList />} /> {/* 채팅방 목록 화면 */}
-                    <Route path="/chatroom/:chatRoomId" element={<ChatRoom />} /> {/* 채팅방 화면 */}
-                </Routes>
-            </main>
-            <Footer />
-        </div>
-      </Router>
-  );
+                        <Route path="/chatrooms" element={<ChatRoomList/>}/> {/* 채팅방 목록 화면 */}
+                        <Route path="/chatroom/:chatRoomId" element={<ChatRoom/>}/> {/* 채팅방 화면 */}
+                    </Routes>
+                </main>
+                <Footer/>
+            </div>
+        </Router>
+    );
 };
 
 export default App;
