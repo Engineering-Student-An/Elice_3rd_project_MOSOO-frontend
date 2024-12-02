@@ -12,6 +12,8 @@ import './assets/css/main.css';
 import {Header, Footer} from "./components";
 import {ChatRoomList, ChatRoom} from "./pages/chatting";
 import {CreatePost, OfferPostList, RequestPostList} from "./pages/post";
+import {MainPage} from "./pages";
+import {CategoryList} from "./pages/category";
 
 const App = () => {
     return (
@@ -20,12 +22,16 @@ const App = () => {
                 <Header/>
                 <main className="flex-grow-1">
                     <Routes>
+                        <Route path="/" element={<MainPage />} /> {/* 메인 페이지 */}
+
                         <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/createPost" element={<CreatePost/>}/> {/* 게시글 목록 화면 */}
 
                         <Route path="/chatrooms" element={<ChatRoomList/>}/> {/* 채팅방 목록 화면 */}
                         <Route path="/chatroom/:chatRoomId" element={<ChatRoom/>}/> {/* 채팅방 화면 */}
+
+                        <Route path="/categories" element={<CategoryList/>}/> {/* 카테고리 관리 화면 */}
                     </Routes>
                 </main>
                 <Footer/>
