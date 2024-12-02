@@ -9,7 +9,7 @@ const Category = () => {
     // 대분류 조회 API 호출
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/category/first_category");
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/category/first_category`);
         setCategories(response.data);
       } catch (error) {
         console.error("Error:", error);
