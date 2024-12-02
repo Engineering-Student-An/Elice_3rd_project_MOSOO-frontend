@@ -1,0 +1,47 @@
+stages:
+  - build
+  - deploy
+
+# Build Stage: React 애플리케이션 빌드
+build:
+  stage: build
+  image: node:16.14.2
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - build/
+  only:
+    - review
+
+# Deploy Stage: 프론트엔드 배포
+deploy:
+  stage: deploy
+  image: docker:latest
+  services:
+    - name: docker:dind
+      alias: docker
+      command: [ "--tls=false" ]
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    # SSH 키 Setup
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $GCP_VM_IP >> ~/.ssh/known_hosts
+  script:
+    - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
+    - docker build -t $DOCKER_USER/mosoo_react:latest ./build
+    - docker push $DOCKER_USER/mosoo_react:latest
+    # .env 파일 생성
+    - echo "REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL" > .env
+    # GCP VM에 전송 및 SSH 접속 후 Docker-compose
+    - scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa .env $GCP_USER@$GCP_VM_IP:/path/to/your/project/react/
+    - scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa docker-compose.yml $GCP_USER@$GCP_VM_IP:/path/to/your/project/react/
+    - ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $GCP_USER@$GCP_VM_IP "cd /path/to/your/project/react/ && docker-compose up -d"
+  only:
+    - review
