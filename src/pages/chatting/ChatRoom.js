@@ -36,7 +36,6 @@ const ChatRoom = () => {
     useEffect(() => {
         connect();
         fetchInitialMessages();
-
         return () => disconnect();
     }, [chatRoomId]);
 
@@ -100,7 +99,7 @@ const ChatRoom = () => {
 
             setTimeout(() => {
                 setIsSending(false);
-            }, 500);
+            }, 300);
         }
     };
 
@@ -283,6 +282,11 @@ const ChatRoom = () => {
 
                                 return (
                                     <div key={index}>
+                                        {message.type === "QUIT" || message.type === "ENTER" ? (
+                                            <div className="text-center">
+                                                <p>{message.content}</p> {/* 여기서 content를 원하는 메시지로 설정 */}
+                                            </div>
+                                        ) : (
                                         <div
                                             className={`d-flex align-items-end ${message.sourceUserId === loginUserId ? 'justify-content-end' : 'justify-content-start'}`}>
                                             {/* 시간 표시 조건 */}
@@ -310,7 +314,7 @@ const ChatRoom = () => {
                                             {showTime &&  message.sourceUserId !== loginUserId && (
                                                 <span className={`message-time`}>{currentTime}</span>
                                             )}
-                                        </div>
+                                        </div>)}
                                     </div>
                                 );
                             })

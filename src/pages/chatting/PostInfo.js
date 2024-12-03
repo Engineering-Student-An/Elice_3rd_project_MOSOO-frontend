@@ -3,18 +3,18 @@ import axios from "axios";
 
 const PostInfo = ({ chatRoomId }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [post, setPost] = useState(null);
+    const [post, setPost] = useState();
     const [price, setPrice] = useState(null);
     const [bid, setBid] = useState(null);
     const [isGosu, setIsGosu] = useState(null);
     const [inputPrice, setInputPrice] = useState(null); // 입력값을 위한 상태
     const [originalPrice, setOriginalPrice] = useState(null); // 원래 가격을 저장하는 상태
     const [errorMessage, setErrorMessage] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-
         fetchInfos();
-    }, [chatRoomId]);
+    }, [chatRoomId]); // chatRoomId를 의존성 배열에 추가
 
     const fetchInfos = async () => {
         try {
@@ -27,16 +27,13 @@ const PostInfo = ({ chatRoomId }) => {
             // 가격 상태를 업데이트한 후 inputPrice와 originalPrice 업데이트
             setInputPrice(response.data.price);
             setOriginalPrice(response.data.price);
-
+            setLoading(false); // 데이터 로드 완료
         } catch (err) {
             setErrorMessage(err.response ? err.response.data.message : err.message);
             console.error('Failed to load infos:', err);
+            setLoading(false); // 데이터 로드 완료
         }
     };
-
-    if (errorMessage) {
-        return <div> {errorMessage} </div>;
-    }
 
     const handlePriceChange = async () => {
         try {
@@ -69,6 +66,16 @@ const PostInfo = ({ chatRoomId }) => {
         setInputPrice(originalPrice); // 원래 가격으로 되돌리기
         setIsEditing(false);
     };
+
+    // 에러 발생 시
+    if (errorMessage) {
+        return <div> {errorMessage} </div>;
+    }
+
+    // 로딩 중일 때
+    if (loading) {
+        return <div>로딩 중...</div>; // 로딩 상태 표시
+    }
 
     return (
         <div className="d-flex flex-column align-items-end">
