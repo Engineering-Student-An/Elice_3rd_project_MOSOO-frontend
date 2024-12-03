@@ -36,6 +36,7 @@ const CategoryList = () => {
 
   const handleUpdate = (category_id) => {
     console.log("수정 버튼 클릭");
+    navigate(`/categories/update/${category_id}`);
   };
 
   const handleDelete = (category_id) => {

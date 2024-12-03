@@ -13,7 +13,7 @@ import {Header, Footer} from "./components";
 import {ChatRoomList, ChatRoom} from "./pages/chatting";
 import {CreatePost, OfferPostList, RequestPostList} from "./pages/post";
 import {MainPage} from "./pages";
-import {CategoryList, CreateFirstCategory, CreateSubCategory} from "./pages/category";
+import {CategoryList, CreateFirstCategory, CreateSubCategory, UpdateCategory} from "./pages/category";
 
 const App = () => {
     return (
@@ -34,6 +34,7 @@ const App = () => {
                         <Route path="/categories" element={<CategoryList/>}/> {/* 카테고리 관리 화면 */}
                         <Route path="/categories/createfirst" element={<CreateFirstCategory/>}/> {/* 카테고리 대분류 생성 화면 */}
                         <Route path="/categories/createsub/:category_id" element={<CreateSubCategory/>}/> {/* 카테고리 하위 분류 생성 화면 */}
+                        <Route path="/categories/update/:category_id" element={<UpdateCategory/>}/> {/* 카테고리 수정 화면 */}
                     </Routes>
                 </main>
                 <Footer/>
