@@ -24,21 +24,22 @@ const CategoryList = () => {
   const navigate = useNavigate();
 
   // 이벤트 핸들러
-  const handleCreate = (id) => {
-    console.log("생성 버튼 클릭:", id);
+  const handleCreate = (category_id) => {
+    console.log("생성 버튼 클릭");
+    navigate(`/categories/createsub/${category_id}`)
   };
 
-  const handleCreateFirst = (id) => {
-    console.log("대분류 생성 버튼 클릭:", id);
+  const handleCreateFirst = () => {
+    console.log("대분류 생성 버튼 클릭");
     navigate('/categories/createfirst');
   };
 
-  const handleUpdate = (id) => {
-    console.log("수정 버튼 클릭:", id);
+  const handleUpdate = (category_id) => {
+    console.log("수정 버튼 클릭");
   };
 
-  const handleDelete = (id) => {
-    console.log("삭제 버튼 클릭:", id);
+  const handleDelete = (category_id) => {
+    console.log("삭제 버튼 클릭:");
   };
 
   return (
@@ -52,7 +53,7 @@ const CategoryList = () => {
       <div className="category-list">
         {categories.length > 0 ? (
           categories.map((category) => (
-            <div className="category-item" key={category.id}>
+            <div className="category-item" key={category.category_id}>
               <div style={{ display: "flex", alignItems: "center" }}>
                 <img
                   src={category.icon}
@@ -64,13 +65,13 @@ const CategoryList = () => {
               <div className="category-actions">
                 <button
                   className="btn-create"
-                  onClick={() => handleCreate(category.id)}
+                  onClick={() => handleCreate(category.category_id)}
                 >
                   생성
                 </button>
                 <button
                   className="btn-update"
-                  onClick={() => handleUpdate(category.id)}
+                  onClick={() => handleUpdate(category.category_id)}
                 >
                   수정
                 </button>
