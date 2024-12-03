@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'components/button.css';
+import { useNavigate } from 'react-router-dom';
 
 const CreateFirstCategory = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [icon, setIcon] = useState(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +37,7 @@ const CreateFirstCategory = () => {
         }
       );
       alert('대분류가 생성되었습니다!');
+      navigate('/categories');
     } catch (error) {
       console.error('대분류 생성 실패:', error);
       alert('대분류 생성 중 오류가 발생했습니다.');

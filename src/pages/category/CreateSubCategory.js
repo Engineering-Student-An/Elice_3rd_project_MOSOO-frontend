@@ -3,12 +3,15 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'components/button.css';
 import { useParams } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const CreateSubCategory = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
   const { category_id } = useParams();
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +38,7 @@ const CreateSubCategory = () => {
         }
       );
       alert('하위 카테고리가 생성되었습니다!');
+      navigate('/categories');
     } catch (error) {
       console.error('하위 카테고리 생성 실패:', error);
       alert('하위 카테고리 생성 중 오류가 발생했습니다.');
