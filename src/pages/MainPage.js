@@ -4,7 +4,7 @@ import './MainPage.css';
 
 const MainPage = () => {
   return (
-    <div id="root">
+    <div id="main">
       <Search />
       <Category />
     </div>
