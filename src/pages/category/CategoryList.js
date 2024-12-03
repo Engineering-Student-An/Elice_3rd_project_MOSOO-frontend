@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // axios 추가
 import "./css/CategoryList.css";
+import { useNavigate } from 'react-router-dom';
 
 const CategoryList = () => {
   // 카테고리 데이터 상태 관리
@@ -20,9 +21,16 @@ const CategoryList = () => {
     fetchCategories();
   }, []);
 
+  const navigate = useNavigate();
+
   // 이벤트 핸들러
   const handleCreate = (id) => {
     console.log("생성 버튼 클릭:", id);
+  };
+
+  const handleCreateFirst = (id) => {
+    console.log("대분류 생성 버튼 클릭:", id);
+    navigate('/categories/createfirst');
   };
 
   const handleUpdate = (id) => {
@@ -37,7 +45,7 @@ const CategoryList = () => {
     <div className="container">
       <div className="category-header">
         <h1>카테고리 관리</h1>
-        <button className="btn-create" onClick={handleCreate}>
+        <button className="btn-create" onClick={handleCreateFirst}>
         대분류 생성
         </button>
       </div>
