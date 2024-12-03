@@ -78,13 +78,14 @@ const CreateFirstCategory = () => {
             onChange={(e) => setIcon(e.target.files[0])}
           />
         </div>
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-end">
           <button type="submit" className="purple-button">
             생성
           </button>
           <button
             type="button"
             className="btn btn-secondary"
+            style={{ marginLeft: '10px' }}
             onClick={() => window.history.back()}
           >
             취소
