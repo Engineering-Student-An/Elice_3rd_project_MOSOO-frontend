@@ -1,92 +1,116 @@
 .container {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ccc;
-    padding-bottom: 10px;
-  }
-  
-  .header button {
-    background-color: #6c5ce7;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .header button:hover {
-    background-color: #5a4dbf;
-  }
-  
-  .category-list {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-  }
-  
-  .category-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .category-item:last-child {
-    border-bottom: none;
-  }
-  
-  .category-icon {
-    width: 40px;
-    height: 40px;
-    margin-right: 20px;
-  }
-  
-  .category-name {
-    flex-grow: 1;
-  }
-  
-  .category-actions button {
-    margin-left: 5px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .btn-create {
-    background-color: #6c5ce7;
-    color: white;
-  }
-  
-  .btn-update {
-    background-color: #444;
-    color: white;
-  }
-  
-  .btn-delete {
-    background-color: #d63031;
-    color: white;
-  }
-  
-  .btn-create:hover {
-    background-color: #5a4dbf;
-  }
-  
-  .btn-update:hover {
-    background-color: #333;
-  }
-  
-  .btn-delete:hover {
-    background-color: #c0392b;
-  }
-  
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
+}
+
+.header button {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.header button:hover {
+  background-color: #5a4dbf;
+}
+
+.category-list {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.category-item:last-child {
+  border-bottom: none;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.category-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.category-name {
+  flex-grow: 1;
+}
+
+.category-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.category-actions button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-create {
+  background-color: #6c5ce7;
+  color: white;
+}
+
+.btn-update {
+  background-color: #444;
+  color: white;
+}
+
+.btn-delete {
+  background-color: #d63031;
+  color: white;
+}
+
+.btn-create:hover {
+  background-color: #5a4dbf;
+}
+
+.btn-update:hover {
+  background-color: #333;
+}
+
+.btn-delete:hover {
+  background-color: #c0392b;
+}
+
+.subcategory-list {
+  margin-top: 10px;
+  padding-left: 20px;
+  border-left: 1px solid #ccc;
+}
+
+.category-description {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+}
