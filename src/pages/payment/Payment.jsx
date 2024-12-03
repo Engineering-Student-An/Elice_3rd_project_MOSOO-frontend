@@ -85,6 +85,8 @@ const Payment = () => {
     if (success) {
       try {
         // 결제 성공 시 서버에 결제 완료 정보 전송
+        //1. response 를 백엔드로 모두 보내자.
+        //2. 돌려보고 어떤 데이터가 넘어오는지 확인 - 사용해야하는 데이터 확인해보기 (cs 대응)
         await axios.post(`${process.env.REACT_APP_API_URL}/api/payments/complete`, {
           impUid: imp_uid,
           merchantUid: merchant_uid,
