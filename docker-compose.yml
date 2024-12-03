@@ -2,7 +2,7 @@
 version: "3"
 services:
   backend:
-    image: mosoo_spring:latest
+    image: ${DOCKER_USER}/mosoo_spring:latest
     container_name: mosoo_spring
     ports:
       - 8080:8080
@@ -13,10 +13,11 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DEPLOY_FRONT_URL: ${DEPLOY_FRONT_URL}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
 
   frontend:
-    build: .
-    image: mosoo_react
+    image: ${DOCKER_USER}/mosoo_react:latest
     container_name: mosoo_react
     ports:
       - "80:80"
