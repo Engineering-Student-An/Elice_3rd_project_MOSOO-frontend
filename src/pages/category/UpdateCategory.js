@@ -3,12 +3,15 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'components/button.css';
 import { useParams } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const UpdateCategory = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
   const { category_id } = useParams();
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +34,7 @@ const UpdateCategory = () => {
         }
       );
       alert('카테고리가 수정되었습니다!');
+      navigate('/categories');
     } catch (error) {
       console.error('카테고리 수정 실패:', error);
       alert('카테고리 수정 중 오류가 발생했습니다.');
