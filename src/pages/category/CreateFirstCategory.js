@@ -3,7 +3,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'components/button.css';
 
-const CreateCategory = () => {
+const CreateFirstCategory = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [icon, setIcon] = useState(null);
@@ -95,4 +95,4 @@ const CreateCategory = () => {
   );
 };
 
-export default CreateCategory;
+export default CreateFirstCategory;
