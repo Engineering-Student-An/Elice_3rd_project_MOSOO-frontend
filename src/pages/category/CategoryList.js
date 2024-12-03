@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios"; // axios 추가
 import "./css/CategoryList.css";
 import { useNavigate } from 'react-router-dom';
+import DeleteModal from "./components/DeleteModal";
 
 const CategoryList = () => {
   // 카테고리 데이터 상태 관리
   const [categories, setCategories] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
   useEffect(() => {
     // 대분류 조회 API 호출
@@ -40,8 +43,25 @@ const CategoryList = () => {
   };
 
   const handleDelete = (category_id) => {
-    console.log("삭제 버튼 클릭:");
+    setSelectedCategoryId(category_id);
+    setShowModal(true);
   };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await axios.delete(
+        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedCategoryId}`
+      );
+      alert("카테고리가 삭제되었습니다.");
+      setCategories(categories.filter(category => category.category_id !== selectedCategoryId));
+    } catch (error) {
+      console.error("카테고리 삭제 실패:", error);
+      alert("카테고리 삭제 중 오류가 발생했습니다.");
+    } finally {
+      setShowModal(false);
+    }
+  }
+  
 
   return (
     <div className="container">
@@ -78,7 +98,7 @@ const CategoryList = () => {
                 </button>
                 <button
                   className="btn-delete"
-                  onClick={() => handleDelete(category.id)}
+                  onClick={() => handleDelete(category.category_id)}
                 >
                   삭제
                 </button>
@@ -89,7 +109,18 @@ const CategoryList = () => {
           <p>카테고리를 불러오는 중입니다...</p>
         )}
       </div>
+
+    {/* 삭제 모달 */}
+    <DeleteModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={handleDeleteConfirm}
+        title="카테고리 삭제"
+        message="선택한 카테고리를 삭제하시겠습니까? 삭제한 카테고리는 복구할 수 없습니다."
+    />
     </div>
+
+    
   );
 };
 
