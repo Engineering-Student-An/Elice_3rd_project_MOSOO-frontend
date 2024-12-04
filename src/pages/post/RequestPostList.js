@@ -53,9 +53,9 @@ const RequestPostList = () => {
                     <div className="col-md-4 mb-3" key={post.id}>
                         <div className="card" style={{ fontSize: '0.9rem' }}>
                             {/* 게시글 카드 이미지 */}
-                            {post.ImgUrls && post.ImgUrls.length > 0 && (
+                            {post.imgUrls && post.imgUrls.length > 0 && (
                                 <img
-                                    src={post.ImgUrls[0]}  // 이미지 링크 배열에서 첫 번째 이미지 사용
+                                    src={post.imgUrls[0]}  // 이미지 링크 배열에서 첫 번째 이미지 사용
                                     alt={post.title}
                                     className="card-img-top"
                                     style={{ height: '200px', objectFit: 'cover' }}
