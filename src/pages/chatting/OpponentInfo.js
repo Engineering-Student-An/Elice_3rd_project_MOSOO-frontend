@@ -5,6 +5,7 @@ const OpponentInfo = ({chatRoomId}) => {
 
     const [errorMessage, setErrorMessage] = useState(null);
     const [opponent, setOpponent] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
 
@@ -16,14 +17,22 @@ const OpponentInfo = ({chatRoomId}) => {
         try {
             const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}/user-info`);
             setOpponent(response.data.opponentFullName);
+            setLoading(false); // 데이터 로드 완료
         } catch (err) {
             setErrorMessage(err.response ? err.response.data.message : err.message);
             console.error('Failed to load infos:', err);
+            setLoading(false); // 데이터 로드 완료
         }
     };
 
+    // 에러 발생 시
     if (errorMessage) {
         return <div> {errorMessage} </div>;
+    }
+
+    // 로딩 중일 때
+    if (loading) {
+        return <div>로딩 중...</div>; // 로딩 상태 표시
     }
 
     return (
