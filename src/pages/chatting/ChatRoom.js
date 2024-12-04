@@ -49,7 +49,9 @@ const ChatRoom = () => {
     }, []);
 
     const connect = () => {
-        const socket = new SockJS('http://localhost:8080/ws-stomp');
+        const socket = new SockJS(`${process.env.REACT_APP_API_BASE_URL}/ws-stomp`,
+            { withCredentials: true }
+        );
         const client = Stomp.over(socket);
 
         // chatRoomId를 헤더에 추가
@@ -144,10 +146,11 @@ const ChatRoom = () => {
     const fetchInitialMessages = async () => {
 
         try {
-            const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}`, {
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}`, {
                 params: {
                     isInit: true
                 }
+                , withCredentials: true
             });
             const initialMessages = response.data.chatMessageResponseDtoList;
             setMessages(initialMessages);
@@ -175,14 +178,14 @@ const ChatRoom = () => {
             let url; // URL 변수를 선언
 
             if (lastIndex === null) {
-                url = `http://localhost:8080/api/chatroom/${chatRoomId}`; // lastIndex가 null일 경우
+                url = `${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}`; // lastIndex가 null일 경우
             } else {
-                url = `http://localhost:8080/api/chatroom/${chatRoomId}?index=${lastIndex}`; // lastIndex가 null이 아닐 경우
+                url = `${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}?index=${lastIndex}`; // lastIndex가 null이 아닐 경우
             }
             const response = await axios.get(url, {
                 params: {
                     isInit: false
-                }
+                },withCredentials: true
             });
             const newMessages = response.data.chatMessageResponseDtoList;
             setMessages(prevMessages => [...prevMessages, ...newMessages]); // 가장 아래에 추가

@@ -17,7 +17,9 @@ const ChatRoomList = () => {
     useEffect(() => {
         const fetchChatRooms = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/api/chatrooms?page=${currentPage}`);
+                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatrooms?page=${currentPage}`,
+                    { withCredentials: true }
+                );
                 setChatRooms(response.data.chatRoomResponseDtoList); // DTO에서 채팅방 목록 가져오기
                 setTotalPages(response.data.totalPages);
             } catch (err) {
