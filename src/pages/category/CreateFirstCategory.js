@@ -34,6 +34,7 @@ const CreateFirstCategory = () => {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          withCredentials: true
         }
       );
       alert('대분류가 생성되었습니다!');
