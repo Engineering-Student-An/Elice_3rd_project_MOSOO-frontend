@@ -39,3 +39,26 @@ export const deletePost = async (postId) => {
         throw new Error('게시글 삭제에 실패했습니다.');
     }
 };
+
+export const fetchBids = async (postId) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/bid/${postId}`, { withCredentials: true });
+        return response.data;  // BidListResponseDto 반환
+    } catch (err) {
+        console.error('입찰 데이터 조회 실패:', err);
+        throw err;
+    }
+};
+
+// 입찰 생성하기
+export const createBid = async (postId, requestDto, userId) => {
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/bid/${postId}`, requestDto, {
+            params: { userId },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('입찰 생성에 실패했습니다.', error);
+        throw error;
+    }
+};

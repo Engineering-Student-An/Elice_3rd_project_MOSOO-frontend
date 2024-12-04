@@ -8,50 +8,72 @@ const CreatePost = () => {
     const [price, setPrice] = useState('');
     const [duration, setDuration] = useState('');
     const [images, setImages] = useState([]);
-    const [categoryId, setCategoryId] = useState('');
-    const [parentCategoryId, setParentCategoryId] = useState('');
     const [categories, setCategories] = useState([]);
-    const [subCategories, setSubCategories] = useState([]);
+    const [subCategoriesLevel1, setSubCategoriesLevel1] = useState([]);
+    const [subCategoriesLevel2, setSubCategoriesLevel2] = useState([]);
+    const [selectedParentCategory, setSelectedParentCategory] = useState('');
+    const [selectedSubCategory1, setSelectedSubCategory1] = useState('');
+    const [selectedSubCategory2, setSelectedSubCategory2] = useState('');
     const [isOffer, setIsOffer] = useState(false);
     const [userId] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    // Fetch 대분류
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const response = await axios.get(
-                    `${process.env.REACT_APP_API_BASE_URL}/api/category/first_category`, // 템플릿 리터럴 수정
-                    { withCredentials: true } // 옵션은 객체로 전달
+                    `${process.env.REACT_APP_API_BASE_URL}/api/category/first_category`
                 );
                 setCategories(response.data);
             } catch (err) {
-                console.error('상위 카테고리 불러오기 실패:', err);
-                setError('상위 카테고리를 불러오는 데 실패했습니다.');
+                console.error('대분류 불러오기 실패:', err);
+                setError('대분류를 불러오는 데 실패했습니다.');
             }
         };
-
         fetchCategories();
     }, []);
 
+    // Fetch 중분류
     useEffect(() => {
-        if (parentCategoryId) {
-            const fetchSubCategories = async () => {
+        if (selectedParentCategory) {
+            const fetchSubCategoriesLevel1 = async () => {
                 try {
-                    const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/category/${parentCategoryId}`,
-                        { withCredentials: true });
-                    setSubCategories(response.data);
+                    const response = await axios.get(
+                        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedParentCategory}`
+                    );
+                    setSubCategoriesLevel1(response.data);
+                    setSubCategoriesLevel2([]); // 초기화
+                    setSelectedSubCategory1('');
+                    setSelectedSubCategory2('');
                 } catch (err) {
-                    console.error('하위 카테고리 불러오기 실패:', err);
-                    setError('하위 카테고리를 불러오는 데 실패했습니다.');
+                    console.error('중분류 불러오기 실패:', err);
+                    setError('중분류를 불러오는 데 실패했습니다.');
                 }
             };
-
-            fetchSubCategories();
-        } else {
-            setSubCategories([]);
+            fetchSubCategoriesLevel1();
         }
-    }, [parentCategoryId]);
+    }, [selectedParentCategory]);
+
+    // Fetch 하분류
+    useEffect(() => {
+        if (selectedSubCategory1) {
+            const fetchSubCategoriesLevel2 = async () => {
+                try {
+                    const response = await axios.get(
+                        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedSubCategory1}`
+                    );
+                    setSubCategoriesLevel2(response.data);
+                    setSelectedSubCategory2('');
+                } catch (err) {
+                    console.error('하분류 불러오기 실패:', err);
+                    setError('하분류를 불러오는 데 실패했습니다.');
+                }
+            };
+            fetchSubCategoriesLevel2();
+        }
+    }, [selectedSubCategory1]);
 
     const handleImageChange = (event) => {
         setImages(event.target.files);
@@ -60,7 +82,7 @@ const CreatePost = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!title || !description || !price || !duration || !categoryId) {
+        if (!title || !description || !price || !duration || !selectedSubCategory2) {
             setError('모든 필드를 채워주세요.');
             return;
         }
@@ -76,7 +98,7 @@ const CreatePost = () => {
         formData.append('status', 'OPEN');
         formData.append('isOffer', isOffer);
         formData.append('userId', userId);
-        formData.append('categoryId', categoryId);
+        formData.append('categoryId', selectedSubCategory2);
 
         for (let i = 0; i < images.length; i++) {
             formData.append('imageUrls', images[i]);
@@ -104,7 +126,7 @@ const CreatePost = () => {
 
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <div className="row">
-                    {/* 왼쪽 텍스트 영역 */}
+                    {/* 왼쪽 설명 영역 */}
                     <div className="col-md-6">
                         <div className="mb-5">
                             <h5>제목</h5>
@@ -126,46 +148,35 @@ const CreatePost = () => {
 
                     {/* 오른쪽 입력 영역 */}
                     <div className="col-md-6">
-                        {/* 제목 입력 */}
                         <div className="mb-5">
                             <input
                                 type="text"
-                                id="title"
                                 className="form-control"
                                 placeholder="제목"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                             />
                         </div>
-
-                        {/* 설명 입력 */}
                         <div className="mb-5">
                             <textarea
-                                id="description"
                                 className="form-control"
                                 placeholder="설명"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                             />
                         </div>
-
-                        {/* 가격 입력 */}
                         <div className="mb-5">
                             <input
                                 type="number"
-                                id="price"
                                 className="form-control"
                                 placeholder="가격"
                                 value={price}
                                 onChange={(e) => setPrice(e.target.value)}
                             />
                         </div>
-
-                        {/* 기간 입력 */}
                         <div className="mb-5">
                             <input
                                 type="text"
-                                id="duration"
                                 className="form-control"
                                 placeholder="기간"
                                 value={duration}
@@ -177,71 +188,73 @@ const CreatePost = () => {
 
                 {/* 카테고리 선택 */}
                 <div className="mb-5">
-                    <h5>카테고리</h5>
-                    <p>적합한 상위 및 하위 카테고리를 선택하세요.</p>
+                    <h5>카테고리 선택</h5>
+                    <p>대분류, 중분류, 소분류를 순서대로 선택하세요.</p>
                     <select
-                        id="parentCategory"
-                        className="form-select"
-                        value={parentCategoryId}
-                        onChange={(e) => setParentCategoryId(e.target.value)}
+                        className="form-select mb-3"
+                        value={selectedParentCategory}
+                        onChange={(e) => setSelectedParentCategory(e.target.value)}
                     >
-                        <option value="">상위 카테고리 선택</option>
+                        <option value="">대분류 선택</option>
                         {categories.map((category) => (
                             <option key={category.category_id} value={category.category_id}>
                                 {category.name}
                             </option>
                         ))}
                     </select>
+
+                    <select
+                        className="form-select mb-3"
+                        value={selectedSubCategory1}
+                        onChange={(e) => setSelectedSubCategory1(e.target.value)}
+                    >
+                        <option value="">중분류 선택</option>
+                        {subCategoriesLevel1.map((subCategory) => (
+                            <option key={subCategory.category_id} value={subCategory.category_id}>
+                                {subCategory.name}
+                            </option>
+                        ))}
+                    </select>
+
+                    <select
+                        className="form-select mb-3"
+                        value={selectedSubCategory2}
+                        onChange={(e) => setSelectedSubCategory2(e.target.value)}
+                    >
+                        <option value="">소분류 선택</option>
+                        {subCategoriesLevel2.map((subCategory) => (
+                            <option key={subCategory.category_id} value={subCategory.category_id}>
+                                {subCategory.name}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-                {parentCategoryId && (
-                    <div className="mb-5">
-                        <select
-                            id="category"
-                            className="form-select"
-                            value={categoryId}
-                            onChange={(e) => setCategoryId(e.target.value)}
-                        >
-                            <option value="">하위 카테고리 선택</option>
-                            {subCategories.map((subCategory) => (
-                                <option key={subCategory.category_id} value={subCategory.category_id}>
-                                    {subCategory.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
 
                 {/* 이미지 업로드 */}
                 <div className="mb-5">
                     <h5>이미지</h5>
-                    <p>관련된 이미지를 업로드하세요. 여러 개의 파일을 선택할 수 있습니다.</p>
                     <input
                         type="file"
-                        id="images"
                         className="form-control"
                         multiple
                         onChange={handleImageChange}
                     />
                 </div>
 
-                {/* 오퍼 설정 */}
-                <div className="mb-5 form-check">
+                {/* 오퍼 체크 */}
+                <div className="form-check mb-5">
                     <input
                         type="checkbox"
-                        id="isOffer"
                         className="form-check-input"
                         checked={isOffer}
                         onChange={() => setIsOffer(!isOffer)}
                     />
-                    <label htmlFor="isOffer" className="form-check-label">고수 게시글로 설정</label>
+                    <label className="form-check-label">오퍼 가능</label>
                 </div>
 
-                {/* 제출 버튼 */}
-                <div className="d-flex justify-content-center m-3">
-                    <button type="submit" className="btn btn-primary" disabled={loading}>
-                        {loading ? '로딩 중...' : '게시글 작성'}
-                    </button>
-                </div>
+                <button type="submit" className="btn btn-primary m-3" disabled={loading}>
+                    {loading ? '게시글 생성 중...' : '게시글 작성'}
+                </button>
             </form>
         </div>
     );
