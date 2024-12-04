@@ -1,6 +1,6 @@
 import React from "react";
 
-const FirstCategoryModal = ({ categoryName }) => {
+const FirstCategory = ({ categoryName }) => {
   return (
     <div>
       <h4>1단계: {categoryName}에 대한 정보를 입력하세요.</h4>
@@ -9,4 +9,4 @@ const FirstCategoryModal = ({ categoryName }) => {
   );
 };
 
-export default FirstCategoryModal;
+export default FirstCategory;

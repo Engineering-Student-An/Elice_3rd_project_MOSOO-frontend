@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./SecondCategory.css";
 
-const SecondCategoryModal = ({ category_id, onSelectSecondcategory }) => {
+const SecondCategory = ({ category_id, onSelectSecondcategory }) => {
   const [secondcategories, setSecondcategories] = useState([]);
   const [error, setError] = useState(null);
   const [selectedSecondcategory, setSelectedSecondcategory] = useState(null);
@@ -62,4 +62,4 @@ const SecondCategoryModal = ({ category_id, onSelectSecondcategory }) => {
   );
 };
 
-export default SecondCategoryModal;
+export default SecondCategory;
