@@ -33,6 +33,8 @@ const StepModal = ({ category_id, onClose }) => {
   const nextStep = () => {
     if (step < 3) {
       setStep(step + 1);
+    } else {
+      handleSearch();
     }
   };
 
@@ -41,6 +43,11 @@ const StepModal = ({ category_id, onClose }) => {
     if (step > 1) {
       setStep(step - 1);
     }
+  };
+
+  const handleSearch = () => {
+    console.log("검색 버튼 클릭됨");
+    onClose();
   };
 
   return (
@@ -54,7 +61,7 @@ const StepModal = ({ category_id, onClose }) => {
             이전
           </button>
           <button onClick={nextStep} disabled={step === 3}>
-            다음
+            {step === 3 ? "검색" : "다음"}
           </button>
         </div>
       </div>
