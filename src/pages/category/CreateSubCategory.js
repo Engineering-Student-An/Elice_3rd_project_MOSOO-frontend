@@ -35,6 +35,7 @@ const CreateSubCategory = () => {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          withCredentials: true
         }
       );
       alert('하위 카테고리가 생성되었습니다!');
