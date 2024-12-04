@@ -58,7 +58,7 @@ const Category = () => {
 
       {isModalOpen && (
         <StepModal
-          categoryName={selectedCategory.name}
+          category_id={selectedCategory.category_id}
           onClose={closeModal}
         />
       )}

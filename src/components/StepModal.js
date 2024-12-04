@@ -4,18 +4,19 @@ import Step2 from "../pages/category/components/SecondCategoryModal";
 import Step3 from "../pages/category/components/ThirdCategoryModal";
 import "./StepModal.css";
 
-const StepModal = ({ categoryName, onClose }) => {
+const StepModal = ({ category_id, onClose }) => {
   const [step, setStep] = useState(1); // 단계 상태
+  const [selectedSecondcategory, setSelectedSecondcategory] = useState(null); // 선택된 중분류 상태
 
   // 각 단계 컴포넌트 렌더링
   const renderStepContent = () => {
     switch (step) {
       case 1:
-        return <Step1 categoryName={categoryName} />;
+        return <Step1 category_id={category_id} />;
       case 2:
-        return <Step2 categoryName={categoryName} />;
+        return <Step2 category_id={category_id} onSelectSecondcategory={setSelectedSecondcategory} />;
       case 3:
-        return <Step3 categoryName={categoryName} />;
+        return <Step3 category_id={category_id} selectedSubcategory={selectedSecondcategory} />;
       default:
         return null;
     }
@@ -38,7 +39,6 @@ const StepModal = ({ categoryName, onClose }) => {
   return (
     <div className="main-modal-overlay">
       <div className="main-modal-content">
-        <h3>{categoryName} 모달</h3>
         <div className="main-modal-body">
           {renderStepContent()}
         </div>
