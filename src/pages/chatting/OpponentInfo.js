@@ -15,7 +15,9 @@ const OpponentInfo = ({chatRoomId}) => {
     // TODO: 유저 정보 dto 로 받아야 함 (지금은 opponentFullName)
     const fetchInfos = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}/user-info`);
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}/user-info`,
+                { withCredentials: true }
+            );
             setOpponent(response.data.opponentFullName);
             setLoading(false); // 데이터 로드 완료
         } catch (err) {
