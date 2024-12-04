@@ -8,6 +8,13 @@ const StepModal = ({ category_id, onClose }) => {
   const [step, setStep] = useState(1); // 단계 상태
   const [selectedSecondcategory, setSelectedSecondcategory] = useState(null); // 선택된 중분류 상태
 
+  // 이벤트 핸들러
+  const handleOverlayClick = (e) => {
+    if (e.target.classList.contains('main-modal-overlay')) {
+      onClose();
+    }
+  };
+
   // 각 단계 컴포넌트 렌더링
   const renderStepContent = () => {
     switch (step) {
@@ -16,7 +23,7 @@ const StepModal = ({ category_id, onClose }) => {
       case 2:
         return <Step2 category_id={category_id} onSelectSecondcategory={setSelectedSecondcategory} />;
       case 3:
-        return <Step3 category_id={category_id} selectedSubcategory={selectedSecondcategory} />;
+        return <Step3 selectedSubcategory={selectedSecondcategory} />;
       default:
         return null;
     }
@@ -37,7 +44,7 @@ const StepModal = ({ category_id, onClose }) => {
   };
 
   return (
-    <div className="main-modal-overlay">
+    <div className="main-modal-overlay" onClick={handleOverlayClick}>
       <div className="main-modal-content">
         <div className="main-modal-body">
           {renderStepContent()}
@@ -49,7 +56,6 @@ const StepModal = ({ category_id, onClose }) => {
           <button onClick={nextStep} disabled={step === 3}>
             다음
           </button>
-          <button onClick={onClose}>닫기</button>
         </div>
       </div>
     </div>

@@ -55,7 +55,7 @@ const SecondCategory = ({ category_id, onSelectSecondcategory }) => {
       )}
       {selectedSecondcategory && (
         <div>
-          <p>선택된 중분류: {selectedSecondcategory.name}</p>
+          <p>{selectedSecondcategory.name}</p>
         </div>
       )}
     </div>
