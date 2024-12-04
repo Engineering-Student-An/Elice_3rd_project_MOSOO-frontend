@@ -9,20 +9,19 @@ const CreatePost = () => {
     const [duration, setDuration] = useState('');
     const [images, setImages] = useState([]);
     const [categoryId, setCategoryId] = useState('');
-    const [parentCategoryId, setParentCategoryId] = useState(''); // 상위 카테고리 ID 상태 추가
-    const [categories, setCategories] = useState([]); // 상위 카테고리 리스트 상태
-    const [subCategories, setSubCategories] = useState([]); // 하위 카테고리 리스트 상태
+    const [parentCategoryId, setParentCategoryId] = useState('');
+    const [categories, setCategories] = useState([]);
+    const [subCategories, setSubCategories] = useState([]);
     const [isOffer, setIsOffer] = useState(false);
-    const [userId] = useState(1); // 예시로 하드코딩된 userId. 실제로는 로그인된 사용자 정보로 교체 필요.
+    const [userId] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // 상위 카테고리 API 요청
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const response = await axios.get('http://localhost:8080/api/category/first_category');
-                setCategories(response.data); // 상위 카테고리 데이터를 상태에 저장
+                setCategories(response.data);
             } catch (err) {
                 console.error('상위 카테고리 불러오기 실패:', err);
                 setError('상위 카테고리를 불러오는 데 실패했습니다.');
@@ -32,13 +31,12 @@ const CreatePost = () => {
         fetchCategories();
     }, []);
 
-    // 하위 카테고리 API 요청
     useEffect(() => {
         if (parentCategoryId) {
             const fetchSubCategories = async () => {
                 try {
                     const response = await axios.get(`http://localhost:8080/api/category/${parentCategoryId}`);
-                    setSubCategories(response.data); // 하위 카테고리 데이터를 상태에 저장
+                    setSubCategories(response.data);
                 } catch (err) {
                     console.error('하위 카테고리 불러오기 실패:', err);
                     setError('하위 카테고리를 불러오는 데 실패했습니다.');
@@ -47,9 +45,9 @@ const CreatePost = () => {
 
             fetchSubCategories();
         } else {
-            setSubCategories([]); // 상위 카테고리가 선택되지 않으면 하위 카테고리 리스트를 비웁니다.
+            setSubCategories([]);
         }
-    }, [parentCategoryId]); // parentCategoryId가 변경될 때마다 하위 카테고리 데이터를 다시 로드합니다.
+    }, [parentCategoryId]);
 
     const handleImageChange = (event) => {
         setImages(event.target.files);
@@ -66,30 +64,27 @@ const CreatePost = () => {
         setLoading(true);
         setError('');
 
-        // FormData 생성
         const formData = new FormData();
         formData.append('title', title);
         formData.append('description', description);
         formData.append('price', price);
         formData.append('duration', duration);
-        formData.append('status', 'OPEN');  // 기본값으로 OPEN 상태 추가
+        formData.append('status', 'OPEN');
         formData.append('isOffer', isOffer);
         formData.append('userId', userId);
         formData.append('categoryId', categoryId);
 
-        // 이미지 파일 추가
         for (let i = 0; i < images.length; i++) {
             formData.append('imageUrls', images[i]);
         }
 
         try {
             const response = await axios.post(
-                'http://localhost:8080/api/post', // 실제 API URL로 교체
+                'http://localhost:8080/api/post',
                 formData,
                 { headers: { 'Content-Type': 'multipart/form-data' } }
             );
             console.log('게시글 생성 성공:', response.data);
-            // 성공적으로 게시글이 생성된 후 처리 (예: 성공 메시지, 리디렉션 등)
         } catch (error) {
             console.error('게시글 생성 실패:', error);
             setError('게시글 생성에 실패했습니다.');
@@ -104,56 +99,82 @@ const CreatePost = () => {
             {error && <div className="alert alert-danger">{error}</div>}
 
             <form onSubmit={handleSubmit} encType="multipart/form-data">
-                {/* 제목 */}
-                <div className="mb-3">
-                    <label htmlFor="title" className="form-label">제목</label>
-                    <input
-                        type="text"
-                        id="title"
-                        className="form-control"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
+                <div className="row">
+                    {/* 왼쪽 텍스트 영역 */}
+                    <div className="col-md-6">
+                        <div className="mb-5">
+                            <h5>제목</h5>
+                            <p>게시글의 제목을 입력하세요.</p>
+                        </div>
+                        <div className="mb-5">
+                            <h5>설명</h5>
+                            <p>게시글에 대한 상세 설명을 입력하세요.</p>
+                        </div>
+                        <div className="mb-5">
+                            <h5>가격</h5>
+                            <p>서비스나 제품의 가격을 입력하세요.</p>
+                        </div>
+                        <div className="mb-5">
+                            <h5>기간</h5>
+                            <p>제공 가능한 기간을 입력하세요.</p>
+                        </div>
+                    </div>
+
+                    {/* 오른쪽 입력 영역 */}
+                    <div className="col-md-6">
+                        {/* 제목 입력 */}
+                        <div className="mb-5">
+                            <input
+                                type="text"
+                                id="title"
+                                className="form-control"
+                                placeholder="제목"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                        </div>
+
+                        {/* 설명 입력 */}
+                        <div className="mb-5">
+                            <textarea
+                                id="description"
+                                className="form-control"
+                                placeholder="설명"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                        </div>
+
+                        {/* 가격 입력 */}
+                        <div className="mb-5">
+                            <input
+                                type="number"
+                                id="price"
+                                className="form-control"
+                                placeholder="가격"
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                            />
+                        </div>
+
+                        {/* 기간 입력 */}
+                        <div className="mb-5">
+                            <input
+                                type="text"
+                                id="duration"
+                                className="form-control"
+                                placeholder="기간"
+                                value={duration}
+                                onChange={(e) => setDuration(e.target.value)}
+                            />
+                        </div>
+                    </div>
                 </div>
 
-                {/* 설명 */}
-                <div className="mb-3">
-                    <label htmlFor="description" className="form-label">설명</label>
-                    <textarea
-                        id="description"
-                        className="form-control"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                    />
-                </div>
-
-                {/* 가격 */}
-                <div className="mb-3">
-                    <label htmlFor="price" className="form-label">가격</label>
-                    <input
-                        type="number"
-                        id="price"
-                        className="form-control"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                    />
-                </div>
-
-                {/* 기간 */}
-                <div className="mb-3">
-                    <label htmlFor="duration" className="form-label">기간</label>
-                    <input
-                        type="text"
-                        id="duration"
-                        className="form-control"
-                        value={duration}
-                        onChange={(e) => setDuration(e.target.value)}
-                    />
-                </div>
-
-                {/* 상위 카테고리 선택 */}
-                <div className="mb-3">
-                    <label htmlFor="parentCategory" className="form-label">상위 카테고리</label>
+                {/* 카테고리 선택 */}
+                <div className="mb-5">
+                    <h5>카테고리</h5>
+                    <p>적합한 상위 및 하위 카테고리를 선택하세요.</p>
                     <select
                         id="parentCategory"
                         className="form-select"
@@ -168,11 +189,8 @@ const CreatePost = () => {
                         ))}
                     </select>
                 </div>
-
-                {/* 하위 카테고리 선택 */}
                 {parentCategoryId && (
-                    <div className="mb-3">
-                        <label htmlFor="category" className="form-label">하위 카테고리</label>
+                    <div className="mb-5">
                         <select
                             id="category"
                             className="form-select"
@@ -190,8 +208,9 @@ const CreatePost = () => {
                 )}
 
                 {/* 이미지 업로드 */}
-                <div className="mb-3">
-                    <label htmlFor="images" className="form-label">이미지 업로드</label>
+                <div className="mb-5">
+                    <h5>이미지</h5>
+                    <p>관련된 이미지를 업로드하세요. 여러 개의 파일을 선택할 수 있습니다.</p>
                     <input
                         type="file"
                         id="images"
@@ -201,8 +220,8 @@ const CreatePost = () => {
                     />
                 </div>
 
-                {/* isOffer 선택 */}
-                <div className="mb-3 form-check">
+                {/* 오퍼 설정 */}
+                <div className="mb-5 form-check">
                     <input
                         type="checkbox"
                         id="isOffer"
@@ -210,11 +229,11 @@ const CreatePost = () => {
                         checked={isOffer}
                         onChange={() => setIsOffer(!isOffer)}
                     />
-                    <label htmlFor="isOffer" className="form-check-label">오퍼 게시글로 설정</label>
+                    <label htmlFor="isOffer" className="form-check-label">고수 게시글로 설정</label>
                 </div>
 
                 {/* 제출 버튼 */}
-                <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center m-3">
                     <button type="submit" className="btn btn-primary" disabled={loading}>
                         {loading ? '로딩 중...' : '게시글 작성'}
                     </button>

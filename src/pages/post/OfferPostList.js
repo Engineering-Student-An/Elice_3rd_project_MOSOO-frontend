@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './PostList.css';
 import { fetchPostList } from './Api'; // API 호출 함수
+import { Link } from 'react-router-dom'; // Link 컴포넌트 import
 
 const OfferPostList = () => {
     const [posts, setPosts] = useState([]); // 게시글 목록
@@ -51,11 +52,12 @@ const OfferPostList = () => {
             <div className="row">
                 {posts.map((post) => (
                     <div className="col-md-4 mb-3" key={post.id}>
+                        {post.id}
                         <div className="card" style={{ fontSize: '0.9rem' }}>
                             {/* 게시글 카드 이미지 */}
-                            {post.ImgUrls && post.ImgUrls.length > 0 && (
+                            {post.imgUrls && post.imgUrls.length > 0 && (
                                 <img
-                                    src={post.ImgUrls[0]}  // 이미지 링크 배열에서 첫 번째 이미지 사용
+                                    src={post.imgUrls[0]}  // 이미지 링크 배열에서 첫 번째 이미지 사용
                                     alt={post.title}
                                     className="card-img-top"
                                     style={{ height: '200px', objectFit: 'cover' }}
@@ -68,6 +70,8 @@ const OfferPostList = () => {
                                     <li><strong>가격:</strong> {post.price.toLocaleString()} 원</li>
                                     <li><strong>기간:</strong> {post.duration}</li>
                                 </ul>
+                                {/* 게시글 상세 페이지로 이동하는 링크 추가 */}
+                                <Link to={`/posts/${post.id}`} className="btn m-2 btn-primary">상세 보기</Link>
                             </div>
                         </div>
                     </div>
