@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api/post'; // 실제 API URL로 교체하세요
-
 /**
  * 게시글 목록 가져오기
  * @param {number} page - 요청할 페이지 번호
@@ -10,7 +8,7 @@ const API_BASE_URL = 'http://localhost:8080/api/post'; // 실제 API URL로 교�
  */
 export const fetchPostList = async (page = 1, isOffer) => {
     try {
-        const response = await axios.get(`${API_BASE_URL}`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/post`, {
             params: {
                 page, // 페이지 번호
                 isOffer // 요청 유형
@@ -26,7 +24,7 @@ export const fetchPostList = async (page = 1, isOffer) => {
 export const fetchPostDetail = async (postId) => {
     try {
         console.log(postId);
-        const response = await axios.get(`http://localhost:8080/api/post/${postId}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/post/${postId}`);
         return response.data;
     } catch (error) {
         throw new Error('게시글을 불러오는 데 실패했습니다.');
@@ -35,7 +33,7 @@ export const fetchPostDetail = async (postId) => {
 
 export const deletePost = async (postId) => {
     try {
-        const response = await axios.delete(`http://localhost:8080/api/post/${postId}`);
+        const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/post/${postId}`);
         return response.data; // 성공적으로 삭제된 경우 응답 데이터 반환
     } catch (error) {
         throw new Error('게시글 삭제에 실패했습니다.');

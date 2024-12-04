@@ -20,7 +20,10 @@ const CreatePost = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/category/first_category');
+                const response = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}/api/category/first_category`, // 템플릿 리터럴 수정
+                    { withCredentials: true } // 옵션은 객체로 전달
+                );
                 setCategories(response.data);
             } catch (err) {
                 console.error('상위 카테고리 불러오기 실패:', err);
@@ -35,7 +38,8 @@ const CreatePost = () => {
         if (parentCategoryId) {
             const fetchSubCategories = async () => {
                 try {
-                    const response = await axios.get(`http://localhost:8080/api/category/${parentCategoryId}`);
+                    const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/category/${parentCategoryId}`,
+                        { withCredentials: true });
                     setSubCategories(response.data);
                 } catch (err) {
                     console.error('하위 카테고리 불러오기 실패:', err);
@@ -80,7 +84,7 @@ const CreatePost = () => {
 
         try {
             const response = await axios.post(
-                'http://localhost:8080/api/post',
+                `${process.env.REACT_APP_API_BASE_URL}/api/post`,
                 formData,
                 { headers: { 'Content-Type': 'multipart/form-data' } }
             );
