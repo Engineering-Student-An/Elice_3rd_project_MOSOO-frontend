@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Step1 from "../pages/category/components/FirstCategoryModal";
-import Step2 from "../pages/category/components/SecondCategoryModal";
-import Step3 from "../pages/category/components/ThirdCategoryModal";
+import Step1 from "../pages/category/components/FirstCategory";
+import Step2 from "../pages/category/components/SecondCategory";
+import Step3 from "../pages/category/components/ThirdCategory";
 import "./StepModal.css";
 
 const StepModal = ({ category_id, onClose }) => {

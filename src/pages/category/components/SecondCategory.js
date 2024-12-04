@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./SecondCategoryModal.css";
+import "./SecondCategory.css";
 
 const SecondCategoryModal = ({ category_id, onSelectSecondcategory }) => {
   const [secondcategories, setSecondcategories] = useState([]);
