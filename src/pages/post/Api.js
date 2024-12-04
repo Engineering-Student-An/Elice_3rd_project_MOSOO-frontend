@@ -22,3 +22,22 @@ export const fetchPostList = async (page = 1, isOffer) => {
         throw new Error('게시글 목록을 가져오는 데 실패했습니다.');
     }
 };
+
+export const fetchPostDetail = async (postId) => {
+    try {
+        console.log(postId);
+        const response = await axios.get(`http://localhost:8080/api/post/${postId}`);
+        return response.data;
+    } catch (error) {
+        throw new Error('게시글을 불러오는 데 실패했습니다.');
+    }
+};
+
+export const deletePost = async (postId) => {
+    try {
+        const response = await axios.delete(`http://localhost:8080/api/post/${postId}`);
+        return response.data; // 성공적으로 삭제된 경우 응답 데이터 반환
+    } catch (error) {
+        throw new Error('게시글 삭제에 실패했습니다.');
+    }
+};
