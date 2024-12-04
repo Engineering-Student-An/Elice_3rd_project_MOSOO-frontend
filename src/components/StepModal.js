@@ -29,6 +29,9 @@ const StepModal = ({ category_id, onClose }) => {
     }
   };
 
+  // 진행도 계산
+  const progress = (step / 3) * 100;
+
   // 다음 단계로 이동하는 함수
   const nextStep = () => {
     if (step < 3) {
@@ -56,6 +59,12 @@ const StepModal = ({ category_id, onClose }) => {
         <div className="main-modal-body">
           {renderStepContent()}
         </div>
+
+        {/* 진행 바 추가 */}
+        <div className="progress-bar-container">
+          <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+        </div>
+
         <div className="main-modal-footer">
           <button onClick={prevStep} disabled={step === 1}>
             이전
