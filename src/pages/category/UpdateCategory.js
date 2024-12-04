@@ -31,6 +31,7 @@ const UpdateCategory = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          withCredentials: true
         }
       );
       alert('카테고리가 수정되었습니다!');
