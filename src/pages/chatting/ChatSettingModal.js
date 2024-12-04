@@ -7,7 +7,9 @@ const ChatSettingModal = ({ isOpen, onRequestClose, chatRoomId, buttonRef }) => 
     const handleLeaveChatRoom = async () => {
         try {
             // API 호출
-            await axios.delete(`http://localhost:8080/api/chatroom/${chatRoomId}`);
+            await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}`,
+                { withCredentials: true }
+            );
             alert('채팅방을 나갔습니다.');
 
             // 페이지를 '/chatrooms'로 이동
