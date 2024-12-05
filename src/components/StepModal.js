@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Step1 from "../pages/category/components/FirstCategory";
+import Step1 from "./Address";
 import Step2 from "../pages/category/components/SecondCategory";
 import Step3 from "../pages/category/components/ThirdCategory";
 import "./StepModal.css";
@@ -19,7 +19,7 @@ const StepModal = ({ category_id, onClose }) => {
   const renderStepContent = () => {
     switch (step) {
       case 1:
-        return <Step1 category_id={category_id} />;
+        return <Step1 />;
       case 2:
         return <Step2 category_id={category_id} onSelectSecondcategory={setSelectedSecondcategory} />;
       case 3:
