@@ -37,7 +37,7 @@ const App = () => {
                         <Route path="/chatroom/:chatRoomId" element={<ChatRoom/>}/> {/* 채팅방 화면 */}
 
                         <Route path="/payment" element={<Payment />} />
-                        <Route path="/payment/completion" element={<PaymentComplete/>}/> {/* 결제 완료 화면 */}
+                        <Route path="/payment/success" element={<PaymentComplete/>}/> {/* 결제 완료 화면 */}
 
                         <Route path="/usages" element={<UsageList/>}/> {/* 이용 내역 화면 */}
 
