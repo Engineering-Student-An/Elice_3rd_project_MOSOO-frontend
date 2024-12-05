@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './PostList.css';
 import { fetchPostList } from './Api';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const RequestPostList = () => {
     const [posts, setPosts] = useState([]);
@@ -10,6 +10,8 @@ const RequestPostList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const navigate = useNavigate();
 
     const loadPosts = async (page) => {
         setLoading(true);
@@ -51,13 +53,22 @@ const RequestPostList = () => {
         }
     };
 
+    const handleCreatePost = () => {
+        navigate('/createPost');
+    };
+
     useEffect(() => {
         loadPosts(currentPage);
     }, [currentPage]);
 
     return (
         <div className="container mt-4">
-            <h2 className="text-left mb-4 purple-text">요청 글 목록</h2>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2 className="purple-text">요청 글 목록</h2>
+                <button className="btn btn-primary" onClick={handleCreatePost}>
+                    글 생성
+                </button>
+            </div>
 
             {loading && <p>로딩 중...</p>}
             {error && <p className="text-danger">{error}</p>}
