@@ -7,23 +7,21 @@ import './ChatRoom.css';
 import '../../components/button.css';
 import PostInfo from "./PostInfo";
 import OpponentInfo from "./OpponentInfo";
+import ChatSettingModal from "./ChatSettingModal";
 
 const ChatRoom = () => {
     const {chatRoomId} = useParams();
     const [opponentFullName, setOpponentFullName] = useState([]);
     const [messages, setMessages] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [post, setPost] = useState(null);
-    const [price, setPrice] = useState(0);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [selectedComponent, setSelectedComponent] = useState('postInfo');
-
-    const handleCompButtonClick = (component) => {
-        setSelectedComponent(component);
-    };
+    const [modalOpenIndex, setModalOpenIndex] = useState(null); // 모달이 열려 있는 인덱스
+    const buttonRefs = useRef([]); // 버튼 참조를 위한 배열
+    const [hasMore, setHasMore] = useState(true);   // 로드할 메시지가 더 있는지 여부
+    const [lastIndex, setLastIndex] = useState(null);   // 불러온 채팅의 마지막 인덱스 (id)
 
     // TODO: 실제 로그인한 유저의 id 반영할 것
-    const [loginUserId] = useState(4);
+    const [loginUserId] = useState(1);
 
     // 채팅 전송 관련 (stomp)
     const [stompClient, setStompClient] = useState(null);
@@ -37,24 +35,36 @@ const ChatRoom = () => {
 
     useEffect(() => {
         connect();
-        fetchMessages();
-
+        fetchInitialMessages();
         return () => disconnect();
     }, [chatRoomId]);
 
+    // 컴포넌트가 처음 마운트될 때 일정 시간(ms) 후에 scrollToBottom 호출
     useEffect(() => {
-        scrollToBottom()
-    }, [messages])
+        const timer = setTimeout(() => {
+            scrollToBottom();
+        }, 300); // 300ms 후에 scrollToBottom 실행
+
+        return () => clearTimeout(timer); // 클린업: 컴포넌트 언마운트 시 타이머 정리
+    }, []);
 
     const connect = () => {
-        const socket = new SockJS('http://localhost:8080/ws-stomp');
+        const socket = new SockJS(`${process.env.REACT_APP_API_BASE_URL}/ws-stomp`,
+            { withCredentials: true }
+        );
         const client = Stomp.over(socket);
-        client.connect({}, (frame) => {
+
+        // chatRoomId를 헤더에 추가
+        const headers = {
+            chatRoomId: chatRoomId
+        };
+
+        client.connect(headers, (frame) => {
             console.log('Connected: ' + frame);
             setStompClient(client);
 
             client.subscribe(`/sub/${chatRoomId}`, (chatMessage) => {
-                fetchMessages();
+                fetchInitialMessages();
             });
         });
     };
@@ -78,15 +88,37 @@ const ChatRoom = () => {
             setIsSending(true);
 
             const messageContent = messageRef.current.value;
+            // 현재 시간을 가져옴
+            const now = new Date();
+            // 한국 시간으로 변환 (UTC+9)
+            const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+
+            // 파일 타입 지정
+            let fileType = null;
+            if (selectedFile) {
+                const mimeType = selectedFile.type;
+
+                // MIME 타입에 따라 파일 타입 설정
+                if (mimeType.startsWith("image/")) {
+                    fileType = "IMAGE";
+                } else if (mimeType.startsWith("video/")) {
+                    fileType = "VIDEO";
+                } else {
+                    fileType = "FILE"; // 그 외의 파일은 일반 파일로 처리
+                }
+            }
+
             const chatMessage = {
                 sourceUserId: loginUserId,
-                type: selectedFile ? "FILE" : "MESSAGE",
+                type: selectedFile ? fileType : "MESSAGE",
                 base64File: selectedFile ? await toBase64(selectedFile) : null, // Base64로 변환
-                content: messageContent ? messageContent : null
+                fileName: selectedFile ? selectedFile.name : null,
+                content: messageContent ? messageContent : null,
+                createdAt: koreanTime
             };
 
             stompClient.send(`/pub/${chatRoomId}`, {}, JSON.stringify(chatMessage));
-
+            console.log('created 한국 시간: ' + koreanTime);
             messageRef.current.value = '';
             setInputMessage('');
             setSelectedFile(null);
@@ -96,7 +128,7 @@ const ChatRoom = () => {
 
             setTimeout(() => {
                 setIsSending(false);
-            }, 500);
+            }, 100);
         }
     };
 
@@ -110,25 +142,92 @@ const ChatRoom = () => {
         });
     };
 
-    const fetchMessages = async () => {
+    // 처음 메시지 로드 => 최근 20개만
+    const fetchInitialMessages = async () => {
+
         try {
-            const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}`);
-            setMessages(response.data.chatMessageResponseDtoList);
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}`, {
+                params: {
+                    isInit: true
+                }
+                , withCredentials: true
+            });
+            const initialMessages = response.data.chatMessageResponseDtoList;
+            setMessages(initialMessages);
             setOpponentFullName(response.data.opponentFullName);
-            setPost(response.data.postResponseDto);
-            setPrice(response.data.price);
+
+            const lastMessage = initialMessages[initialMessages.length - 1];
+            if (lastMessage) {
+                setLastIndex(lastMessage.chatMessageId);
+            }
+
+            setTimeout(() => {
+                scrollToBottom();
+            }, 100);
+
         } catch (err) {
-            setError(err);
+            setErrorMessage(err);
             console.error('Failed to load messages:', err);
-        } finally {
-            setLoading(false);
-            scrollToBottom();
         }
     };
 
+    const fetchMoreMessages = async () => {
+        if (!hasMore) return;
+
+        try {
+            let url; // URL 변수를 선언
+
+            if (lastIndex === null) {
+                url = `${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}`; // lastIndex가 null일 경우
+            } else {
+                url = `${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}?index=${lastIndex}`; // lastIndex가 null이 아닐 경우
+            }
+            const response = await axios.get(url, {
+                params: {
+                    isInit: false
+                },withCredentials: true
+            });
+            const newMessages = response.data.chatMessageResponseDtoList;
+            setMessages(prevMessages => [...prevMessages, ...newMessages]); // 가장 아래에 추가
+            setHasMore(newMessages.length > 0); // 더 이상 메시지가 없으면 false
+
+            // 스크롤을 조정
+            if (newMessages.length > 0) {
+
+                setLastIndex(newMessages[newMessages.length - 1].chatMessageId);
+
+                // 추가된 메시지 중 마지막 메시지의 위치로 스크롤 이동
+                setTimeout(() => {
+                    scrollToMessage(newMessages.length - 1); // 마지막 추가된 메시지로 스크롤
+                }, 0);
+            }
+        } catch (err) {
+            setErrorMessage(err.response ? err.response.data.message : err.message);
+            console.error('Failed to load more messages:', err);
+        }
+    };
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (chatContainerRef.current.scrollTop === 0) {
+                fetchMoreMessages(); // 스크롤이 맨 위에 도달하면 이전 메시지 로드
+            }
+        };
+
+        const scrollElement = chatContainerRef.current;
+        if (scrollElement) {
+            scrollElement.addEventListener('scroll', handleScroll);
+        }
+
+        return () => {
+            if (scrollElement) {
+                scrollElement.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, [hasMore, messages]);
+
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        console.log("fileNAme: " + file.name);
         setSelectedFile(file); // 파일 선택 시 상태 업데이트
         messageRef.current.value = ''; // 메시지 입력 필드 초기화
         if (file) {
@@ -145,25 +244,38 @@ const ChatRoom = () => {
     const scrollToBottom = () => {
         if (chatContainerRef.current) {
             chatContainerRef.current.querySelector('& > div:last-child').scrollIntoView();
-            // chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
+    // 특정 인덱스의 메시지로 스크롤 조정하는 함수
+    const scrollToMessage = (index) => {
+        if (chatContainerRef.current) {
+            const messageElements = chatContainerRef.current.children;
+            if (messageElements[index]) {
+                messageElements[index].scrollIntoView(); // 즉시 스크롤 이동
+            }
+        }
+    };
+
+    if (errorMessage) {
+        return <div> {errorMessage} </div>;
     }
 
-    if (error) {
-        return (
-            <div>
-                Error loading messages: {error.response ? error.response.data.message : error.message}
-            </div>
-        );
-    }
+    const handleCompButtonClick = (component) => {
+        setSelectedComponent(component);
+    };
 
     const formatDate = (date) => {
         const options = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
         return new Date(date).toLocaleTimeString('ko-KR', options);
+    };
+
+    const handleOpenModal = (index) => {
+        setModalOpenIndex(index); // 클릭한 버튼의 인덱스를 설정
+    };
+
+    const handleCloseModal = () => {
+        setModalOpenIndex(null); // 모달 닫기
     };
 
     return (
@@ -173,34 +285,57 @@ const ChatRoom = () => {
                     <h2>{opponentFullName}</h2>
                     <div className="d-flex flex-row justify-content-between align-items-center">
 
-                        <a href="/" className="purple-button me-5">결제하기</a>
-
-                        <button className="three-dots-button">
+                        <button ref={el => buttonRefs.current[0] = el} // 각 버튼을 refs 배열에 저장
+                                className="three-dots-button"
+                                onClick={() => handleOpenModal(0)} // 인덱스를 인자로 전달
+                        >
                             <span></span>
                             <span></span>
                             <span></span>
                         </button>
+                        <ChatSettingModal
+                            isOpen={modalOpenIndex === 0} // 해당 인덱스와 비교하여 모달 열기
+                            onRequestClose={handleCloseModal}
+                            chatRoomId={chatRoomId}
+                            buttonRef={buttonRefs.current[0]} // 해당 버튼의 참조 전달
+                        />
                     </div>
                 </div>
 
                 <div className="d-flex flex-column justify-content-start">
                     <div ref={chatContainerRef} className="messages-container">
                         {messages.length > 0 ? (
-                            messages.map((message, index) => {
+                            messages.slice().reverse().map((message, index) => {
                                 // 현재 메시지의 시간
                                 const currentTime = formatDate(message.createdAt);
-                                // 다음 메시지의 시간 (마지막 메시지일 경우 undefined)
-                                const nextTime = index < messages.length - 1 ? formatDate(messages[index + 1].createdAt) : null;
+                                // 다음 메시지의 시간 및 발신자 ID (마지막 메시지일 경우 undefined)
+                                const nextMessage = index < messages.length - 1 ? messages[messages.length - 1 - index - 1] : null;
+                                const nextTime = nextMessage ? formatDate(nextMessage.createdAt) : null;
+                                const nextSenderId = nextMessage ? nextMessage.sourceUserId : null;
 
-                                // 현재 메시지의 시간이 다음 메시지의 시간과 같은지 확인
-                                const isLastInGroup = nextTime !== currentTime;
+                                // 상태를 유지하는 변수 초기화
+                                let showTime = false;
+
+                                // 현재 메시지와 다음 메시지를 비교
+                                if (nextTime === currentTime && message.sourceUserId === nextSenderId) {
+                                    // 동일한 시간과 발신자인 경우 마지막 메시지에만 시간 표시
+                                    showTime = index === 0; // 첫 번째 메시지에만 시간을 표시
+                                } else {
+                                    // 발신자나 시간이 다르면 시간 표시
+                                    showTime = true;
+                                }
 
                                 return (
                                     <div key={index}>
+                                        {message.type === "QUIT" || message.type === "ENTER" ? (
+                                            <div className="text-center">
+                                                <p>{message.content}</p> {/* 여기서 content를 원하는 메시지로 설정 */}
+                                            </div>
+                                        ) : (
                                         <div
                                             className={`d-flex align-items-end ${message.sourceUserId === loginUserId ? 'justify-content-end' : 'justify-content-start'}`}>
-                                            {/* 마지막 메시지에만 시간 표시 */}
-                                            {isLastInGroup && message.sourceUserId === loginUserId && (
+                                            {/* 시간 표시 조건 */}
+                                            {showTime && message.sourceUserId === loginUserId && (
                                                 <span className={`message-time`}>{currentTime}</span>
                                             )}
                                             <div
@@ -214,16 +349,17 @@ const ChatRoom = () => {
                                                     </video>
                                                 ) : message.type === "FILE" ? (
                                                     <a href={message.content} download className="file-download-link">
-                                                        Download File
+                                                        {message.fileName}
                                                     </a>
                                                 ) : (
                                                     <span>{message.content}</span>
                                                 )}
                                             </div>
-                                            {isLastInGroup && message.sourceUserId !== loginUserId && (
+                                            {/* 시간 표시 조건 */}
+                                            {showTime &&  message.sourceUserId !== loginUserId && (
                                                 <span className={`message-time`}>{currentTime}</span>
                                             )}
-                                        </div>
+                                        </div>)}
                                     </div>
                                 );
                             })
@@ -232,7 +368,7 @@ const ChatRoom = () => {
                         )}
                     </div>
 
-                    <div className="mt-5">
+                <div className="mt-5">
 
                         <div className="input-group mb-2">
                             {/* 미리보기 영역 */}
@@ -273,7 +409,8 @@ const ChatRoom = () => {
                                 style={{display: 'none'}} // 파일 입력을 숨김
                                 id="file-upload"
                             />
-                            <label htmlFor="file-upload" className="btn btn-light" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                            <label htmlFor="file-upload" className="btn btn-light"
+                                   style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                 <span className="material-icons">upload_file</span>
                             </label>
                             <input
@@ -283,7 +420,7 @@ const ChatRoom = () => {
                                 value={inputMessage} // 현재 메시지 상태 사용
                                 onChange={(e) => setInputMessage(e.target.value)} // 입력값 변경 시 상태 업데이트
                                 className="form-control"
-                                placeholder={ !selectedFile ? "메시지를 입력하세요..." : "파일 선택 시 메시지는 입력 불가합니다." }
+                                placeholder={!selectedFile ? "메시지를 입력하세요..." : "파일 선택 시 메시지는 입력 불가합니다."}
                                 onKeyPress={(e) => {
                                     if (e.key === 'Enter' && !selectedFile) { // 파일이 업로드되지 않은 경우에만 메시지 전송
                                         sendChat();
@@ -296,8 +433,8 @@ const ChatRoom = () => {
                                     style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
                                     onClick={sendChat}
                                     disabled={inputMessage.trim() === '' && !selectedFile} // 메시지가 비어있고 파일이 선택되지 않은 경우 버튼 비활성화
-                                >
-                            <span className="material-icons">send</span>
+                            >
+                                <span className="material-icons">send</span>
                             </button>
                         </div>
                     </div>
@@ -306,14 +443,18 @@ const ChatRoom = () => {
 
             <div className="right-container">
                 <div className="button-container">
-                    <button className="purple-button" style={{padding: '10px', marginRight: '10px'}} onClick={() => handleCompButtonClick('postInfo')}>거래 상세 정보</button>
-                    <button className="purple-button" style={{padding: '10px'}} onClick={() => handleCompButtonClick('opponentInfo')}>상대 프로필</button>
+                    <button className="purple-button" style={{padding: '10px', marginRight: '10px'}}
+                            onClick={() => handleCompButtonClick('postInfo')}>거래 상세 정보
+                    </button>
+                    <button className="purple-button" style={{padding: '10px'}}
+                            onClick={() => handleCompButtonClick('opponentInfo')}>상대 프로필
+                    </button>
 
                 </div>
 
                 <div className="info-container">
-                    {selectedComponent === 'postInfo' && <PostInfo post={post} price={price} chatRoomId={chatRoomId}/>}
-                    {selectedComponent === 'opponentInfo' && <OpponentInfo opponentFullName={opponentFullName}/>}
+                    {selectedComponent === 'postInfo' && <PostInfo chatRoomId={chatRoomId}/>}
+                    {selectedComponent === 'opponentInfo' && <OpponentInfo chatRoomId={chatRoomId}/>}
                 </div>
             </div>
         </div>
