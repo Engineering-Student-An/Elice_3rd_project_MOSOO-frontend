@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Form, Button } from "react-bootstrap";
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import {Navigate, useParams} from 'react-router-dom';
 
 const Payment = () => {
   const [paymentData, setPaymentData] = useState(null);
   const [loading, setLoading] = useState(true);
   const { orderId } = useParams(); // URL에서 주문 ID를 가져옴 (필요한 경우)
-
+  const [redirect, setRedirect] = useState(false);  // 리다이렉트 여부
+  const [responseData, setResponseData] = useState(null);   // 결제 완료 후 응답
   // 포트원 SDK 로드
   useEffect(() => {
     const script = document.createElement('script');
@@ -87,7 +88,7 @@ const Payment = () => {
         // 결제 성공 시 서버에 결제 완료 정보 전송
         //1. response 를 백엔드로 모두 보내자.
         //2. 돌려보고 어떤 데이터가 넘어오는지 확인 - 사용해야하는 데이터 확인해보기 (cs 대응)
-        await axios.post(`${process.env.REACT_APP_API_URL}/api/payments/complete`, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/payments/complete`, {
           impUid: imp_uid,
           merchantUid: merchant_uid,
           amount: paid_amount,
@@ -97,10 +98,11 @@ const Payment = () => {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-        
+        setResponseData(response.data);
+        setRedirect(true);
         alert('결제가 성공적으로 완료되었습니다.');
         // 결제 완료 후 리다이렉션
-        window.location.href = '/payment/success';
+        // window.location.href = '/payment/success';
       } catch (error) {
         console.error('결제 완료 처리 실패:', error);
         alert('결제는 성공했으나 서버 처리에 실패했습니다.');
@@ -109,6 +111,10 @@ const Payment = () => {
       alert(`결제 실패: ${error_msg}`);
     }
   };
+
+  if(redirect) {
+    return <Navigate to="/payment/success" state={{ responseData }}/>;
+  }
 
   if (loading) {
     return <div className="text-center py-5">로딩중...</div>;
