@@ -13,15 +13,15 @@ const ChatRoom = () => {
     const {chatRoomId} = useParams();
     const [opponentFullName, setOpponentFullName] = useState([]);
     const [messages, setMessages] = useState([]);
-    const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [selectedComponent, setSelectedComponent] = useState('postInfo');
     const [modalOpenIndex, setModalOpenIndex] = useState(null); // 모달이 열려 있는 인덱스
     const buttonRefs = useRef([]); // 버튼 참조를 위한 배열
     const [hasMore, setHasMore] = useState(true);   // 로드할 메시지가 더 있는지 여부
-    const [lastIndex, setLastIndex] = useState();   // 불러온 채팅의 마지막 인덱스 (id)
+    const [lastIndex, setLastIndex] = useState(null);   // 불러온 채팅의 마지막 인덱스 (id)
 
     // TODO: 실제 로그인한 유저의 id 반영할 것
-    const [loginUserId] = useState(4);
+    const [loginUserId] = useState(1);
 
     // 채팅 전송 관련 (stomp)
     const [stompClient, setStompClient] = useState(null);
@@ -36,7 +36,6 @@ const ChatRoom = () => {
     useEffect(() => {
         connect();
         fetchInitialMessages();
-
         return () => disconnect();
     }, [chatRoomId]);
 
@@ -50,9 +49,17 @@ const ChatRoom = () => {
     }, []);
 
     const connect = () => {
-        const socket = new SockJS('http://localhost:8080/ws-stomp');
+        const socket = new SockJS(`${process.env.REACT_APP_API_BASE_URL}/ws-stomp`,
+            { withCredentials: true }
+        );
         const client = Stomp.over(socket);
-        client.connect({}, (frame) => {
+
+        // chatRoomId를 헤더에 추가
+        const headers = {
+            chatRoomId: chatRoomId
+        };
+
+        client.connect(headers, (frame) => {
             console.log('Connected: ' + frame);
             setStompClient(client);
 
@@ -81,16 +88,37 @@ const ChatRoom = () => {
             setIsSending(true);
 
             const messageContent = messageRef.current.value;
+            // 현재 시간을 가져옴
+            const now = new Date();
+            // 한국 시간으로 변환 (UTC+9)
+            const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+
+            // 파일 타입 지정
+            let fileType = null;
+            if (selectedFile) {
+                const mimeType = selectedFile.type;
+
+                // MIME 타입에 따라 파일 타입 설정
+                if (mimeType.startsWith("image/")) {
+                    fileType = "IMAGE";
+                } else if (mimeType.startsWith("video/")) {
+                    fileType = "VIDEO";
+                } else {
+                    fileType = "FILE"; // 그 외의 파일은 일반 파일로 처리
+                }
+            }
+
             const chatMessage = {
                 sourceUserId: loginUserId,
-                type: selectedFile ? "FILE" : "MESSAGE",
+                type: selectedFile ? fileType : "MESSAGE",
                 base64File: selectedFile ? await toBase64(selectedFile) : null, // Base64로 변환
                 fileName: selectedFile ? selectedFile.name : null,
-                content: messageContent ? messageContent : null
+                content: messageContent ? messageContent : null,
+                createdAt: koreanTime
             };
 
             stompClient.send(`/pub/${chatRoomId}`, {}, JSON.stringify(chatMessage));
-
+            console.log('created 한국 시간: ' + koreanTime);
             messageRef.current.value = '';
             setInputMessage('');
             setSelectedFile(null);
@@ -100,7 +128,7 @@ const ChatRoom = () => {
 
             setTimeout(() => {
                 setIsSending(false);
-            }, 500);
+            }, 100);
         }
     };
 
@@ -118,7 +146,12 @@ const ChatRoom = () => {
     const fetchInitialMessages = async () => {
 
         try {
-            const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}`);
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}`, {
+                params: {
+                    isInit: true
+                }
+                , withCredentials: true
+            });
             const initialMessages = response.data.chatMessageResponseDtoList;
             setMessages(initialMessages);
             setOpponentFullName(response.data.opponentFullName);
@@ -130,10 +163,10 @@ const ChatRoom = () => {
 
             setTimeout(() => {
                 scrollToBottom();
-            }, 300);
+            }, 100);
 
         } catch (err) {
-            setError(err);
+            setErrorMessage(err);
             console.error('Failed to load messages:', err);
         }
     };
@@ -142,7 +175,18 @@ const ChatRoom = () => {
         if (!hasMore) return;
 
         try {
-            const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}?index=` + lastIndex);
+            let url; // URL 변수를 선언
+
+            if (lastIndex === null) {
+                url = `${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}`; // lastIndex가 null일 경우
+            } else {
+                url = `${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}?index=${lastIndex}`; // lastIndex가 null이 아닐 경우
+            }
+            const response = await axios.get(url, {
+                params: {
+                    isInit: false
+                },withCredentials: true
+            });
             const newMessages = response.data.chatMessageResponseDtoList;
             setMessages(prevMessages => [...prevMessages, ...newMessages]); // 가장 아래에 추가
             setHasMore(newMessages.length > 0); // 더 이상 메시지가 없으면 false
@@ -158,7 +202,7 @@ const ChatRoom = () => {
                 }, 0);
             }
         } catch (err) {
-            setError(err);
+            setErrorMessage(err.response ? err.response.data.message : err.message);
             console.error('Failed to load more messages:', err);
         }
     };
@@ -213,12 +257,8 @@ const ChatRoom = () => {
         }
     };
 
-    if (error) {
-        return (
-            <div>
-                Error loading messages: {error.response ? error.response.data.message : error.message}
-            </div>
-        );
+    if (errorMessage) {
+        return <div> {errorMessage} </div>;
     }
 
     const handleCompButtonClick = (component) => {
@@ -287,6 +327,11 @@ const ChatRoom = () => {
 
                                 return (
                                     <div key={index}>
+                                        {message.type === "QUIT" || message.type === "ENTER" ? (
+                                            <div className="text-center">
+                                                <p>{message.content}</p> {/* 여기서 content를 원하는 메시지로 설정 */}
+                                            </div>
+                                        ) : (
                                         <div
                                             className={`d-flex align-items-end ${message.sourceUserId === loginUserId ? 'justify-content-end' : 'justify-content-start'}`}>
                                             {/* 시간 표시 조건 */}
@@ -314,7 +359,7 @@ const ChatRoom = () => {
                                             {showTime &&  message.sourceUserId !== loginUserId && (
                                                 <span className={`message-time`}>{currentTime}</span>
                                             )}
-                                        </div>
+                                        </div>)}
                                     </div>
                                 );
                             })
