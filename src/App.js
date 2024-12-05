@@ -14,6 +14,8 @@ import {CreatePost, OfferPostList, PostDetail, RequestPostList} from "./pages/po
 import {MainPage} from "./pages";
 import {CategoryList, CreateFirstCategory, CreateSubCategory, UpdateCategory} from "./pages/category";
 import { Payment } from "./pages/payment";
+import PaymentComplete from "./pages/payment/PaymentComplete";
+import UsageList from "./pages/usage/UsageList";
 
 const App = () => {
     return (
@@ -31,8 +33,11 @@ const App = () => {
 
                         <Route path="/chatrooms" element={<ChatRoomList/>}/> {/* 채팅방 목록 화면 */}
                         <Route path="/chatroom/:chatRoomId" element={<ChatRoom/>}/> {/* 채팅방 화면 */}
-                        <Route path="/payment" element={<Payment />} />
 
+                        <Route path="/payment" element={<Payment />} />
+                        <Route path="/payment/completion" element={<PaymentComplete/>}/> {/* 결제 완료 화면 */}
+
+                        <Route path="/usages" element={<UsageList/>}/> {/* 이용 내역 화면 */}
 
                         <Route path="/categories" element={<CategoryList/>}/> {/* 카테고리 관리 화면 */}
                         <Route path="/categories/createfirst" element={<CreateFirstCategory/>}/> {/* 카테고리 대분류 생성 화면 */}
