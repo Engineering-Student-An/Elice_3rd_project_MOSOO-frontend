@@ -18,3 +18,19 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
     text-align: center; /* 텍스트 중앙 정렬 */
 }
+
+.gray-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #aaaaaa;
+    color: #000000;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+    border: none;
+}
+
+.gray-button:hover {
+    background-color: #272727;
+    color: white;
+}
