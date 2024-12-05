@@ -14,7 +14,8 @@ import {ChatRoomList, ChatRoom} from "./pages/chatting";
 import {CreatePost, OfferPostList, PostDetail, RequestPostList} from "./pages/post";
 import {MainPage} from "./pages";
 import {CategoryList, CreateFirstCategory, CreateSubCategory, UpdateCategory} from "./pages/category";
-
+import SignUp from './pages/user/login-signup/SignUp';
+import Login from './pages/user/login-signup/Login';
 const App = () => {
     return (
         <Router>
@@ -23,6 +24,9 @@ const App = () => {
                 <main className="flex-grow-1">
                     <Routes>
                         <Route path="/" element={<MainPage />} /> {/* 메인 페이지 */}
+
+                        <Route path="/SignUp" element={<SignUp/>}/> // 회원가입 페이지
+                        <Route path="/Login" element={<Login/>}/> // 로그인 페이지
 
                         <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
