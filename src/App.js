@@ -10,7 +10,7 @@ import "./assets/css/glightbox.min.css";
 import "./assets/css/main.css";
 import {Header, Footer} from "./components";
 import {ChatRoomList, ChatRoom} from "./pages/chatting";
-import {CreatePost, OfferPostList, PostDetail, RequestPostList} from "./pages/post";
+import {CreatePost, CreateReview, OfferPostList, PostDetail, RequestPostList} from "./pages/post";
 import {MainPage} from "./pages";
 import {CategoryList, CreateFirstCategory, CreateSubCategory, UpdateCategory} from "./pages/category";
 import { Payment } from "./pages/payment";
@@ -30,6 +30,8 @@ const App = () => {
                         <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/createPost" element={<CreatePost/>}/> {/* 게시글 작성 화면 */}
                         <Route path="/posts/:id" element={<PostDetail/>}/> {/* 게시글 상세 화면 */}
+
+                        <Route path="/review/:id" element={<CreateReview/>}/> {/* 리뷰 작성 화면 */}
 
                         <Route path="/chatrooms" element={<ChatRoomList/>}/> {/* 채팅방 목록 화면 */}
                         <Route path="/chatroom/:chatRoomId" element={<ChatRoom/>}/> {/* 채팅방 화면 */}
