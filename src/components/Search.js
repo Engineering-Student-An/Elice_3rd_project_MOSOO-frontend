@@ -1,8 +1,12 @@
 import React from 'react';
+import "./Search.css";
 
 const Search = () => {
   return (
     <div className="search-form wow fadeInUp" data-wow-delay=".7s">
+      <h2>
+        원하는 전문가를 검색해보세요.
+      </h2>
       <div className="row">
         <div className="col-lg-4 col-md-4 col-12 p-0">
           <div className="search-input">
