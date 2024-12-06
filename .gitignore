@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 
+package.json
+package-lock.json
+vcs.xml
+
 # testing
 /coverage
 
