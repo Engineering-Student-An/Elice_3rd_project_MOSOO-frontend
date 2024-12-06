@@ -94,7 +94,20 @@ const ChatRoomList = () => {
 
                             <li>
                                 <div className="d-flex flex-row justify-content-between">
-                                    <h3 className="mb-2">{chatRoom.opponentFullName}</h3>
+                                    <div className="d-flex flex-row justify-content-start align-items-center mb-2">
+                                        <h3>{chatRoom.opponentFullName}</h3>
+                                        {chatRoom.existUnchecked && (
+                                            <span style={{
+                                                display: 'inline-block',
+                                                width: '10px',
+                                                height: '10px',
+                                                backgroundColor: 'red',
+                                                borderRadius: '50%',
+                                                marginLeft: '15px',
+                                            }}></span>
+                                        )}
+                                    </div>
+
                                     <button ref={el => buttonRefs.current[index] = el} // 각 버튼을 refs 배열에 저장
                                             className="three-dots-button mb-3"
                                             onClick={() => handleOpenModal(index)} // 인덱스를 인자로 전달
