@@ -50,7 +50,7 @@ const ChatRoom = () => {
 
     const connect = () => {
         const socket = new SockJS(`${process.env.REACT_APP_API_BASE_URL}/ws-stomp`,
-            { withCredentials: true }
+            {withCredentials: true}
         );
         const client = Stomp.over(socket);
 
@@ -185,7 +185,7 @@ const ChatRoom = () => {
             const response = await axios.get(url, {
                 params: {
                     isInit: false
-                },withCredentials: true
+                }, withCredentials: true
             });
             const newMessages = response.data.chatMessageResponseDtoList;
             setMessages(prevMessages => [...prevMessages, ...newMessages]); // 가장 아래에 추가
@@ -332,34 +332,41 @@ const ChatRoom = () => {
                                                 <p>{message.content}</p> {/* 여기서 content를 원하는 메시지로 설정 */}
                                             </div>
                                         ) : (
-                                        <div
-                                            className={`d-flex align-items-end ${message.sourceUserId === loginUserId ? 'justify-content-end' : 'justify-content-start'}`}>
-                                            {/* 시간 표시 조건 */}
-                                            {showTime && message.sourceUserId === loginUserId && (
-                                                <span className={`message-time`}>{currentTime}</span>
-                                            )}
                                             <div
-                                                className={`chat-message ${message.sourceUserId === loginUserId ? 'own' : 'other'}`}>
-                                                {message.type === "IMAGE" ? (
-                                                    <img src={message.content} alt="Chat Image" className="chat-image"/>
-                                                ) : message.type === "VIDEO" ? (
-                                                    <video controls className="chat-video">
-                                                        <source src={message.content} type="video/mp4"/>
-                                                        Your browser does not support the video tag.
-                                                    </video>
-                                                ) : message.type === "FILE" ? (
-                                                    <a href={message.content} download className="file-download-link">
-                                                        {message.fileName}
-                                                    </a>
-                                                ) : (
-                                                    <span>{message.content}</span>
+                                                className={`d-flex align-items-end ${message.sourceUserId === loginUserId ? 'justify-content-end' : 'justify-content-start'}`}>
+
+                                                {/* 시간 표시 조건 */}
+                                                {message.sourceUserId === loginUserId && (
+                                                    <span className={`message-time`}>{message.checked ? '읽음' : '읽지 않음'}
+                                                        <br/>
+                                                        {showTime && <span>{currentTime}</span>}</span>
                                                 )}
-                                            </div>
-                                            {/* 시간 표시 조건 */}
-                                            {showTime &&  message.sourceUserId !== loginUserId && (
-                                                <span className={`message-time`}>{currentTime}</span>
-                                            )}
-                                        </div>)}
+
+
+                                                <div
+                                                    className={`chat-message ${message.sourceUserId === loginUserId ? 'own' : 'other'}`}>
+                                                    {message.type === "IMAGE" ? (
+                                                        <img src={message.content} alt="Chat Image"
+                                                             className="chat-image"/>
+                                                    ) : message.type === "VIDEO" ? (
+                                                        <video controls className="chat-video">
+                                                            <source src={message.content} type="video/mp4"/>
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    ) : message.type === "FILE" ? (
+                                                        <a href={message.content} download
+                                                           className="file-download-link">
+                                                            {message.fileName}
+                                                        </a>
+                                                    ) : (
+                                                        <span>{message.content}</span>
+                                                    )}
+                                                </div>
+                                                {/* 시간 표시 조건 */}
+                                                {showTime && message.sourceUserId !== loginUserId && (
+                                                    <span className={`message-time`}>{currentTime}</span>
+                                                )}
+                                            </div>)}
                                     </div>
                                 );
                             })
@@ -368,7 +375,7 @@ const ChatRoom = () => {
                         )}
                     </div>
 
-                <div className="mt-5">
+                    <div className="mt-5">
 
                         <div className="input-group mb-2">
                             {/* 미리보기 영역 */}
