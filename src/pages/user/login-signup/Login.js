@@ -1,8 +1,7 @@
 // src/pages/user/login-signup/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, provider } from './firebase'; // 경로 수정
-import { signInWithPopup } from 'firebase/auth';
+import Cookies from 'js-cookie';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -53,14 +52,17 @@ const Login = () => {
         }
     };
 
-    const handleGoogleLogin = async () => {
-        try {
-            await signInWithPopup(auth, provider);
-            alert('로그인 성공!');
-            navigate('/dashboard'); // 대시보드 또는 메인 페이지로 리다이렉트
-        } catch (err) {
-            setError(err.message);
-        }
+    const handleGoogleLogin = () => {
+        const clientId = '761318087169-kh2l1luon3lgq1odovtcao22abk4tu33.apps.googleusercontent.com'; // 구글 클라이언트 ID
+        const redirectUri = 'http://localhost:3000'; // 리디렉션 URI
+        const scope = 'profile email';
+        const responseType = 'token'; // 토큰 방식으로 응답 받기
+
+        // 구글 로그인 URL
+        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}`;
+
+        // 새로운 창으로 구글 로그인 페이지 열기
+        window.location.href = googleAuthUrl;
     };
 
     return (
@@ -68,7 +70,7 @@ const Login = () => {
             <h2>로그인</h2>
             <form onSubmit={handleSubmit} style={styles.form}>
                 <div style={styles.inputGroup}>
-                    <button onClick={handleGoogleLogin} style={styles.button}>구글로 로그인</button>
+                    <button type="button" onClick={handleGoogleLogin} style={styles.button}>구글로 로그인</button>
                 </div>
                 <hr style={styles.divider} /> {/* 구분선 추가 */}
                 <div style={styles.inputGroup}>
