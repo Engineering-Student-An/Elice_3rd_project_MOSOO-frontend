@@ -13,6 +13,10 @@ import {ChatRoomList, ChatRoom} from "./pages/chatting";
 import {CreatePost, CreateReview, OfferPostList, PostDetail, RequestPostList} from "./pages/post";
 import {MainPage} from "./pages";
 import {CategoryList, CreateFirstCategory, CreateSubCategory, UpdateCategory} from "./pages/category";
+import SignUp from './pages/user/login-signup/SignUp';
+import Login from './pages/user/login-signup/Login';
+import AuthHandler from './pages/user/login-signup/AuthHandler';
+import MyPage from './pages/user/userinfo/MyPage'
 import { Payment } from "./pages/payment";
 import PaymentComplete from "./pages/payment/PaymentComplete";
 import UsageList from "./pages/usage/UsageList";
@@ -25,6 +29,11 @@ const App = () => {
                 <main className="flex-grow-1">
                     <Routes>
                         <Route path="/" element={<MainPage />} /> {/* 메인 페이지 */}
+
+                        <Route path="/SignUp" element={<SignUp/>}/> {/* 회원 가입 페이지 */}
+                        <Route path="/Login" element={<Login/>}/> {/* 로그인 페이지 */}
+                        <Route path="/auth" element={<AuthHandler/>}/> {/* 구글 Auth 로그인 */}
+                        <Route path="/MyPage" element={<MyPage/>}/> {/* 유저 마이 페이지*/}
 
                         <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
@@ -54,4 +63,3 @@ const App = () => {
 };
 
 export default App;
-
