@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePost = () => {
     const [title, setTitle] = useState('');
@@ -18,6 +19,8 @@ const CreatePost = () => {
     const [userId] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    const navigate = useNavigate();
 
     // Fetch 대분류
     useEffect(() => {
@@ -111,6 +114,13 @@ const CreatePost = () => {
                 { headers: { 'Content-Type': 'multipart/form-data' } }
             );
             console.log('게시글 생성 성공:', response.data);
+
+            // isOffer 값에 따라 리다이렉션
+            if (isOffer) {
+                navigate('/offerPosts');
+            } else {
+                navigate('/requestPosts');
+            }
         } catch (error) {
             console.error('게시글 생성 실패:', error);
             setError('게시글 생성에 실패했습니다.');
@@ -241,7 +251,7 @@ const CreatePost = () => {
                     />
                 </div>
 
-                {/* 오퍼 체크 */}
+                {/* 고수 글 체크 */}
                 <div className="form-check mb-5">
                     <input
                         type="checkbox"
@@ -249,7 +259,7 @@ const CreatePost = () => {
                         checked={isOffer}
                         onChange={() => setIsOffer(!isOffer)}
                     />
-                    <label className="form-check-label">오퍼 가능</label>
+                    <label className="form-check-label">고수 글 게시</label>
                 </div>
 
                 <button type="submit" className="btn btn-primary m-3" disabled={loading}>
