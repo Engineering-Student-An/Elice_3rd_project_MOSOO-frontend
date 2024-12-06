@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 
-const Address = () => {
+const Address = ({ onSelectAddress }) => {
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [address, setAddress] = useState('');
+  const [inputAddress, setInputAddress] = useState("");
 
   // 주소 검색
   const handleComplete = (data) => {
@@ -23,6 +24,7 @@ const Address = () => {
 
     setAddress(selectedAddress);
     setIsPostcodeOpen(false);
+    onSelectAddress(selectedAddress);
   };
 
   return (
