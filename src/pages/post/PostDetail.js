@@ -145,6 +145,9 @@ const PostDetail = () => {
                                 <div className="col-md-6 d-flex align-items-center">
                                     <ul className="list-group w-100">
                                         <li className="list-group-item">
+                                            <strong>주소:</strong> <small>{post.address}</small>
+                                        </li>
+                                        <li className="list-group-item">
                                             <strong>가격:</strong> {post.price.toLocaleString()} 원
                                         </li>
                                         <li className="list-group-item">
