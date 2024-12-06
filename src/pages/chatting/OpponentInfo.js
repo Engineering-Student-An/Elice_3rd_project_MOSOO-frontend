@@ -12,13 +12,12 @@ const OpponentInfo = ({chatRoomId}) => {
         fetchInfos();
     }, []);
 
-    // TODO: 유저 정보 dto 로 받아야 함 (지금은 opponentFullName)
     const fetchInfos = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}/user-info`,
                 { withCredentials: true }
             );
-            setOpponent(response.data.opponentFullName);
+            setOpponent(response.data);
             setLoading(false); // 데이터 로드 완료
         } catch (err) {
             setErrorMessage(err.response ? err.response.data.message : err.message);
@@ -39,7 +38,32 @@ const OpponentInfo = ({chatRoomId}) => {
 
     return (
         <div>
-            <h1>{opponent}</h1>
+            {opponent.opponentGosu ? (
+                <div>
+                    <h5>사업자 명 </h5>
+                    <p>{opponent.businessName}</p>
+
+                    <h5 className="mt-4">사업자 번호</h5>
+                    <p>{opponent.businessNumber}</p>
+
+                    <h5 className="mt-4">기술 제공 주소</h5>
+                    <p>{opponent.gosuInfoAddress}</p>
+
+                    <h5 className="mt-4">기술 제공 카테고리</h5>
+                    <p>{opponent.categoryName}</p>
+
+                    <h5 className="mt-4">전화번호</h5>
+                    <p>{opponent.gosuInfoPhone}</p>
+                </div>
+            ) : (
+                <div>
+                    <h5>이름</h5>
+                    <p>{opponent.fullName}</p>
+
+                    <h5 className="mt-4">이메일</h5>
+                    <p>{opponent.email}</p>
+                </div>
+            )}
         </div>
     );
 
