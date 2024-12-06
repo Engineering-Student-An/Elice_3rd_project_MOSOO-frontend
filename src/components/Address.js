@@ -44,7 +44,7 @@ const Address = ({ onSelectAddress }) => {
         </div>
       )}
       {address && (
-        <div style={{ marginTop: '20px' }}>
+        <div style={{ marginTop: '20px', textAlign: 'center' }}>
           <p>{address}</p>
         </div>
       )}
