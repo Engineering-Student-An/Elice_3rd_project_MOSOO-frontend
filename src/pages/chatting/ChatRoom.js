@@ -168,6 +168,12 @@ const ChatRoom = () => {
         } catch (err) {
             setErrorMessage(err);
             console.error('Failed to load messages:', err);
+
+            // 410 에러 처리
+            if (err.response && err.response.status === 410) {
+                alert('해당 채팅방은 나간 채팅방입니다. 채팅 목록으로 이동합니다.');
+                window.location.href = '/chatrooms';
+            }
         }
     };
 
@@ -257,7 +263,7 @@ const ChatRoom = () => {
         }
     };
 
-    if (errorMessage) {
+    if (errorMessage && messages === null) {
         return <div> {errorMessage} </div>;
     }
 
