@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SearchCategory from './SearchCategory';
 import AddressModal from './AddressModal';
 import "./Search.css";
@@ -9,6 +10,9 @@ const Search = () => {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState('');
+  const [keyword, setKeyword] = useState('');
+
+  const navigate = useNavigate();
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -37,6 +41,21 @@ const Search = () => {
     console.log("선택된 주소:", address);
   };
 
+  // 검색
+  const handleSearch = () => {
+    console.log('검색 키워드:', keyword);
+    console.log('선택된 카테고리:', selectedCategory);
+    console.log('선택된 주소:', selectedAddress);
+    
+    navigate('/offerPosts', {
+      state: {
+        keyword,
+        selectedCategory,
+        selectedAddress
+      }
+    });
+  };
+
   return (
     <div className="search-form wow fadeInUp" data-wow-delay=".7s">
       <h2>
@@ -53,6 +72,8 @@ const Search = () => {
               name="keyword"
               id="keyword"
               placeholder="제품 키워드"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
             />
           </div>
         </div>
@@ -88,7 +109,7 @@ const Search = () => {
         </div>
         <div className="col-lg-2 col-md-2 col-12 p-0">
           <div className="search-btn button">
-            <button className="btn">
+            <button className="btn" onClick={handleSearch}>
               <i className="lni lni-search-alt"></i> 검색
             </button>
           </div>
