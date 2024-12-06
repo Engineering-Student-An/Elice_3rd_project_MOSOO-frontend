@@ -26,7 +26,6 @@ const FirstCategory = ( {onSelectFirstcategory} ) => {
   // 핸들러
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
-    console.log("선택된 카테고리:", category);
 
     onSelectFirstcategory(category);
   };
