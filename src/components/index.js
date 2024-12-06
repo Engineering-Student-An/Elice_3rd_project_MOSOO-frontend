@@ -4,3 +4,4 @@ export { default as Search } from './Search';
 export { default as MainCategory } from './MainCategory';
 export { default as StepModal } from './StepModal';
 export { default as Address } from './Address';
+export { default as AddressModal } from './AddressModal';

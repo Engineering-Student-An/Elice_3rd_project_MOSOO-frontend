@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import SearchCategory from './SearchCategory';
+import AddressModal from './AddressModal';
 import "./Search.css";
 
 const Search = () => {
   // 상태 관리
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState('');
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -15,10 +18,23 @@ const Search = () => {
     setIsModalOpen(false);
   };
 
+  const openAddressModal = () => {
+    setIsAddressModalOpen(true);
+  };
+
+  const closeAddressModal = () => {
+    setIsAddressModalOpen(false);
+  };
+
   // 핸들러
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     console.log("선택된 카테고리:", category);
+  };
+
+  const handleSelectAddress = (address) => {
+    setSelectedAddress(address);
+    console.log("선택된 주소:", address);
   };
 
   return (
@@ -60,11 +76,14 @@ const Search = () => {
             <label htmlFor="location">
               <i className="lni lni-map-marker theme-color"></i>
             </label>
-            <select name="location" id="location">
-              <option value="none" selected disabled>
-                지역
-              </option>
-            </select>
+            <button
+              type="button"
+              id="location"
+              className="btn location-btn"
+              onClick={openAddressModal}
+            >
+              {selectedAddress || '지역 선택'}
+            </button>
           </div>
         </div>
         <div className="col-lg-2 col-md-2 col-12 p-0">
@@ -76,6 +95,7 @@ const Search = () => {
         </div>
       </div>
       {isModalOpen && <SearchCategory onClose={closeModal} onSelectCategory={handleCategorySelect} />}
+      {isAddressModalOpen && <AddressModal onClose={closeAddressModal} onSelectAddress={handleSelectAddress} />}
     </div>
   );
 };
