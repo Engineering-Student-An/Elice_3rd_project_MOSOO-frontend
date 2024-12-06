@@ -36,7 +36,8 @@ const PostDetail = () => {
     const loadBids = async () => {
         try {
             const data = await fetchBids(id);
-            setBids(data.bids);
+            console.log(data);
+            setBids(data);
         } catch (err) {
             console.error('입찰 데이터를 불러오는 데 실패했습니다.', err);
             setError('입찰 데이터를 불러오는 데 실패했습니다.');
@@ -207,6 +208,41 @@ const PostDetail = () => {
                             </Button>
                         </Modal.Footer>
                     </Modal>
+
+                    {/* 입찰(BID) 데이터 섹션 */}
+                    {!post.offer && (
+                        <div className="card mt-4 mb-4 shadow">
+                            <div className="card-header">
+                                <h5>입찰 현황</h5>
+                            </div>
+                            <div className="card-body">
+                                <div className="d-flex flex-column">
+                                    {Array.isArray(bids) && bids.length > 0 ? ( // bids가 배열인지 확인
+                                        bids.map((bid, index) => (
+                                            <div
+                                                key={index}
+                                                className="d-flex justify-content-between align-items-start mb-3 p-3 border rounded"
+                                            >
+                                                <div className="d-flex flex-column w-75">
+                                                    <div className="mb-2">
+                                                        <strong>입찰자:</strong> {bid.fullName}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <strong>입찰 금액:</strong> {bid.price.toLocaleString()} 원
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <strong>작업 시작 가능일:</strong> {new Date(bid.date).toLocaleDateString()}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p>입찰 데이터가 없습니다.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* 리뷰 데이터 섹션 */}
                     {post.offer && (
