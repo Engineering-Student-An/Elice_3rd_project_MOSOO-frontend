@@ -22,7 +22,7 @@ const SignUp = () => {
 
     const handleGoogleSignUp = () => {
         const clientId = '761318087169-kh2l1luon3lgq1odovtcao22abk4tu33.apps.googleusercontent.com'; // 구글 클라이언트 ID
-        const redirectUri = 'http://localhost:3000/login'; // 리디렉션 URI
+        const redirectUri = 'http://localhost:3000/'; // 리디렉션 URI
         const scope = 'profile email';
         const responseType = 'token'; // 토큰 방식으로 응답 받기
 
