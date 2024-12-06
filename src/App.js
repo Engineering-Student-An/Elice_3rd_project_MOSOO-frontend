@@ -8,7 +8,7 @@ import "./assets/css/animate.css";
 import "./assets/css/tiny-slider.css";
 import "./assets/css/glightbox.min.css";
 import "./assets/css/main.css";
-import {Header, Footer} from "./components";
+import {Header, Footer, AdminRoute, AccessDeniedPage, ProtectedRoute} from "./components";
 import {ChatRoomList, ChatRoom} from "./pages/chatting";
 import {CreatePost, CreateReview, OfferPostList, PostDetail, RequestPostList} from "./pages/post";
 import {MainPage} from "./pages";
@@ -29,6 +29,7 @@ const App = () => {
                 <main className="flex-grow-1">
                     <Routes>
                         <Route path="/" element={<MainPage />} /> {/* 메인 페이지 */}
+                        <Route path="/access-denied" element={<AccessDeniedPage />}></Route>    {/*관리자 권한이 없을 때의 페이지*/}
 
                         <Route path="/SignUp" element={<SignUp/>}/> {/* 회원 가입 페이지 */}
                         <Route path="/Login" element={<Login/>}/> {/* 로그인 페이지 */}
@@ -42,8 +43,8 @@ const App = () => {
 
                         <Route path="/review/:id" element={<CreateReview/>}/> {/* 리뷰 작성 화면 */}
 
-                        <Route path="/chatrooms" element={<ChatRoomList/>}/> {/* 채팅방 목록 화면 */}
-                        <Route path="/chatroom/:chatRoomId" element={<ChatRoom/>}/> {/* 채팅방 화면 */}
+                        <Route path="/chatrooms" element={<ProtectedRoute><ChatRoomList/></ProtectedRoute>}/> {/* 채팅방 목록 화면 */}
+                        <Route path="/chatroom/:chatRoomId" element={<ProtectedRoute><ChatRoom/></ProtectedRoute>}/> {/* 채팅방 화면 */}
 
                         <Route path="/payment" element={<Payment />} />
                         <Route path="/payment/success" element={<PaymentComplete/>}/> {/* 결제 완료 화면 */}
