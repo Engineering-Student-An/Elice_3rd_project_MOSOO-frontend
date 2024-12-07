@@ -93,6 +93,7 @@ const PostInfo = ({ chatRoomId }) => {
                         ? `${post.description.substring(0, 30)}...`
                         : post.description}
                     </p>
+                    <br/>
                     {post.duration && (<p>기간: {post.duration}</p>)}
                 </div>
 
