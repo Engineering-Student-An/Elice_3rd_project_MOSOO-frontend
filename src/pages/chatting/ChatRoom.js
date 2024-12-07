@@ -118,7 +118,6 @@ const ChatRoom = () => {
             };
 
             stompClient.send(`/pub/${chatRoomId}`, {}, JSON.stringify(chatMessage));
-            console.log('created 한국 시간: ' + koreanTime);
             messageRef.current.value = '';
             setInputMessage('');
             setSelectedFile(null);
@@ -272,9 +271,24 @@ const ChatRoom = () => {
     };
 
     const formatDate = (date) => {
-        const options = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
-        return new Date(date).toLocaleTimeString('ko-KR', options);
+        const inputDate = new Date(date);
+        const today = new Date();
+
+        // 오늘 날짜와 입력 날짜 비교
+        const isToday = inputDate.toDateString() === today.toDateString();
+
+        if (isToday) {
+            const options = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
+            return inputDate.toLocaleTimeString('ko-KR', options);
+        } else {
+            const dateOptions = {month: 'numeric', day: 'numeric'}; // 몇 월 몇 일 형식
+            const timeOptions = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
+            const dateString = inputDate.toLocaleDateString('ko-KR', dateOptions);
+            const timeString = inputDate.toLocaleTimeString('ko-KR', timeOptions);
+            return `${dateString} ${timeString}`; // 날짜와 시간 결합
+        }
     };
+
 
     const handleOpenModal = (index) => {
         setModalOpenIndex(index); // 클릭한 버튼의 인덱스를 설정
@@ -343,11 +357,11 @@ const ChatRoom = () => {
 
                                                 {/* 시간 표시 조건 */}
                                                 {message.sourceUserId === loginUserId && (
-                                                    <span className={`message-time`}>{message.checked ? '읽음' : '읽지 않음'}
-                                                        <br/>
-                                                        {showTime && <span>{currentTime}</span>}</span>
+                                                    <span className={`message-time`} style={{textAlign: 'right'}}>
+                                                        <span style={{ color: 'rgb(255, 249, 203)' }}>{!message.checked && '1'}</span> <br/>
+                                                        <span>{showTime && currentTime}</span>
+                                                    </span>
                                                 )}
-
 
                                                 <div
                                                     className={`chat-message ${message.sourceUserId === loginUserId ? 'own' : 'other'}`}>
