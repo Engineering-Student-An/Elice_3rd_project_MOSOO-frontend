@@ -20,6 +20,7 @@ import MyPage from './pages/user/userinfo/MyPage'
 import { Payment } from "./pages/payment";
 import PaymentComplete from "./pages/payment/PaymentComplete";
 import UsageList from "./pages/usage/UsageList";
+import GoogleTokenCheck from "./pages/user/login-signup/GoogleTokenCheck";
 
 const App = () => {
     return (
@@ -34,6 +35,7 @@ const App = () => {
                         <Route path="/Login" element={<Login/>}/> {/* 로그인 페이지 */}
                         <Route path="/auth" element={<AuthHandler/>}/> {/* 구글 Auth 로그인 */}
                         <Route path="/MyPage" element={<MyPage/>}/> {/* 유저 마이 페이지*/}
+                        <Route path="/tokenCheck" element={<GoogleTokenCheck />} /> {/* Google로그인 후 토큰 저장 */}
 
                         <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
