@@ -5,10 +5,12 @@ import image1 from '../assets/images/banner/banner1.jpg';
 import image2 from '../assets/images/banner/banner2.jpg';
 import buttonImage1 from '../assets/images/banner/button/button1.png';
 import buttonImage2 from '../assets/images/banner/button/button2.png';
+import SearchRequestPostsModal from './SearchRequestPosts';
 
 function Banner() {
   const imageUrls = [image1, image2];
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   /* 배너 이미지 슬라이드 */
@@ -38,6 +40,10 @@ function Banner() {
     navigate('/createPost');
   };
 
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
     <div className="banner-container">
       <div className="banner-left-image">
@@ -54,11 +60,13 @@ function Banner() {
           <img src={buttonImage1} alt="버튼1 이미지" />
           <p className="banner-button-text">맞춤 주문 요청</p>
         </div>
-        <div className="banner-button banner-bottom-button">
+        <div className="banner-button banner-bottom-button" onClick={toggleModal}>
           <img src={buttonImage2} alt="버튼2 이미지" />
           <p className="banner-button-text">요청 글 목록</p>
         </div>
       </div>
+
+      {isModalOpen && <SearchRequestPostsModal onClose={toggleModal} />}
     </div>
   );
 }
