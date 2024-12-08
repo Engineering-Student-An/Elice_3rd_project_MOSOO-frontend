@@ -1,4 +1,12 @@
-.search-form h2 {
+  .search-form {
+    width: 100%;
+    padding: 10px;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  .search-form h2 {
     font-size: 24px;
     margin-bottom: 20px;
     color: #333;
