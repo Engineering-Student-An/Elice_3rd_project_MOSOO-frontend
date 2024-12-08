@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 import './MyPage.css'; // CSS 파일에서 아이콘 스타일 추가
 
 const MyPage = () => {
@@ -12,6 +12,7 @@ const MyPage = () => {
     currentPassword: '',
   });
 
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [newUser, setNewUser] = useState(user);
   const [error, setError] = useState('');
@@ -23,7 +24,7 @@ const MyPage = () => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const response = await axios.get('YOUR_API_ENDPOINT_HERE/api/user', {
+          const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -85,6 +86,11 @@ const MyPage = () => {
     setActiveMenu(menu);
   };
 
+
+    const handleTechProvideTransition = () => {
+      navigate('/TechProvide'); // 기술 제공 페이지로 이동
+    };
+
   return (
     <div className="my-page">
       <div className="my-page-sidebar">
@@ -102,16 +108,18 @@ const MyPage = () => {
           <button className={`my-page-menu-button ${activeMenu === 'chat' ? 'active' : ''}`} onClick={() => handleMenuClick('chat')}>
             <i className="fas fa-comments"></i> 채팅 기록
           </button>
-          <button className={`my-page-menu-button ${activeMenu === 'techInfo' ? 'active' : ''}`}
-                  onClick={() => handleMenuClick('techInfo')}
-                  disabled={userRole === 'ROLE_USER'} // ROLE_USER일 경우 비활성화
-                  style={{ opacity: userRole === 'ROLE_USER' ? 0.5 : 1 }}>
+          <button
+            className={`my-page-menu-button ${activeMenu === 'techInfo' ? 'active' : ''}`}
+            onClick={() => handleMenuClick('techInfo')}
+            disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
+            style={{ opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1 }}>
             <i className="fas fa-laptop-code"></i> 기술 제공 정보
           </button>
-          <button className={`my-page-menu-button ${activeMenu === 'techHistory' ? 'active' : ''}`}
-                  onClick={() => handleMenuClick('techHistory')}
-                  disabled={userRole === 'ROLE_USER'} // ROLE_USER일 경우 비활성화
-                  style={{ opacity: userRole === 'ROLE_USER' ? 0.5 : 1 }}>
+          <button
+            className={`my-page-menu-button ${activeMenu === 'techHistory' ? 'active' : ''}`}
+            onClick={() => handleMenuClick('techHistory')}
+            disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
+            style={{ opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1 }}>
             <i className="fas fa-history"></i> 기술 제공 기록
           </button>
         </div>
@@ -163,7 +171,7 @@ const MyPage = () => {
                   <button className="my-page-action-button" onClick={handleEditToggle}>
                     수정
                   </button>
-                  <button className="my-page-request-button">기술 제공 전환</button>
+                  <button className="my-page-request-button" onClick={handleTechProvideTransition}>기술 제공 전환</button>
                 </div>
               </div>
             )}

@@ -36,11 +36,10 @@ const SignUp = () => {
             });
 
             if (response.status === 200) {
-
-                                        alert('회원가입 성공!');
-                                        // 예: 대시보드 페이지로 이동
-                                        navigate('/login');
-                                    }
+                alert('회원가입 성공!');
+                // 예: 대시보드 페이지로 이동
+                navigate('/login');
+            }
         } catch (error) {
             // 에러 처리
             if (error.response) {
