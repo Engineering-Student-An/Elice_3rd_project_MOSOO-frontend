@@ -1,68 +1,43 @@
-// src/pages/user/login-signup/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import axios from 'axios';
 
 const Login = () => {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-    });
-
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate(); // useNavigate 훅 사용
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-    };
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
         // 간단한 유효성 검사
-        if (!formData.email || !formData.password) {
+        if (!email || !password) {
             setError('모든 필드를 입력해야 합니다.');
             return;
         }
 
         try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login`, { email, password });
 
-            if (!response.ok) {
-                throw new Error('로그인에 실패했습니다.');
-            }
+            if (response.status === 200) {
+                            // 로그인 성공 시 처리 (예: 토큰 저장, 리다이렉트)
+                            localStorage.setItem('token', response.data.accessToken);
 
-            // 성공적으로 로그인된 경우 처리할 내용
-            alert('로그인 성공!');
-            // 대시보드 또는 메인 페이지로 리다이렉트
-            navigate('/dashboard'); // 대시보드 페이지로 리다이렉트
+
+                            alert('로그인 성공!');
+                            // 예: 대시보드 페이지로 이동
+                            navigate('/');
+                        }
         } catch (err) {
-            setError(err.message);
+            console.error('로그인 실패:', err);
+            setError(err.response?.data?.message || '로그인에 실패했습니다.');
         }
     };
 
     const handleGoogleLogin = () => {
-        const clientId = '761318087169-kh2l1luon3lgq1odovtcao22abk4tu33.apps.googleusercontent.com'; // 구글 클라이언트 ID
-        const redirectUri = 'http://localhost:3000'; // 리디렉션 URI
-        const scope = 'profile email';
-        const responseType = 'token'; // 토큰 방식으로 응답 받기
-
-        // 구글 로그인 URL
-        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}`;
-
-        // 새로운 창으로 구글 로그인 페이지 열기
-        window.location.href = googleAuthUrl;
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
     };
 
     return (
@@ -70,17 +45,19 @@ const Login = () => {
             <h2>로그인</h2>
             <form onSubmit={handleSubmit} style={styles.form}>
                 <div style={styles.inputGroup}>
-                    <button type="button" onClick={handleGoogleLogin} style={styles.button}>구글로 로그인</button>
+                    <button type="button" onClick={handleGoogleLogin} style={styles.button}>
+                        구글로 로그인
+                    </button>
                 </div>
-                <hr style={styles.divider} /> {/* 구분선 추가 */}
+                <hr style={styles.divider} />
                 <div style={styles.inputGroup}>
                     <label htmlFor="email">이메일:</label>
                     <input
                         type="email"
                         id="email"
                         name="email"
-                        value={formData.email}
-                        onChange={handleChange}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         style={styles.input}
                     />
                 </div>
@@ -90,16 +67,21 @@ const Login = () => {
                         type="password"
                         id="password"
                         name="password"
-                        value={formData.password}
-                        onChange={handleChange}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         style={styles.input}
                     />
                 </div>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit" style={styles.button}>로그인</button>
+                <button type="submit" style={styles.button}>
+                    로그인
+                </button>
             </form>
             <p style={styles.redirect}>
-                아직 회원이 아니신가요? <button onClick={() => navigate('/signup')} style={styles.linkButton}>회원가입하기</button>
+                아직 회원이 아니신가요?{' '}
+                <button onClick={() => navigate('/signup')} style={styles.linkButton}>
+                    회원가입하기
+                </button>
             </p>
         </div>
     );
@@ -112,7 +94,7 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh', // 화면 중앙에 위치
+        height: '100vh',
         backgroundColor: '#f9f9f9',
         padding: '20px',
     },
@@ -155,9 +137,9 @@ const styles = {
         padding: '0',
     },
     divider: {
-        margin: '20px 0', // 구분선의 상하 여백
+        margin: '20px 0',
         border: 'none',
-        borderTop: '1px solid #ccc', // 구분선 스타일
+        borderTop: '1px solid #ccc',
     },
 };
 

@@ -6,40 +6,55 @@
   overflow-y: auto; /* 스크롤 가능 */
 }
 
-.sidebar {
+.my-page-sidebar {
   width: 250px; /* 사이드바 너비 */
   padding: 20px;
   background-color: #f0f0f0;
   border-right: 1px solid #ccc;
 }
 
-.profile {
+.my-page-profile {
   text-align: center;
 }
 
-.profile-image {
+.my-page-profile-image {
   width: 100px; /* 프로필 이미지 크기 */
   height: 100px;
   border-radius: 50%;
 }
 
-.menu {
-  list-style: none;
-  padding: 0;
+.my-page-menu {
+  display: flex;
+  flex-direction: column; /* 수직 배치 */
 }
 
-.menu li {
-  margin: 10px 0;
+.my-page-menu-button {
+  padding: 10px;
+  margin: 5px 0; /* 버튼 간 간격 */
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.content {
+.my-page-menu-button.active {
+  background-color: #007bff; /* 활성화된 버튼 색상 */
+  color: white;
+}
+
+.my-page-menu-button:hover {
+  background-color: #e0e0e0; /* 호버 시 색상 */
+}
+
+.my-page-content {
   flex-grow: 1;
   padding: 20px;
   width: 600px; /* 내용 영역 너비 */
   margin-left: 40px; /* 사이드바와의 간격 */
 }
 
-.info-section, .password-section {
+.my-page-info-section, .my-page-password-section {
   border: 1px solid #ccc; /* 네모칸 테두리 */
   padding: 20px;
   margin-bottom: 20px; /* 아래쪽 간격 */
@@ -60,11 +75,11 @@ input {
   border-radius: 4px; /* 입력 필드 모서리 둥글게 */
 }
 
-.button-group {
+.my-page-button-group {
   margin-top: 20px; /* 버튼 그룹 상단 간격 */
 }
 
-.action-button, .request-button {
+.my-page-action-button, .my-page-request-button {
   padding: 10px 20px; /* 버튼 크기 조정 */
   background-color: #007bff;
   color: white;
@@ -74,19 +89,14 @@ input {
   margin-right: 10px; /* 버튼 간격 */
 }
 
-.password-section {
-  margin-top: 20px; /* 비밀번호 섹션과 위쪽 간격 */
-}
-
-.message {
+.my-page-message {
   margin-top: 5px; /* 메시지와 입력 필드 간격 */
 }
 
-.warning {
+.my-page-warning {
   color: gray; /* 경고 메시지 색상 설정 */
 }
 
-.error {
+.my-page-error {
   color: red; /* 에러 메시지 색상 설정 */
 }
-

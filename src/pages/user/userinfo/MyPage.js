@@ -1,142 +1,233 @@
-import React, { useState } from 'react';
-import './MyPage.css'; // 스타일을 위한 CSS 파일
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import './MyPage.css'; // CSS 파일에서 아이콘 스타일 추가
 
 const MyPage = () => {
   const [user, setUser] = useState({
-    name: '현승',
-    email: 'gustmd9694@gmail.com',
-    address: '부산광역시 해운대구 우동',
-    profileImage: 'testimage.jpg',
+    fullName: '',
+    email: '',
+    address: '',
     password: '',
-    currentPassword: '', // 현재 비밀번호 추가
+    currentPassword: '',
   });
 
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [newUser, setNewUser] = useState(user);
-  const [error, setError] = useState(''); // 초기 에러 상태 설정
+  const [error, setError] = useState('');
+  const [activeMenu, setActiveMenu] = useState('info');
+  const [userRole, setUserRole] = useState('ROLE_USER'); // 사용자 역할 상태
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const { fullName, email, address, role } = response.data; // 역할도 포함
+          setUser({
+            fullName: fullName || '',
+            email: email || '',
+            address: address || '',
+            password: '',
+            currentPassword: '',
+          });
+          setNewUser({
+            fullName: fullName || '',
+            email: email || '',
+            address: address || '',
+            password: '',
+            currentPassword: '',
+          });
+          setUserRole(role); // 사용자 역할 설정
+        } catch (error) {
+          console.error('사용자 정보를 가져오는 데 오류가 발생했습니다:', error);
+          setError('사용자 정보를 가져오는 데 오류가 발생했습니다.');
+        }
+      } else {
+        setError('토큰이 존재하지 않습니다.');
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
-    setError(''); // 편집 모드 전환 시 에러 초기화
+    setError('');
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewUser({ ...newUser, [name]: value });
 
-    // 이름 입력 시 에러 메시지 초기화
-    if (name === 'name') {
+    if (name === 'fullName') {
       setError('');
     }
   };
 
   const handleSave = () => {
-    // 유효성 검사
-    if (!newUser.name || newUser.name.length < 2 || newUser.name.length > 20) {
+    if (!newUser.fullName || newUser.fullName.length < 2 || newUser.fullName.length > 20) {
       setError('이름은 2글자 이상 20글자 이하로 입력해야 합니다.');
       return;
     }
-    setError(''); // 에러 메시지 초기화
+    setError('');
     setUser(newUser);
     setIsEditing(false);
   };
 
+  const handleMenuClick = (menu) => {
+    setActiveMenu(menu);
+  };
+
+
+    const handleTechProvideTransition = () => {
+      navigate('/TechProvide'); // 기술 제공 페이지로 이동
+    };
+
   return (
     <div className="my-page">
-      <div className="sidebar">
-        <div className="profile">
-          <img src={user.profileImage} alt="Profile" className="profile-image" />
-          <p>{user.name}</p>
+      <div className="my-page-sidebar">
+        <div className="my-page-profile">
+          <p>{user.fullName}</p>
           <p>@{user.email.split('@')[0]}</p>
         </div>
-        <ul className="menu">
-          <li>내정보 수정</li>
-          <li>이용 기록</li>
-          <li>채팅 기록</li>
-          <li>기술 제공 정보</li>
-          <li>기술 제공 기록</li>
-        </ul>
+        <div className="my-page-menu">
+          <button className={`my-page-menu-button ${activeMenu === 'info' ? 'active' : ''}`} onClick={() => handleMenuClick('info')}>
+            <i className="fas fa-user-edit"></i> 내정보 수정
+          </button>
+          <button className={`my-page-menu-button ${activeMenu === 'history' ? 'active' : ''}`} onClick={() => handleMenuClick('history')}>
+            <i className="fas fa-bookmark"></i> 이용 기록
+          </button>
+          <button className={`my-page-menu-button ${activeMenu === 'chat' ? 'active' : ''}`} onClick={() => handleMenuClick('chat')}>
+            <i className="fas fa-comments"></i> 채팅 기록
+          </button>
+          <button
+            className={`my-page-menu-button ${activeMenu === 'techInfo' ? 'active' : ''}`}
+            onClick={() => handleMenuClick('techInfo')}
+            disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
+            style={{ opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1 }}>
+            <i className="fas fa-laptop-code"></i> 기술 제공 정보
+          </button>
+          <button
+            className={`my-page-menu-button ${activeMenu === 'techHistory' ? 'active' : ''}`}
+            onClick={() => handleMenuClick('techHistory')}
+            disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
+            style={{ opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1 }}>
+            <i className="fas fa-history"></i> 기술 제공 기록
+          </button>
+        </div>
       </div>
 
-      <div className="content">
-        <div className="info-section">
-          <h2>내정보 수정</h2>
-          {isEditing ? (
-            <div>
-              <label>이름 *</label>
-              <input
-                type="text"
-                name="name"
-                value={newUser.name}
-                onChange={handleChange}
-              />
-              <p className={`message ${error ? 'error' : 'warning'}`}>
-                {error || '이름은 2글자 이상 20글자 이하로 입력해야 합니다.'}
-              </p> {/* 경고 및 에러 메시지 표시 */}
-              <label>이메일 *</label>
-              <input
-                type="email"
-                name="email"
-                value={newUser.email}
-                onChange={handleChange}
-                readOnly // 이메일 필드를 수정 불가능하게 설정
-              />
-              <label>프로필 사진</label>
-              <input
-                type="text"
-                name="profileImage"
-                value={newUser.profileImage}
-                onChange={handleChange}
-              />
-              <label>사용자 주소</label>
-              <input
-                type="text"
-                name="address"
-                value={newUser.address}
-                onChange={handleChange}
-              />
-              <div className="button-group">
-                <button className="action-button" onClick={handleSave}>
-                  프로필 수정
-                </button>
+      <div className="my-page-content">
+        {activeMenu === 'info' && (
+          <div className="my-page-info-section">
+            <h2>내정보 수정</h2>
+            {isEditing ? (
+              <div>
+                <label>이름 *</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={newUser.fullName}
+                  onChange={handleChange}
+                />
+                <p className={`my-page-message ${error ? 'my-page-error' : 'my-page-warning'}`}>
+                  {error || '이름은 2글자 이상 20글자 이하로 입력해야 합니다.'}
+                </p>
+                <label>이메일 *</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={newUser.email}
+                  onChange={handleChange}
+                  readOnly
+                />
+                <label>사용자 주소</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={newUser.address}
+                  onChange={handleChange}
+                />
+                <div className="my-page-button-group">
+                  <button className="my-page-action-button" onClick={handleSave}>
+                    프로필 수정
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div>
-              <p>이름: {user.name}</p>
-              <p>이메일: {user.email}</p>
-              <p>프로필 사진: {user.profileImage}</p>
-              <p>주소: {user.address}</p>
-              <div className="button-group">
-                <button className="action-button" onClick={handleEditToggle}>
-                  수정
-                </button>
-                <button className="request-button">기술 제공 전환</button>
+            ) : (
+              <div>
+                <p>이름: {user.fullName}</p>
+                <p>이메일: {user.email}</p>
+                <p>주소: {user.address}</p>
+                <div className="my-page-button-group">
+                  <button className="my-page-action-button" onClick={handleEditToggle}>
+                    수정
+                  </button>
+                  <button className="my-page-request-button" onClick={handleTechProvideTransition}>기술 제공 전환</button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-
-        <div className="password-section">
-          <h3>비밀번호 수정</h3>
-          <label>현재 비밀번호</label>
-          <input
-            type="password"
-            name="currentPassword"
-            value={newUser.currentPassword}
-            onChange={handleChange}
-          />
-          <label>새 비밀번호</label>
-          <input
-            type="password"
-            name="password"
-            value={newUser.password}
-            onChange={handleChange}
-          />
-          <div className="button-group">
-            <button className="action-button">비밀번호 수정</button>
+            )}
           </div>
-        </div>
+        )}
+
+        {activeMenu === 'history' && (
+          <div>
+            <h2>이용 기록</h2>
+            <p>이용 기록 내용이 여기에 표시됩니다.</p>
+          </div>
+        )}
+
+        {activeMenu === 'chat' && (
+          <div>
+            <h2>채팅 기록</h2>
+            <p>채팅 기록 내용이 여기에 표시됩니다.</p>
+          </div>
+        )}
+
+        {activeMenu === 'techInfo' && (
+          <div>
+            <h2>기술 제공 정보</h2>
+            <p>기술 제공 정보 내용이 여기에 표시됩니다.</p>
+          </div>
+        )}
+
+        {activeMenu === 'techHistory' && (
+          <div>
+            <h2>기술 제공 기록</h2>
+            <p>기술 제공 기록 내용이 여기에 표시됩니다.</p>
+          </div>
+        )}
+
+        {activeMenu === 'info' && (
+          <div className="my-page-password-section">
+            <h3>비밀번호 수정</h3>
+            <label>현재 비밀번호</label>
+            <input
+              type="password"
+              name="currentPassword"
+              value={newUser.currentPassword}
+              onChange={handleChange}
+            />
+            <label>새 비밀번호</label>
+            <input
+              type="password"
+              name="password"
+              value={newUser.password}
+              onChange={handleChange}
+            />
+            <div className="my-page-button-group">
+              <button className="my-page-action-button">비밀번호 수정</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
