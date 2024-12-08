@@ -16,7 +16,8 @@ const CategoryList = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/category`
+          `${process.env.REACT_APP_API_BASE_URL}/api/category`,
+          {withCredentials: true}
         );
         setCategories(response.data);
       } catch (error) {
@@ -53,7 +54,8 @@ const CategoryList = () => {
   const handleDeleteConfirm = async () => {
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedCategoryId}`
+        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedCategoryId}`,
+        {withCredentials: true}
       );
       alert("카테고리가 삭제되었습니다.");
       setCategories(

@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './PostList.css';
-import { fetchPostList } from './Api'; // API 호출 함수
+import { fetchPostList } from './Api';
+import { Link, useNavigate } from "react-router-dom";
 
 const RequestPostList = () => {
-    const [posts, setPosts] = useState([]); // 게시글 목록
-    const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
-    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-    const [loading, setLoading] = useState(false); // 로딩 상태
-    const [error, setError] = useState(null); // 에러 상태
+    const [posts, setPosts] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    // 게시글 데이터 로드
+    const navigate = useNavigate();
+
     const loadPosts = async (page) => {
         setLoading(true);
         setError(null);
@@ -25,37 +27,59 @@ const RequestPostList = () => {
         }
     };
 
-    // 페이지 변경 핸들러
-    const handlePageChange = (page) => {
+    const handlePageClick = (page) => {
         if (page > 0 && page <= totalPages) {
-            setCurrentPage(page); // 페이지 상태 업데이트
+            setCurrentPage(page);
         }
     };
 
-    // 페이지 변경 시 데이터 로드
+    const handleFirstPage = () => {
+        setCurrentPage(1);
+    };
+
+    const handleLastPage = () => {
+        setCurrentPage(totalPages);
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handleCreatePost = () => {
+        navigate('/createPost');
+    };
+
     useEffect(() => {
-        loadPosts(currentPage); // 현재 페이지 기반 데이터 호출
+        loadPosts(currentPage);
     }, [currentPage]);
 
     return (
         <div className="container mt-4">
-            <h2 className="text-left mb-4 purple-text">요청 목록</h2>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2 className="purple-text">요청 글 목록</h2>
+                <button className="btn btn-primary" onClick={handleCreatePost}>
+                    글 생성
+                </button>
+            </div>
 
-            {/* 로딩 상태 */}
             {loading && <p>로딩 중...</p>}
-
-            {/* 에러 메시지 */}
             {error && <p className="text-danger">{error}</p>}
 
-            {/* 게시글 카드 */}
             <div className="row">
                 {posts.map((post) => (
                     <div className="col-md-4 mb-3" key={post.id}>
                         <div className="card" style={{ fontSize: '0.9rem' }}>
-                            {/* 게시글 카드 이미지 */}
-                            {post.ImgUrls && post.ImgUrls.length > 0 && (
+                            {post.imgUrls && post.imgUrls.length > 0 && (
                                 <img
-                                    src={post.ImgUrls[0]}  // 이미지 링크 배열에서 첫 번째 이미지 사용
+                                    src={post.imgUrls[0]}
                                     alt={post.title}
                                     className="card-img-top"
                                     style={{ height: '200px', objectFit: 'cover' }}
@@ -63,51 +87,61 @@ const RequestPostList = () => {
                             )}
                             <div className="card-header purple-bg text-white">{post.title}</div>
                             <div className="card-body">
-                                <p className="card-text">{post.description}</p>
                                 <ul className="list-unstyled">
                                     <li><strong>가격:</strong> {post.price.toLocaleString()} 원</li>
                                     <li><strong>기간:</strong> {post.duration}</li>
                                 </ul>
+                                <Link to={`/posts/${post.id}`} className="btn m-2 btn-primary">상세 보기</Link>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* 페이지네이션 */}
-            {totalPages > 1 && (
-                <div className="d-flex justify-content-center mt-4">
-                    <div className="btn-group">
-                        <button
-                            className="btn btn-outline-primary"
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                        >
-                            이전
-                        </button>
-                        {[...Array(totalPages)].map((_, index) => (
-                            <button
-                                className={`btn ${
-                                    currentPage === index + 1
-                                        ? 'btn-primary'
-                                        : 'btn-outline-primary'
-                                }`}
-                                key={index}
-                                onClick={() => handlePageChange(index + 1)}
-                            >
-                                {index + 1}
+            <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: '50px',
+                marginBottom: '50px'
+            }}>
+                <nav aria-label="Page navigation example">
+                    <ul className="pagination justify-content-center" style={{ display: 'flex', flexDirection: 'row' }}>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handleFirstPage} aria-label="First">
+                                <span aria-hidden="true">&laquo;</span>
                             </button>
-                        ))}
-                        <button
-                            className="btn btn-outline-primary"
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                        >
-                            다음
-                        </button>
-                    </div>
-                </div>
-            )}
+                        </li>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handlePreviousPage}>
+                                <span aria-hidden="true">&#8249;</span>
+                            </button>
+                        </li>
+                        {Array.from({ length: 5 }, (_, index) => {
+                            const pageNum = currentPage - 2 + index;
+                            if (pageNum < 1 || pageNum > totalPages) return null;
+                            return (
+                                <li key={pageNum} className={`page-item ${currentPage === pageNum ? 'active' : ''}`}>
+                                    <button className="page-link" onClick={() => handlePageClick(pageNum)}>
+                                        {pageNum}
+                                    </button>
+                                </li>
+                            );
+                        })}
+                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handleNextPage}>
+                                <span aria-hidden="true">&#8250;</span>
+                            </button>
+                        </li>
+                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handleLastPage}>
+                                <span aria-hidden="true">&raquo;</span>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     );
 };
