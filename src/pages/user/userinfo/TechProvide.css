@@ -1,0 +1,60 @@
+.tech-provide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 100%; /* 전체 너비 사용 */
+    max-width: 1200px; /* 최대 너비 설정 */
+    margin: 0 auto; /* 중앙 정렬 */
+}
+
+.tech-provide-form {
+    width: 100%;
+    max-width: 800px; /* 너비를 넓게 조정 */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box; /* 패딩 포함 */
+}
+
+.tech-provide-input,
+.tech-provide-textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    margin-bottom: 20px; /* 각 입력 필드 간의 간격 */
+}
+
+.tech-provide-textarea {
+    resize: vertical; /* 세로 길이 조절 가능 */
+}
+
+.tech-provide-button {
+    width: 100%;
+    padding: 15px;
+    border-radius: 4px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px; /* 버튼 간의 간격 */
+}
+
+.tech-provide-submit {
+    padding: 10px 20px; /* 버튼 크기 조정 */
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 14px; /* 버튼 글자 크기 조정 */
+      margin-right: 10px; /* 버튼 간격 */
+}
+
+.tech-provide-button:hover,
+.tech-provide-submit:hover {
+    opacity: 0.9; /* 호버 시 효과 */
+}
