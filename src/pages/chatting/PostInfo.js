@@ -18,7 +18,9 @@ const PostInfo = ({ chatRoomId }) => {
 
     const fetchInfos = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}/info`);
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}/info`,
+                { withCredentials: true }
+            );
             setPost(response.data.postResponseDto);
             setBid(response.data.bidResponseDto);
             setPrice(response.data.price);
@@ -37,12 +39,13 @@ const PostInfo = ({ chatRoomId }) => {
 
     const handlePriceChange = async () => {
         try {
-            const response = await axios.patch(`http://localhost:8080/api/chatroom/${chatRoomId}/price`, {
+            const response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}/price`, {
                 price: inputPrice
             }, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
+                , withCredentials: true
             });
 
             // 요청이 성공하면 반환된 가격으로 상태 업데이트
@@ -90,6 +93,7 @@ const PostInfo = ({ chatRoomId }) => {
                         ? `${post.description.substring(0, 30)}...`
                         : post.description}
                     </p>
+                    <br/>
                     {post.duration && (<p>기간: {post.duration}</p>)}
                 </div>
 

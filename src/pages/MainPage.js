@@ -1,12 +1,12 @@
 import React from 'react';
-import {Category, Search} from "../components";
+import {MainCategory, Search} from "../components";
 import './MainPage.css';
 
 const MainPage = () => {
   return (
     <div id="main">
       <Search />
-      <Category />
+      <MainCategory />
     </div>
   );
 };

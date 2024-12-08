@@ -14,7 +14,7 @@
 .right-container {
     width: 25%;
     padding: 10px;
-    border: 1px solid #989898;
+    border: 1px solid #e6e6e6;
     border-radius: 10px;
 }
 
@@ -28,8 +28,8 @@
 }
 
 .chat-message {
-    margin: 10px 0 ;
-    padding: 15px;
+    margin: 7px 0;
+    padding: 13px;
     border-radius: 10px;
     background-color: #e6f7ff; /* 메시지 배경색 */
     max-width: 60%;
@@ -87,10 +87,11 @@
     align-items: center;
 }
 .info-container {
-    margin-top: 50px;
-    height: 80%;
+    margin-top: 30px;
+    height: 85%;
     padding: 10px;
     padding-top: 30px;
     border-radius: 10px;
     background-color: #DBF3FFFF;
+    overflow: auto; /* 내용이 넘칠 경우 스크롤 가능 */
 }
