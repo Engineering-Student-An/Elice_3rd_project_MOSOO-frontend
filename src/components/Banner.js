@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Banner.css';
 import image1 from '../assets/images/banner/banner1.jpg';
 import image2 from '../assets/images/banner/banner2.jpg';
@@ -8,6 +9,7 @@ import buttonImage2 from '../assets/images/banner/button/button2.png';
 function Banner() {
   const imageUrls = [image1, image2];
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
 
   /* 배너 이미지 슬라이드 */
   useEffect(() => {
@@ -32,6 +34,10 @@ function Banner() {
     );
   };
 
+  const navigateToCreatePost = () => {
+    navigate('/createPost');
+  };
+
   return (
     <div className="banner-container">
       <div className="banner-left-image">
@@ -44,7 +50,7 @@ function Banner() {
         </button>
       </div>
       <div className="banner-right-buttons">
-        <div className="banner-button banner-top-button">
+        <div className="banner-button banner-top-button" onClick={navigateToCreatePost}>
           <img src={buttonImage1} alt="버튼1 이미지" />
           <p className="banner-button-text">맞춤 주문 요청</p>
         </div>
