@@ -47,7 +47,7 @@ const Search = () => {
     console.log('선택된 카테고리:', selectedCategory);
     console.log('선택된 주소:', selectedAddress);
     
-    navigate('/offerPosts', {
+    navigate('/offerPostsFilter', {
       state: {
         keyword,
         selectedCategory,

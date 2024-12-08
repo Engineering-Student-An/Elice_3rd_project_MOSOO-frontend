@@ -20,6 +20,7 @@ import MyPage from './pages/user/userinfo/MyPage'
 import { Payment } from "./pages/payment";
 import PaymentComplete from "./pages/payment/PaymentComplete";
 import UsageList from "./pages/usage/UsageList";
+import OfferPostFilterList from "./pages/post/OfferPostFilterList";
 
 const App = () => {
     return (
@@ -38,6 +39,7 @@ const App = () => {
 
                         <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
+                        <Route path="/offerPostsFilter" element={<OfferPostFilterList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/createPost" element={<CreatePost/>}/> {/* 게시글 작성 화면 */}
                         <Route path="/posts/:id" element={<PostDetail/>}/> {/* 게시글 상세 화면 */}
 
