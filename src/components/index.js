@@ -1,2 +1,10 @@
 export { default as Header } from './Header';
 export { default as Footer } from './Footer';
+export { default as AdminRoute } from './AdminRoute';
+export { default as AccessDeniedPage } from './AccessDeniedPage';
+export { default as ProtectedRoute } from './ProtectedRoute';
+export { default as Search } from './Search';
+export { default as MainCategory } from './MainCategory';
+export { default as StepModal } from './StepModal';
+export { default as Address } from './Address';
+export { default as AddressModal } from './AddressModal';
