@@ -3,69 +3,54 @@ import axios from "axios";
 
 const PostInfo = ({ chatRoomId }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [post, setPost] = useState(null);
+    const [post, setPost] = useState();
     const [price, setPrice] = useState(null);
     const [bid, setBid] = useState(null);
     const [isGosu, setIsGosu] = useState(null);
     const [inputPrice, setInputPrice] = useState(null); // 입력값을 위한 상태
     const [originalPrice, setOriginalPrice] = useState(null); // 원래 가격을 저장하는 상태
-    const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-
         fetchInfos();
-    }, [chatRoomId]);
+    }, [chatRoomId]); // chatRoomId를 의존성 배열에 추가
 
     const fetchInfos = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/chatroom/${chatRoomId}/info`);
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}/info`,
+                { withCredentials: true }
+            );
             setPost(response.data.postResponseDto);
             setBid(response.data.bidResponseDto);
             setPrice(response.data.price);
             setIsGosu(response.data.isGosu);
 
             // 가격 상태를 업데이트한 후 inputPrice와 originalPrice 업데이트
-            setInputPrice(price);
-            setOriginalPrice(price);
-
+            setInputPrice(response.data.price);
+            setOriginalPrice(response.data.price);
+            setLoading(false); // 데이터 로드 완료
         } catch (err) {
-            setError(err);
+            setErrorMessage(err.response ? err.response.data.message : err.message);
             console.error('Failed to load infos:', err);
-        } finally {
-            setLoading(false);
+            setLoading(false); // 데이터 로드 완료
         }
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return (
-            <div>
-                Error loading infos: {error.response ? error.response.data.message : error.message}
-            </div>
-        );
-    }
-
     const handlePriceChange = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/chatroom/${chatRoomId}/price?price=${inputPrice}`, {
-                method: 'PATCH',
+            const response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}/price`, {
+                price: inputPrice
+            }, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
+                , withCredentials: true
             });
 
-            if (!response.ok) {
-                throw new Error('가격 변경에 실패했습니다.');
-            }
-
-            const data = await response.json();
             // 요청이 성공하면 반환된 가격으로 상태 업데이트
-            setInputPrice(data.price);
-            setOriginalPrice(data.price); // 원래 가격도 업데이트
+            setInputPrice(response.data.price);
+            setOriginalPrice(response.data.price); // 원래 가격도 업데이트
             setIsEditing(false); // 편집 모드 종료
 
             alert('가격이 변경되었습니다.');
@@ -85,6 +70,16 @@ const PostInfo = ({ chatRoomId }) => {
         setIsEditing(false);
     };
 
+    // 에러 발생 시
+    if (errorMessage) {
+        return <div> {errorMessage} </div>;
+    }
+
+    // 로딩 중일 때
+    if (loading) {
+        return <div>로딩 중...</div>; // 로딩 상태 표시
+    }
+
     return (
         <div className="d-flex flex-column align-items-end">
             <div>
@@ -98,6 +93,7 @@ const PostInfo = ({ chatRoomId }) => {
                         ? `${post.description.substring(0, 30)}...`
                         : post.description}
                     </p>
+                    <br/>
                     {post.duration && (<p>기간: {post.duration}</p>)}
                 </div>
 

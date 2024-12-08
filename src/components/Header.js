@@ -12,7 +12,7 @@ const Header = () => {
                         <div className="col-lg-12">
                             <div className="nav-inner">
                                 <nav className="navbar navbar-expand-lg" style={{height: '95px'}}>
-                                    <a className="navbar-brand" href="">
+                                    <a className="navbar-brand" href="/">
                                         <img src={logo}
                                              style={{width:'130px'}} alt="Logo" />
                                     </a>
