@@ -2064,14 +2064,14 @@ ol {
 
 .search-form .search-input input {
   width: 100%;
-  background: #fff;
+  background-color: #f8f9fa;
   border-radius: 6px;
   border: none;
   padding: 0 25px;
   padding-right: 45px;
   height: 55px;
   font-size: 15px;
-  border: 1px solid #eee;
+  border: 1px solid #ccc;
 }
 
 .search-form .search-input input:focus {
