@@ -1,26 +1,18 @@
-// src/pages/user/login-signup/SignUp.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // axios 모듈을 import
 
 const SignUp = () => {
-    const [fullName, setFullName] = useState(''); // fullname을 fullName으로 변경
+    const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleChangeFullName = (e) => {
-        setFullName(e.target.value);
-    };
-
-    const handleChangeEmail = (e) => {
-        setEmail(e.target.value);
-    };
-
-    const handleChangePassword = (e) => {
-        setPassword(e.target.value);
-    };
+    // 입력값 변경 핸들러
+    const handleChangeFullName = (e) => setFullName(e.target.value);
+    const handleChangeEmail = (e) => setEmail(e.target.value);
+    const handleChangePassword = (e) => setPassword(e.target.value);
 
     const handleGoogleSignUp = () => {
         window.location.href = 'http://localhost:8080/oauth2/authorization/google';
@@ -30,29 +22,29 @@ const SignUp = () => {
         e.preventDefault();
         setError('');
 
-        // 간단한 유효성 검사
+        // 유효성 검사
         if (!fullName || !email || !password) {
             setError('모든 필드를 입력해야 합니다.');
             return;
         }
 
         try {
-            // Axios를 사용하여 회원가입 요청 보내기
             const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth`, {
-                fullName, // fullName으로 변경
                 email,
+                fullName,
                 password,
             });
 
-            if (response.data.success) {
-                alert('회원가입 성공!');
-                navigate('/login'); // 로그인 페이지로 리다이렉트
-            } else {
-                setError(response.data.message); // 실패 시 에러 메시지 표시
-            }
+            if (response.status === 200) {
+
+                                        alert('회원가입 성공!');
+                                        // 예: 대시보드 페이지로 이동
+                                        navigate('/login');
+                                    }
         } catch (error) {
+            // 에러 처리
             if (error.response) {
-                console.error('에러 응답:', error.response.data); // 서버에서 보낸 에러 메시지
+                console.error('에러 응답:', error.response.data);
                 setError(error.response.data.message || '회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
             } else {
                 console.error('요청 오류:', error);
@@ -73,7 +65,7 @@ const SignUp = () => {
                     <label htmlFor="fullName">사용자 이름:</label>
                     <input
                         type="text"
-                        id="fullName" // id도 fullName으로 변경
+                        id="fullName"
                         value={fullName}
                         onChange={handleChangeFullName}
                         style={styles.input}
