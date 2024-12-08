@@ -1,51 +1,55 @@
-// src/pages/user/login-signup/SignUp.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import axios from 'axios'; // axios 모듈을 import
 
 const SignUp = () => {
-    const [formData, setFormData] = useState({
-        fullname: '',
-        email: '',
-        password: '',
-    });
+    const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-    };
+    // 입력값 변경 핸들러
+    const handleChangeFullName = (e) => setFullName(e.target.value);
+    const handleChangeEmail = (e) => setEmail(e.target.value);
+    const handleChangePassword = (e) => setPassword(e.target.value);
 
     const handleGoogleSignUp = () => {
-        const clientId = '761318087169-kh2l1luon3lgq1odovtcao22abk4tu33.apps.googleusercontent.com'; // 구글 클라이언트 ID
-        const redirectUri = 'http://localhost:3000/'; // 리디렉션 URI
-        const scope = 'profile email';
-        const responseType = 'token'; // 토큰 방식으로 응답 받기
-
-        // 구글 로그인 URL
-        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}`;
-
-        // 새로운 창으로 구글 로그인 페이지 열기
-        window.location.href = googleAuthUrl;
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
-        // 간단한 유효성 검사
-        if (!formData.fullname || !formData.email || !formData.password) {
+        // 유효성 검사
+        if (!fullName || !email || !password) {
             setError('모든 필드를 입력해야 합니다.');
             return;
         }
 
-        // 여기서 이메일/비밀번호로 회원가입 로직을 추가할 수 있습니다.
-        alert('회원가입 성공!');
-        navigate('/login'); // 로그인 페이지로 리다이렉트
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth`, {
+                email,
+                fullName,
+                password,
+            });
+
+            if (response.status === 200) {
+                alert('회원가입 성공!');
+                // 예: 대시보드 페이지로 이동
+                navigate('/login');
+            }
+        } catch (error) {
+            // 에러 처리
+            if (error.response) {
+                console.error('에러 응답:', error.response.data);
+                setError(error.response.data.message || '회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
+            } else {
+                console.error('요청 오류:', error);
+                setError('회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
+            }
+        }
     };
 
     return (
@@ -55,15 +59,14 @@ const SignUp = () => {
                 <div style={styles.inputGroup}>
                     <button type="button" onClick={handleGoogleSignUp} style={styles.button}>구글로 가입하기</button>
                 </div>
-                <hr style={styles.divider} /> {/* 구분선 추가 */}
+                <hr style={styles.divider} />
                 <div style={styles.inputGroup}>
-                    <label htmlFor="fullname">사용자 이름:</label>
+                    <label htmlFor="fullName">사용자 이름:</label>
                     <input
                         type="text"
-                        id="fullname"
-                        name="fullname"
-                        value={formData.fullname}
-                        onChange={handleChange}
+                        id="fullName"
+                        value={fullName}
+                        onChange={handleChangeFullName}
                         style={styles.input}
                     />
                 </div>
@@ -72,9 +75,8 @@ const SignUp = () => {
                     <input
                         type="email"
                         id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
+                        value={email}
+                        onChange={handleChangeEmail}
                         style={styles.input}
                     />
                 </div>
@@ -83,9 +85,8 @@ const SignUp = () => {
                     <input
                         type="password"
                         id="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
+                        value={password}
+                        onChange={handleChangePassword}
                         style={styles.input}
                     />
                 </div>
