@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./SecondCategory.css";
 
-const SecondCategory = ({ category_id, onSelectSecondcategory }) => {
+const SecondCategory = ({ categoryId, onSelectSecondcategory }) => {
   const [secondcategories, setSecondcategories] = useState([]);
   const [error, setError] = useState(null);
   const [selectedSecondcategory, setSelectedSecondcategory] = useState(null);
@@ -11,7 +11,7 @@ const SecondCategory = ({ category_id, onSelectSecondcategory }) => {
     const fetchSecondcategories = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/category/${category_id}`
+          `${process.env.REACT_APP_API_BASE_URL}/api/category/${categoryId}`
         );
         setSecondcategories(response.data);
       } catch (error) {
@@ -20,10 +20,10 @@ const SecondCategory = ({ category_id, onSelectSecondcategory }) => {
       }
     };
 
-    if (category_id) {
+    if (categoryId) {
       fetchSecondcategories();
     }
-  }, [category_id]);
+  }, [categoryId]);
 
   const handleSecondcategorySelect = (secondcategory) => {
     setSelectedSecondcategory(secondcategory);

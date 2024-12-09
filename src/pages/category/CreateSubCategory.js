@@ -9,7 +9,7 @@ const CreateSubCategory = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
-  const { category_id } = useParams();
+  const { categoryId } = useParams();
 
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ const CreateSubCategory = () => {
     const category = {
       name: name,
       description: description,
-      parent_id: category_id
+      parentId: categoryId
     };
 
     // FormData 생성
