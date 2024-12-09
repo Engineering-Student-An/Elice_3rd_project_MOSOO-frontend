@@ -11,7 +11,7 @@ const FirstCategory = ( {onSelectFirstcategory} ) => {
     const fetchFirstcategories = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/category/first_category`
+          `${process.env.REACT_APP_API_BASE_URL}/api/category/firstCategory`
         );
         setFirstCategories(response.data);
       } catch (error) {

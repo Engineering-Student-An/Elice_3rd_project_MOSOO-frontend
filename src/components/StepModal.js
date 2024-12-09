@@ -6,7 +6,7 @@ import Step3 from "../pages/category/components/ThirdCategory";
 import "./StepModal.css";
 
 
-const StepModal = ({ category_id, onClose }) => {
+const StepModal = ({ categoryId, onClose }) => {
   const [step, setStep] = useState(1); // 단계 상태
   const [selectedSecondcategory, setSelectedSecondcategory] = useState(null); // 선택된 중분류 상태
   const [address, setAddress] = useState(null);
@@ -30,7 +30,7 @@ const StepModal = ({ category_id, onClose }) => {
       case 1:
         return <Step1 onSelectAddress={setAddress} />;
       case 2:
-        return <Step2 category_id={category_id} onSelectSecondcategory={setSelectedSecondcategory} />;
+        return <Step2 categoryId={categoryId} onSelectSecondcategory={setSelectedSecondcategory} />;
       case 3:
         return <Step3 selectedSubcategory={selectedSecondcategory} onSelectThirdCategory={setThirdCategory} />;
       default:
@@ -60,12 +60,12 @@ const StepModal = ({ category_id, onClose }) => {
   const handleSearch = () => {
     console.log("검색 버튼 클릭됨");
     console.log("주소 정보:", address || "주소가 설정되지 않았습니다.");
-    console.log("ThirdCategory ID:", thirdCategory?.category_id || "소분류가 설정되지 않았습니다.");
+    console.log("ThirdCategory ID:", thirdCategory?.categoryId || "소분류가 설정되지 않았습니다.");
 
     navigate("/offerPosts", {
       state: {
         address: address,
-        thirdCategory: thirdCategory?.category_id
+        thirdCategory: thirdCategory?.categoryId
       },
     });
 

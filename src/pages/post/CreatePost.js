@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
-import {
-    fetchCategories,
-    fetchSubCategoriesLevel1,
-    fetchSubCategoriesLevel2,
-    createPost,
-} from './CreatePostApi';
 
 const CreatePost = () => {
     const [title, setTitle] = useState('');
@@ -27,47 +22,59 @@ const CreatePost = () => {
 
     const navigate = useNavigate();
 
+    // Fetch 대분류
     useEffect(() => {
-        const loadCategories = async () => {
+        const fetchCategories = async () => {
             try {
-                const data = await fetchCategories();
-                setCategories(data);
+                const response = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}/api/category/firstCategory`
+                );
+                setCategories(response.data);
             } catch (err) {
-                setError(err.message);
+                console.error('대분류 불러오기 실패:', err);
+                setError('대분류를 불러오는 데 실패했습니다.');
             }
         };
-        loadCategories();
+        fetchCategories();
     }, []);
 
+    // Fetch 중분류
     useEffect(() => {
         if (selectedParentCategory) {
-            const loadSubCategoriesLevel1 = async () => {
+            const fetchSubCategoriesLevel1 = async () => {
                 try {
-                    const data = await fetchSubCategoriesLevel1(selectedParentCategory);
-                    setSubCategoriesLevel1(data);
-                    setSubCategoriesLevel2([]);
+                    const response = await axios.get(
+                        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedParentCategory}`
+                    );
+                    setSubCategoriesLevel1(response.data);
+                    setSubCategoriesLevel2([]); // 초기화
                     setSelectedSubCategory1('');
                     setSelectedSubCategory2('');
                 } catch (err) {
-                    setError(err.message);
+                    console.error('중분류 불러오기 실패:', err);
+                    setError('중분류를 불러오는 데 실패했습니다.');
                 }
             };
-            loadSubCategoriesLevel1();
+            fetchSubCategoriesLevel1();
         }
     }, [selectedParentCategory]);
 
+    // Fetch 하분류
     useEffect(() => {
         if (selectedSubCategory1) {
-            const loadSubCategoriesLevel2 = async () => {
+            const fetchSubCategoriesLevel2 = async () => {
                 try {
-                    const data = await fetchSubCategoriesLevel2(selectedSubCategory1);
-                    setSubCategoriesLevel2(data);
+                    const response = await axios.get(
+                        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedSubCategory1}`
+                    );
+                    setSubCategoriesLevel2(response.data);
                     setSelectedSubCategory2('');
                 } catch (err) {
-                    setError(err.message);
+                    console.error('하분류 불러오기 실패:', err);
+                    setError('하분류를 불러오는 데 실패했습니다.');
                 }
             };
-            loadSubCategoriesLevel2();
+            fetchSubCategoriesLevel2();
         }
     }, [selectedSubCategory1]);
 
@@ -101,12 +108,22 @@ const CreatePost = () => {
         }
 
         try {
-            const data = await createPost(formData);
-            console.log('게시글 생성 성공:', data);
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_BASE_URL}/api/post`,
+                formData,
+                { headers: { 'Content-Type': 'multipart/form-data' } }
+            );
+            console.log('게시글 생성 성공:', response.data);
 
-            navigate(isOffer ? '/offerPosts' : '/requestPosts');
-        } catch (err) {
-            setError(err.message);
+            // isOffer 값에 따라 리다이렉션
+            if (isOffer) {
+                navigate('/offerPosts');
+            } else {
+                navigate('/requestPosts');
+            }
+        } catch (error) {
+            console.error('게시글 생성 실패:', error);
+            setError('게시글 생성에 실패했습니다.');
         } finally {
             setLoading(false);
         }
@@ -190,7 +207,7 @@ const CreatePost = () => {
                     >
                         <option value="">대분류 선택</option>
                         {categories.map((category) => (
-                            <option key={category.category_id} value={category.category_id}>
+                            <option key={category.categoryId} value={category.categoryId}>
                                 {category.name}
                             </option>
                         ))}
@@ -203,7 +220,7 @@ const CreatePost = () => {
                     >
                         <option value="">중분류 선택</option>
                         {subCategoriesLevel1.map((subCategory) => (
-                            <option key={subCategory.category_id} value={subCategory.category_id}>
+                            <option key={subCategory.categoryId} value={subCategory.categoryId}>
                                 {subCategory.name}
                             </option>
                         ))}
@@ -216,7 +233,7 @@ const CreatePost = () => {
                     >
                         <option value="">소분류 선택</option>
                         {subCategoriesLevel2.map((subCategory) => (
-                            <option key={subCategory.category_id} value={subCategory.category_id}>
+                            <option key={subCategory.categoryId} value={subCategory.categoryId}>
                                 {subCategory.name}
                             </option>
                         ))}
