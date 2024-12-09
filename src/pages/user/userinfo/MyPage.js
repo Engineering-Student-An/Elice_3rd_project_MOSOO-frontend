@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './MyPage.css'; // CSS 파일에서 아이콘 스타일 추가
+import { isAdmin } from '../../../components/IsAdmin'; // isAdmin 함수 import
+import './MyPage.css';
+import UsageList from "../../usage/UsageList";
+import {ChatRoomList} from "../../chatting";
+import AdminUserLIst from "../AdminUserLIst"; // CSS 파일에서 아이콘 스타일 추가
 
 const MyPage = () => {
   const [user, setUser] = useState({
@@ -122,16 +126,46 @@ const MyPage = () => {
             style={{ opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1 }}>
             <i className="fas fa-history"></i> 기술 제공 기록
           </button>
+          {/* Admin 버튼 추가 */}
+          {isAdmin() && (
+              <div className="my-page-menu">
+
+                <button
+                    className={`my-page-menu-button ${activeMenu === 'userManagement' ? 'active' : ''}`}
+                    onClick={() => handleMenuClick('userManagement')}>
+                  <i className="fas fa-users"></i>(관리자) 회원 관리
+                </button>
+
+                <button
+                    className={`my-page-menu-button ${activeMenu === 'categoryManagement' ? 'active' : ''}`}
+                    onClick={() => handleMenuClick('categoryManagement')}>
+                  <i className="fas fa-tags"></i>(관리자) 카테고리 관리
+                </button>
+
+                <button
+                    className={`my-page-menu-button ${activeMenu === 'postManagement' ? 'active' : ''}`}
+                    onClick={() => handleMenuClick('postManagement')}>
+                  <i className="fas fa-file-alt"></i>(관리자) 게시글 관리
+                </button>
+
+                <button
+                    className={`my-page-menu-button ${activeMenu === 'orderManagement' ? 'active' : ''}`}
+                    onClick={() => handleMenuClick('orderManagement')}>
+                  <i className="fas fa-receipt"></i>(관리자) 주문 내역 관리
+                </button>
+              </div>
+          )}
+
         </div>
       </div>
 
       <div className="my-page-content">
         {activeMenu === 'info' && (
-          <div className="my-page-info-section">
-            <h2>내정보 수정</h2>
-            {isEditing ? (
-              <div>
-                <label>이름 *</label>
+            <div className="my-page-info-section">
+              <h2>내정보 수정</h2>
+              {isEditing ? (
+                  <div>
+                    <label>이름 *</label>
                 <input
                   type="text"
                   name="fullName"
@@ -180,15 +214,13 @@ const MyPage = () => {
 
         {activeMenu === 'history' && (
           <div>
-            <h2>이용 기록</h2>
-            <p>이용 기록 내용이 여기에 표시됩니다.</p>
+            <UsageList></UsageList>
           </div>
         )}
 
         {activeMenu === 'chat' && (
           <div>
-            <h2>채팅 기록</h2>
-            <p>채팅 기록 내용이 여기에 표시됩니다.</p>
+            <ChatRoomList></ChatRoomList>
           </div>
         )}
 
@@ -227,6 +259,31 @@ const MyPage = () => {
               <button className="my-page-action-button">비밀번호 수정</button>
             </div>
           </div>
+        )}
+
+        {activeMenu === 'userManagement' && (
+            <AdminUserLIst></AdminUserLIst>
+        )}
+
+        {activeMenu === 'categoryManagement' && (
+            <div>
+              <h2>카테고리 관리</h2>
+              <p>카테고리 관리 내용 넣어주세요.</p>
+            </div>
+        )}
+
+        {activeMenu === 'postManagement' && (
+            <div>
+              <h2>게시글 관리</h2>
+              <p>게시글 관리 넣어주세요.</p>
+            </div>
+        )}
+
+        {activeMenu === 'orderManagement' && (
+            <div>
+              <h2>주문 내역 관리</h2>
+              <p>주문 내역 관리 넣어주세요.</p>
+            </div>
         )}
       </div>
     </div>
