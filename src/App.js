@@ -57,10 +57,10 @@ const App = () => {
 
                         <Route path="/usages" element={<UsageList/>}/> {/* 이용 내역 화면 */}
 
-                        <Route path="/categories" element={<CategoryList/>}/> {/* 카테고리 관리 화면 */}
-                        <Route path="/categories/createfirst" element={<CreateFirstCategory/>}/> {/* 카테고리 대분류 생성 화면 */}
-                        <Route path="/categories/createsub/:categoryId" element={<CreateSubCategory/>}/> {/* 카테고리 하위 분류 생성 화면 */}
-                        <Route path="/categories/update/:categoryId" element={<UpdateCategory/>}/> {/* 카테고리 수정 화면 */}
+                        <Route path="/categories" element={<AdminRoute><CategoryList/></AdminRoute>}/> {/* 카테고리 관리 화면 */}
+                        <Route path="/categories/createfirst" element={<AdminRoute><CreateFirstCategory/></AdminRoute>}/> {/* 카테고리 대분류 생성 화면 */}
+                        <Route path="/categories/createsub/:categoryId" element={<AdminRoute><CreateSubCategory/></AdminRoute>}/> {/* 카테고리 하위 분류 생성 화면 */}
+                        <Route path="/categories/update/:categoryId" element={<AdminRoute><UpdateCategory/></AdminRoute>}/> {/* 카테고리 수정 화면 */}
                     </Routes>
                 </main>
                 <Footer/>
