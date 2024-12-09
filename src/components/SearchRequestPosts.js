@@ -33,7 +33,7 @@ const SearchRequestPosts = ({ onClose }) => {
       case 2:
         return <Step2 onSelectFirstcategory={setFirstCategory} />;
       case 3:
-        return <Step3 category_id={firstCategory?.category_id} onSelectSecondcategory={setSelectedSecondcategory} />;
+        return <Step3 categoryId={firstCategory?.categoryId} onSelectSecondcategory={setSelectedSecondcategory} />;
       case 4:
         return <Step4 selectedSubcategory={selectedSecondcategory} onSelectThirdCategory={setThirdCategory} />;
       default:
@@ -63,13 +63,13 @@ const SearchRequestPosts = ({ onClose }) => {
   const handleSearch = () => {
     console.log("검색 버튼 클릭됨");
     console.log("address:", selectedAddress || "주소가 설정되지 않았습니다.");
-    console.log("ThirdCategory ID:", thirdCategory?.category_id || "소분류가 설정되지 않았습니다.");
+    console.log("ThirdCategory ID:", thirdCategory?.categoryId || "소분류가 설정되지 않았습니다.");
 
     navigate('/requestPosts', 
         { state: 
             { 
             address: selectedAddress, 
-            categoryId: thirdCategory.category_id 
+            categoryId: thirdCategory.categoryId 
         } });
 
   };

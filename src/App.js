@@ -10,7 +10,7 @@ import "./assets/css/glightbox.min.css";
 import "./assets/css/main.css";
 import {Header, Footer, AdminRoute, AccessDeniedPage, ProtectedRoute} from "./components";
 import {ChatRoomList, ChatRoom} from "./pages/chatting";
-import {CreatePost, CreateReview, OfferPostList, PostDetail, RequestPostList} from "./pages/post";
+import {CreatePost, CreateReview, OfferPostList, PostDetail, RequestPostList, OfferPostFilterList } from "./pages/post";
 import {MainPage} from "./pages";
 import {CategoryList, CreateFirstCategory, CreateSubCategory, UpdateCategory} from "./pages/category";
 import SignUp from './pages/user/login-signup/SignUp';
@@ -42,6 +42,7 @@ const App = () => {
 
                         <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
+                        <Route path="/offerPostsFilter" element={<OfferPostFilterList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/createPost" element={<CreatePost/>}/> {/* 게시글 작성 화면 */}
                         <Route path="/posts/:id" element={<PostDetail/>}/> {/* 게시글 상세 화면 */}
 
@@ -57,8 +58,8 @@ const App = () => {
 
                         <Route path="/categories" element={<CategoryList/>}/> {/* 카테고리 관리 화면 */}
                         <Route path="/categories/createfirst" element={<CreateFirstCategory/>}/> {/* 카테고리 대분류 생성 화면 */}
-                        <Route path="/categories/createsub/:category_id" element={<CreateSubCategory/>}/> {/* 카테고리 하위 분류 생성 화면 */}
-                        <Route path="/categories/update/:category_id" element={<UpdateCategory/>}/> {/* 카테고리 수정 화면 */}
+                        <Route path="/categories/createsub/:categoryId" element={<CreateSubCategory/>}/> {/* 카테고리 하위 분류 생성 화면 */}
+                        <Route path="/categories/update/:categoryId" element={<UpdateCategory/>}/> {/* 카테고리 수정 화면 */}
                     </Routes>
                 </main>
                 <Footer/>
