@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import SearchCategory from '../../../components/SearchCategory'; // 경로에 맞게 임포트
-import AddressModal from '../../../components/AddressModal'; // AddressModal 임포트
-import './TechProvide.css'; // 스타일 파일 임포트
+import SearchCategory from '../../../components/SearchCategory';
+import AddressModal from '../../../components/AddressModal';
+import './TechProvide.css';
 
 const TechProvide = () => {
   const [techInfo, setTechInfo] = useState({
-    gender: '', // 성별 추가
-    businessName: '', // 사업자명 추가
-    businessNumber: '', // 사업자번호 추가
+    gender: '',
+    businessName: '',
+    businessNumber: '',
+    phoneNumber: '',
+    verificationCode: '',
   });
-  const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리 상태
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState('');
   const [error, setError] = useState('');
-  const [showCategoryModal, setShowCategoryModal] = useState(false); // 카테고리 선택 모달 상태
-  const [showAddressModal, setShowAddressModal] = useState(false); // 주소 선택 모달 상태
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const navigate = useNavigate();
-  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,55 +30,87 @@ const TechProvide = () => {
     e.preventDefault();
     setError('');
 
-    // 유효성 검사
-    if (!selectedCategory || !setSelectedAddress || !techInfo.gender || !techInfo.businessName || !techInfo.businessNumber) {
-      setError('모든 필드를 채워주세요.');
+    if (!selectedCategory || !selectedCategory.category_id || !selectedAddress || !techInfo.gender || !techInfo.businessName || !techInfo.businessNumber) {
+      setError('모든 필드를 채워주세요. 카테고리를 선택해야 합니다.');
+      return;
+    }
+
+    if (!isVerified) {
+      setError('전화번호 인증을 완료해야 합니다.');
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/tech-provide`, { ...techInfo, category: selectedCategory, setSelectedAddress }, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/tech-provide`, { ...techInfo, category: selectedCategory, address: selectedAddress }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       alert('기술 제공 정보가 성공적으로 저장되었습니다.');
-      navigate('/mypage'); // MyPage로 리다이렉트
+      navigate('/mypage');
     } catch (error) {
       console.error('기술 제공 정보 저장 오류:', error);
       setError('기술 제공 정보 저장 중 오류가 발생했습니다.');
     }
   };
 
-const handleSelectCategory = (thirdCategory) => {
-    setSelectedCategory(thirdCategory); // 선택된 카테고리 상태 업데이트
-    setShowCategoryModal(false); // 카테고리 모달 닫기
-};
+  const handleSelectCategory = (category) => {
+    setSelectedCategory(category);
+    setShowCategoryModal(false);
+  };
 
-const handleSelectAddress = (setSelectedAddress) => {
-    selectedAddress(setSelectedAddress); // 선택된 주소 상태 업데이트
-    setShowAddressModal(false); // 주소 모달 닫기
-};
+  const handleSelectAddress = (address) => {
+    setSelectedAddress(address);
+    setShowAddressModal(false);
+  };
 
-const openAddressModal = () => {
-  setIsAddressModalOpen(true);
-};
+  const openCategoryModal = () => {
+    setShowCategoryModal(true);
+  };
 
-const closeAddressModal = () => {
-  setIsAddressModalOpen(false);
-};
+  const closeCategoryModal = () => {
+    setShowCategoryModal(false);
+  };
 
-const openModal = () => {
-    setIsModalOpen(true);
-};
+  const openAddressModal = () => {
+    setShowAddressModal(true);
+  };
 
-const closeModal = () => {
-    setIsModalOpen(false);
-};
+  const closeAddressModal = () => {
+    setShowAddressModal(false);
+  };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const requestVerificationCode = async () => {
+    try {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/request-verification-code`, {
+        phoneNumber: techInfo.phoneNumber,
+      });
+      alert('인증 코드가 전송되었습니다.');
+    } catch (error) {
+      console.error('인증 코드 요청 오류:', error);
+      setError('인증 코드 요청 중 오류가 발생했습니다.');
+    }
+  };
+
+  const verifyCode = async () => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/verify-code`, {
+        phoneNumber: techInfo.phoneNumber,
+        verificationCode: techInfo.verificationCode,
+      });
+      if (response.data.success) {
+        setIsVerified(true);
+        alert('전화번호 인증이 완료되었습니다.');
+      } else {
+        setError('인증 코드가 올바르지 않습니다.');
+      }
+    } catch (error) {
+      console.error('인증 코드 확인 오류:', error);
+      setError('인증 코드 확인 중 오류가 발생했습니다.');
+    }
+  };
 
   return (
     <div className="tech-provide">
@@ -121,39 +154,72 @@ const closeModal = () => {
           />
         </label>
 
-        <div className="col-lg-3 col-md-3 col-12 p-0">
-                  <div className="search-input">
-                    <label htmlFor="category">
-                      <i className="lni lni-grid-alt theme-color"></i>
-                    </label>
-                    <button
-                      type="button"
-                      id="category"
-                      className="btn category-btn"
-                      onClick={openModal}
-                    >
-                      {selectedCategory ? selectedCategory.name : '카테고리 선택'}
-                    </button>
-                  </div>
-                </div>
-                <div className="col-lg-3 col-md-3 col-12 p-0">
-                  <div className="search-input">
-                    <label htmlFor="location">
-                      <i className="lni lni-map-marker theme-color"></i>
-                    </label>
-                    <button
-                      type="button"
-                      id="location"
-                      className="btn location-btn"
-                      onClick={openAddressModal}
-                    >
-                      {selectedAddress || '지역 선택'}
-                    </button>
-                  </div>
-                </div>
+        <label>
+          전화번호 *
+          <input
+            type="text"
+            name="phoneNumber"
+            value={techInfo.phoneNumber}
+            onChange={handleChange}
+            className="tech-provide-input"
+            placeholder="전화번호 입력"
+          />
+          <button type="button" onClick={requestVerificationCode} className="tech-provide-submit">인증 코드 요청</button>
+        </label>
+
+        <label>
+          인증 코드 *
+          <input
+            type="text"
+            name="verificationCode"
+            value={techInfo.verificationCode}
+            onChange={handleChange}
+            className="tech-provide-input"
+            placeholder="인증 코드 입력"
+          />
+          <button type="button" onClick={verifyCode} className="tech-provide-submit">확인</button> {/* 수정된 부분 */}
+        </label>
+
+        <div className="row">
+          <div className="col-lg-3 col-md-3 col-12 p-0">
+            <div className="search-input">
+              <label htmlFor="category">
+                <i className="lni lni-grid-alt theme-color"></i>
+              </label>
+              <button
+                type="button"
+                id="category"
+                className="btn category-btn"
+                onClick={openCategoryModal}
+              >
+                {selectedCategory ? selectedCategory.name : '카테고리 선택'}
+              </button>
+            </div>
+          </div>
+          <div className="col-lg-3 col-md-3 col-12 p-0">
+            <div className="search-input">
+              <label htmlFor="location">
+                <i className="lni lni-map-marker theme-color"></i>
+              </label>
+              <button
+                type="button"
+                id="location"
+                className="btn location-btn"
+                onClick={openAddressModal}
+              >
+                {selectedAddress || '지역 선택'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p className="output-message">{error}</p>
 
         <button type="submit" className="tech-provide-submit">제출</button>
       </form>
+
+      {showCategoryModal && <SearchCategory onClose={closeCategoryModal} onSelectCategory={handleSelectCategory} />}
+      {showAddressModal && <AddressModal onClose={closeAddressModal} onSelectAddress={handleSelectAddress} />}
     </div>
   );
 };

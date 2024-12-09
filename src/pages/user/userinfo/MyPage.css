@@ -61,13 +61,13 @@
   border-radius: 8px; /* 모서리 둥글게 */
 }
 
-label {
+.my-page-label {
   display: block; /* 블록 요소로 변경하여 줄 바꿈 */
   margin: 10px 0 5px; /* 위쪽 간격과 아래쪽 간격 조정 */
   font-weight: bold; /* 글자 두껍게 */
 }
 
-input {
+.my-page-input {
   width: 100%; /* 입력 필드 가로폭 100% */
   padding: 8px; /* 입력 필드 내부 여백 */
   margin-bottom: 15px; /* 입력 필드 아래쪽 간격 */
