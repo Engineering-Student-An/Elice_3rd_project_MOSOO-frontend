@@ -10,7 +10,7 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
  */
 export const fetchPostList = async (page = 1, isOffer) => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/api/post`, {
+        const response = await axios.get(`${API_BASE_URL}/api/post/postList`, {
             params: { page, isOffer },
         });
         return response.data;
@@ -105,24 +105,36 @@ export const fetchReviews = async (postId) => {
  * @param {Object} filters - 필터링 조건 (카테고리, 키워드, 주소, Offer 여부)
  * @returns {Promise<Object>} - 게시물 목록과 페이지 정보
  */
-export const fetchFilteredPostList = async (page, filters) => {
+export const fetchFilteredPostList = async (page, filters = {}) => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/api/post/filterPosts`, {
-            params: {
-                page,
-                category: filters.selectedCategory || '',
-                isOffer: true, // Offer 조건은 항상 true로 설정 (필요에 따라 수정 가능)
-                keyword: filters.keyword || '',
-                address: filters.selectedAddress || '',
-            },
-        });
+        const params = {
+            page,
+            isOffer: true, // Offer 조건은 항상 true로 설정
+        };
+
+        // 선택적으로 파라미터 추가
+        if (filters.selectedCategory?.category_id) {
+            params.categoryId = filters.selectedCategory.category_id;
+        }
+        if (filters.keyword) {
+            params.keyword = filters.keyword;
+        }
+        if (filters.selectedAddress) {
+            params.address = filters.selectedAddress;
+        }
+
+        const response = await axios.get(`${API_BASE_URL}/api/post/filterPosts`, { params });
 
         return {
-            postList: response.data.posts, // 서버에서 반환된 게시물 목록
+            postList: response.data.postList, // 서버에서 반환된 게시물 목록
             totalPages: response.data.totalPages, // 전체 페이지 수
+            keyword: response.data.keyword || '',
+            address: response.data.address || '',
+            categoryName: response.data.categoryName || '',
         };
     } catch (error) {
         console.error('필터링된 게시물 목록을 가져오는 중 오류 발생:', error);
         throw new Error('필터링된 게시물 데이터를 가져오는 데 실패했습니다.');
     }
 };
+
