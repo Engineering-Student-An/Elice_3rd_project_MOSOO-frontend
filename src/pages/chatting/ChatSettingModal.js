@@ -8,7 +8,12 @@ const ChatSettingModal = ({ isOpen, onRequestClose, chatRoomId, buttonRef }) => 
         try {
             // API 호출
             await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}`,
-                { withCredentials: true }
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    withCredentials: true
+                }
             );
             alert('채팅방을 나갔습니다.');
 

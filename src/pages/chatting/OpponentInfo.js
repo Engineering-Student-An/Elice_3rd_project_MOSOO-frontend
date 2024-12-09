@@ -15,7 +15,12 @@ const OpponentInfo = ({chatRoomId}) => {
     const fetchInfos = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}/user-info`,
-                { withCredentials: true }
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    withCredentials: true
+                }
             );
             setOpponent(response.data);
             setLoading(false); // 데이터 로드 완료
