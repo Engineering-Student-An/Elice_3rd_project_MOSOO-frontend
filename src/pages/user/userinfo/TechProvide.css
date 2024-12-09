@@ -1,3 +1,5 @@
+/* TechProvide.css */
+
 .tech-provide {
     display: flex;
     flex-direction: column;
@@ -32,9 +34,10 @@
     resize: vertical; /* 세로 길이 조절 가능 */
 }
 
-.tech-provide-button {
+.tech-provide-btn,
+.tech-provide-submit {
     width: 100%;
-    padding: 15px;
+    padding: 15px; /* 기본 버튼 패딩 */
     border-radius: 4px;
     border: none;
     background-color: #007bff;
@@ -46,15 +49,68 @@
 
 .tech-provide-submit {
     padding: 10px 20px; /* 버튼 크기 조정 */
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 14px; /* 버튼 글자 크기 조정 */
-      margin-right: 10px; /* 버튼 간격 */
+    font-size: 14px; /* 버튼 글자 크기 조정 */
+    margin: 10px;
 }
 
-.tech-provide-button:hover,
+.tech-provide-btn:hover,
 .tech-provide-submit:hover {
     opacity: 0.9; /* 호버 시 효과 */
 }
+
+.button-container {
+    display: flex; /* Flexbox 사용 */
+    justify-content: center; /* 가운데 정렬 */
+    gap: 10px; /* 버튼 간의 간격 */
+    margin-bottom: 20px; /* 버튼과 출력 문구 간의 간격 */
+}
+
+.output-message {
+    text-align: center; /* 텍스트 중앙 정렬 */
+    margin-top: 10px; /* 위쪽 여백 추가 */
+    color: red; /* 에러 메시지 색상 */
+}
+
+.category-btn,
+.location-btn {
+    width: 100%; /* 버튼의 너비를 100%로 설정 */
+    padding: 8px; /* 버튼 패딩을 줄임 */
+    border-radius: 4px; /* 모서리 둥글게 */
+    border: 1px solid #007bff; /* 테두리 색상 */
+    background-color: #fff; /* 배경 색상 */
+    color: #007bff; /* 글자 색상 */
+    font-size: 12px; /* 글자 크기를 줄임 */
+    cursor: pointer; /* 포인터 커서 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    transition: background-color 0.3s, color 0.3s; /* 호버 시 효과 */
+    margin-bottom: 15px; /* 버튼 간의 간격 */
+}
+
+.category-btn:hover,
+.location-btn:hover {
+    background-color: #007bff; /* 호버 시 배경 색상 */
+    color: white; /* 호버 시 글자 색상 */
+}
+
+.category-selection,
+.address-selection {
+    width: 100%; /* 선택 섹션의 너비 설정 */
+    margin-bottom: 20px; /* 간격 추가 */
+    display: flex; /* Flexbox 사용 */
+    justify-content: center; /* 가운데 정렬 */
+}
+
+.category-selection label,
+.address-selection label {
+    display: block; /* 레이블 블록으로 표시 */
+    margin-bottom: 10px; /* 레이블과 버튼 간의 간격 */
+    font-weight: bold; /* 레이블 글자 두껍게 */
+}
+
+.search-input {
+    display: flex;
+    flex-direction: column; /* 세로 정렬 */
+    align-items: center; /* 가운데 정렬 */
+    justify-content: center; /* 가운데 정렬 */
+}
+
