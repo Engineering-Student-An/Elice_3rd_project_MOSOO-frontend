@@ -4,18 +4,20 @@ import "./AddressModal.css";
 
 const AddressModal = ({ onClose, onSelectAddress }) => {
   const [selectedAddress, setSelectedAddress] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSave = () => {
     if (selectedAddress) {
       onSelectAddress(selectedAddress);
       onClose();
     } else {
-      alert('주소를 선택해 주세요.');
+      setErrorMessage("주소를 입력하지 않았습니다.");
     }
   };
 
   const handleSelectAddress = (address) => {
     setSelectedAddress(address);
+    setErrorMessage(""); // 오류 메시지 초기화
   };
 
   return (
@@ -24,6 +26,7 @@ const AddressModal = ({ onClose, onSelectAddress }) => {
         <div className="address-modal-body">
           {/* Address 컴포넌트 */}
           <Address onSelectAddress={handleSelectAddress} />
+          {errorMessage && <div className="error-message">{errorMessage}</div>}
         </div>
         <div className="address-modal-footer">
           <button onClick={handleSave}>저장</button>
