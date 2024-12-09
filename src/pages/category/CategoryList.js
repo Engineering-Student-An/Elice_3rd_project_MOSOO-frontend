@@ -53,11 +53,21 @@ const CategoryList = () => {
 
   const handleDeleteConfirm = async () => {
     try {
+      const token = localStorage.getItem('token');
+  
+      // 카테고리 삭제 API 호출
       await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedCategoryId}`,
-        {withCredentials: true}
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
+  
       alert("카테고리가 삭제되었습니다.");
+      window.location.reload();
       setCategories(
         categories.filter(
           (category) => category.categoryId !== selectedCategoryId
