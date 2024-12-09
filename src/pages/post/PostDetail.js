@@ -64,7 +64,7 @@ const PostDetail = () => {
                 price: bidPrice,
                 date: new Date(bidDate).toISOString(),
             };
-            await createBid(id, requestDto); // userId=1과 함께 요청 전송
+            await createBid(id, requestDto, 1); // userId=1과 함께 요청 전송
             alert('입찰이 성공적으로 등록되었습니다.');
             setShowModal(false); // 모달 닫기
             loadBids(); // 입찰 데이터 새로고침

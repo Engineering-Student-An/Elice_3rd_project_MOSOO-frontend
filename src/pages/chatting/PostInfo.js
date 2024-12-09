@@ -148,7 +148,8 @@ const PostInfo = ({ chatRoomId }) => {
             </div>
 
             {!isGosu && (
-                <a href={`/payment/${chatRoomId}`} className="purple-button">주문하기</a>
+                //TODO: 주문서 페이지로 이동
+                <a href="/" className="purple-button">주문하기</a>
             )}
 
         </div>

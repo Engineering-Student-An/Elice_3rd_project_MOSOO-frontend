@@ -64,14 +64,9 @@ const OfferPostList = () => {
         <div className="container mt-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 className="purple-text">고수 글 목록</h2>
-                <div>
-                    <button className="btn m-1 btn-primary" onClick={handleCreatePost}>
-                        글 생성
-                    </button>
-                    <button className="btn m-1 btn-secondary" onClick={() => navigate(-1)}>
-                        뒤로 가기
-                    </button>
-                </div>
+                <button className="btn btn-primary" onClick={handleCreatePost}>
+                    글 생성
+                </button>
             </div>
 
             {loading && <p>로딩 중...</p>}
@@ -81,7 +76,7 @@ const OfferPostList = () => {
                 {posts.map((post) => (
                     <div className="col-md-4 mb-3" key={post.id}>
                         <div className="card" style={{fontSize: '0.9rem'}}>
-                        {post.imgUrls && post.imgUrls.length > 0 && (
+                            {post.imgUrls && post.imgUrls.length > 0 && (
                                 <img
                                     src={post.imgUrls[0]}
                                     alt={post.title}

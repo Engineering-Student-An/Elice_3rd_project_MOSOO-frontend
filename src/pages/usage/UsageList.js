@@ -14,14 +14,12 @@ const PaymentComplete = () => {
         setOngoing(isOngoing);
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/order`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
                 params: { orderStatus: status },
                 withCredentials: true
             });
 
             setOrders(response.data.orders);
+            console.log(response.data.orders);
 
         } catch (err) {
             setError(err.message);

@@ -22,6 +22,8 @@ const MyPage = () => {
   const [error, setError] = useState('');
   const [activeMenu, setActiveMenu] = useState('info');
   const [userRole, setUserRole] = useState('ROLE_USER'); // 사용자 역할 상태
+  const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -95,6 +97,47 @@ const MyPage = () => {
       navigate('/TechProvide'); // 기술 제공 페이지로 이동
     };
 
+  const handlePasswordChange = async () => {
+    setPasswordError('');
+    if (!newUser.currentPassword) {
+      setPasswordError('현재 비밀번호를 입력하세요.');
+      return;
+    }
+
+    if (!newUser.password) {
+      setPasswordError('새 비밀번호를 입력하세요.');
+      return;
+    }
+
+    if (newUser.password !== confirmPassword) {
+      setPasswordError('새 비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/user/password`, {
+        currentPassword: newUser.currentPassword,
+        newPassword: newUser.password,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        alert('비밀번호가 성공적으로 변경되었습니다.');
+        // 비밀번호 변경 후 필드 초기화
+        setNewUser({ ...newUser, currentPassword: '', password: '' });
+        setConfirmPassword('');
+      }
+    } catch (error) {
+      console.error('비밀번호 변경 중 오류가 발생했습니다:', error);
+      setPasswordError('비밀번호 변경 중 오류가 발생했습니다.');
+    }
+  };
+
+
   return (
     <div className="my-page">
       <div className="my-page-sidebar">
@@ -107,10 +150,10 @@ const MyPage = () => {
             <i className="fas fa-user-edit"></i> 내정보 수정
           </button>
           <button className={`my-page-menu-button ${activeMenu === 'history' ? 'active' : ''}`} onClick={() => handleMenuClick('history')}>
-            <i className="fas fa-bookmark"></i> 이용 기록
+            <i className="fas fa-bookmark"></i> 이용 내역
           </button>
           <button className={`my-page-menu-button ${activeMenu === 'chat' ? 'active' : ''}`} onClick={() => handleMenuClick('chat')}>
-            <i className="fas fa-comments"></i> 채팅 기록
+            <i className="fas fa-comments"></i> 채팅 내역
           </button>
           <button
             className={`my-page-menu-button ${activeMenu === 'techInfo' ? 'active' : ''}`}
@@ -161,12 +204,13 @@ const MyPage = () => {
 
       <div className="my-page-content">
         {activeMenu === 'info' && (
-            <div className="my-page-info-section">
-              <h2>내정보 수정</h2>
-              {isEditing ? (
-                  <div>
-                    <label>이름 *</label>
+          <div className="my-page-info-section">
+            <h2>내정보 수정</h2>
+            {isEditing ? (
+              <div>
+                <label className = "my-page-label">이름 *</label>
                 <input
+                  className = "my-page-input"
                   type="text"
                   name="fullName"
                   value={newUser.fullName}
@@ -175,16 +219,18 @@ const MyPage = () => {
                 <p className={`my-page-message ${error ? 'my-page-error' : 'my-page-warning'}`}>
                   {error || '이름은 2글자 이상 20글자 이하로 입력해야 합니다.'}
                 </p>
-                <label>이메일 *</label>
+                <label className = "my-page-label">이메일 *</label>
                 <input
+                  className = "my-page-input"
                   type="email"
                   name="email"
                   value={newUser.email}
                   onChange={handleChange}
                   readOnly
                 />
-                <label>사용자 주소</label>
+                <label className = "my-page-label">사용자 주소</label>
                 <input
+                  className = "my-page-input"
                   type="text"
                   name="address"
                   value={newUser.address}
@@ -241,24 +287,40 @@ const MyPage = () => {
         {activeMenu === 'info' && (
           <div className="my-page-password-section">
             <h3>비밀번호 수정</h3>
-            <label>현재 비밀번호</label>
+            <label className="my-page-label">현재 비밀번호</label>
             <input
+              className="my-page-input"
               type="password"
               name="currentPassword"
               value={newUser.currentPassword}
               onChange={handleChange}
             />
-            <label>새 비밀번호</label>
+            <label className="my-page-label">새 비밀번호</label>
             <input
+              className="my-page-input"
               type="password"
               name="password"
               value={newUser.password}
               onChange={handleChange}
             />
+            <label className="my-page-label">새 비밀번호 확인</label>
+            <input
+              className="my-page-input"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <p className={`my-page-message ${passwordError ? 'my-page-error' : ''}`}>
+              {passwordError}
+            </p>
             <div className="my-page-button-group">
-              <button className="my-page-action-button">비밀번호 수정</button>
+              <button className="my-page-action-button" onClick={handlePasswordChange}>
+                비밀번호 수정
+              </button>
             </div>
           </div>
+        )}
+
         )}
 
         {activeMenu === 'userManagement' && (

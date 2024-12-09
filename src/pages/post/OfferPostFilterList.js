@@ -36,10 +36,6 @@ const OfferPostFilterList = () => {
         }
     };
 
-    const handleCreatePost = () => {
-        navigate('/createPost');
-    };
-
     const handleFirstPage = () => {
         setCurrentPage(1);
     };
@@ -68,14 +64,9 @@ const OfferPostFilterList = () => {
         <div className="container mt-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 className="purple-text">필터링된 글 목록</h2>
-                <div>
-                    <button className="btn m-1 btn-primary" onClick={handleCreatePost}>
-                        글 생성
-                    </button>
-                    <button className="btn m-1 btn-secondary" onClick={() => navigate(-1)}>
-                        뒤로 가기
-                    </button>
-                </div>
+                <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+                    뒤로 가기
+                </button>
             </div>
 
             {loading && <p>로딩 중...</p>}

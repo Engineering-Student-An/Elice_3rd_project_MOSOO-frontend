@@ -6,7 +6,7 @@ const SignUp = () => {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [errors, setErrors] = useState({}); // 여러 오류 메시지를 저장할 상태
     const navigate = useNavigate();
 
     // 입력값 변경 핸들러
@@ -15,16 +15,16 @@ const SignUp = () => {
     const handleChangePassword = (e) => setPassword(e.target.value);
 
     const handleGoogleSignUp = () => {
-        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+        window.location.href = `${process.env.REACT_APP_API_BASE_URL}/oauth2/authorization/google`;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        setErrors({}); // 이전 오류 초기화
 
         // 유효성 검사
         if (!fullName || !email || !password) {
-            setError('모든 필드를 입력해야 합니다.');
+            setErrors({ global: '모든 필드를 입력해야 합니다.' });
             return;
         }
 
@@ -44,10 +44,16 @@ const SignUp = () => {
             // 에러 처리
             if (error.response) {
                 console.error('에러 응답:', error.response.data);
-                setError(error.response.data.message || '회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
+
+                // 오류 메시지 처리
+                if (error.response.data.code === 'INVALID_PASSWORD') {
+                    setErrors({ password: '비밀번호는 반드시 문자와 숫자로 8자 이상이어야 합니다.' });
+                } else {
+                    setErrors(error.response.data); // 서버에서 반환된 오류 메시지를 상태에 설정
+                }
             } else {
                 console.error('요청 오류:', error);
-                setError('회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
+                setErrors({ global: '회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.' });
             }
         }
     };
@@ -69,6 +75,7 @@ const SignUp = () => {
                         onChange={handleChangeFullName}
                         style={styles.input}
                     />
+                    {errors.fullName && <p style={{ color: 'red' }}>{errors.fullName}</p>} {/* 오류 메시지 표시 */}
                 </div>
                 <div style={styles.inputGroup}>
                     <label htmlFor="email">이메일:</label>
@@ -79,6 +86,7 @@ const SignUp = () => {
                         onChange={handleChangeEmail}
                         style={styles.input}
                     />
+                    {errors.email && <p style={{ color: 'red' }}>{errors.email}</p>} {/* 오류 메시지 표시 */}
                 </div>
                 <div style={styles.inputGroup}>
                     <label htmlFor="password">비밀번호:</label>
@@ -89,8 +97,9 @@ const SignUp = () => {
                         onChange={handleChangePassword}
                         style={styles.input}
                     />
+                    {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>} {/* 오류 메시지 표시 */}
                 </div>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {errors.global && <p style={{ color: 'red' }}>{errors.global}</p>} {/* 전체 오류 메시지 표시 */}
                 <button type="submit" style={styles.button}>가입하기</button>
             </form>
 

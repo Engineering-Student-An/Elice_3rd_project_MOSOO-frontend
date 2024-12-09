@@ -22,14 +22,12 @@ const Login = () => {
             const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login`, { email, password });
 
             if (response.status === 200) {
-                            // 로그인 성공 시 처리 (예: 토큰 저장, 리다이렉트)
-                            localStorage.setItem('token', response.data.accessToken);
-
-
-                            alert('로그인 성공!');
-                            // 예: 대시보드 페이지로 이동
-                            navigate('/');
-                        }
+                // 로그인 성공 시 처리 (예: 토큰 저장, 리다이렉트)
+                localStorage.setItem('token', response.data.accessToken);
+                alert('로그인 성공!');
+                // 페이지 새로고침 후 대시보드 페이지로 이동
+                window.location.href = '/'; // 전체 페이지 새로고침
+            }
         } catch (err) {
             console.error('로그인 실패:', err);
             setError(err.response?.data?.message || '로그인에 실패했습니다.');
@@ -37,7 +35,7 @@ const Login = () => {
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google'; // 구글 로그인 URL
     };
 
     return (
