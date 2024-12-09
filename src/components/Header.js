@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import logo from '../assets/images/logo/logo.png'; // Header.js의 위치에 따라 경로 조정
 
+
 const Header = () => {
     const [token, setToken] = useState(localStorage.getItem('token')); // 로컬 스토리지에서 토큰 가져오기
 
@@ -51,7 +52,8 @@ const Header = () => {
                                     <div className="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
                                         <ul id="nav" className="navbar-nav d-flex ms-auto">
                                             <li className="nav-item">
-                                                <a href="javascript:void(0)" aria-label="Toggle navigation">Home</a>
+                                                <a href="/"
+                                                   aria-label="Toggle navigation">Home</a>
                                             </li>
                                             <li className="nav-item">
                                                 <a href="javascript:void(0)" aria-label="Toggle navigation">입찰페이지</a>
@@ -60,11 +62,98 @@ const Header = () => {
                                                 <a href="javascript:void(0)" aria-label="Toggle navigation">결제하기</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="javascript:void(0)" aria-label="Toggle navigation">이용내역</a>
+                                                <a href="/usages"
+                                                   aria-label="Toggle navigation">이용내역</a>
                                             </li>
                                             <li className="nav-item ms-auto">
                                                 <a href="/chatrooms" aria-label="Toggle navigation">채팅</a>
                                             </li>
+                                            {/*<li className="nav-item">*/}
+                                            {/*    <a*/}
+                                            {/*        className="dd-menu collapsed"*/}
+                                            {/*        href="javascript:void(0)"*/}
+                                            {/*        data-bs-toggle="collapse"*/}
+                                            {/*        data-bs-target="#submenu-1-3"*/}
+                                            {/*        aria-controls="navbarSupportedContent"*/}
+                                            {/*        aria-expanded="false"*/}
+                                            {/*        aria-label="Toggle navigation"*/}
+                                            {/*    >*/}
+                                            {/*        Listings*/}
+                                            {/*    </a>*/}
+                                            {/*    <ul className="sub-menu collapse" id="submenu-1-3">*/}
+                                            {/*        <li className="nav-item"><a href="javascript:void(0)">Ad Grid</a>*/}
+                                            {/*        </li>*/}
+                                            {/*        <li className="nav-item"><a href="javascript:void(0)">Ad Listing</a>*/}
+                                            {/*        </li>*/}
+                                            {/*        <li className="nav-item"><a href="javascript:void(0)">Ad Details</a>*/}
+                                            {/*        </li>*/}
+                                            {/*    </ul>*/}
+                                            {/*</li>*/}
+                                            {/*<li className="nav-item">*/}
+                                            {/*    <a*/}
+                                            {/*        className="dd-menu collapsed"*/}
+                                            {/*        href="javascript:void(0)"*/}
+                                            {/*        data-bs-toggle="collapse"*/}
+                                            {/*        data-bs-target="#submenu-1-4"*/}
+                                            {/*        aria-controls="navbarSupportedContent"*/}
+                                            {/*        aria-expanded="false"*/}
+                                            {/*        aria-label="Toggle navigation"*/}
+                                            {/*    >*/}
+                                            {/*        Pages*/}
+                                            {/*    </a>*/}
+                                            {/*    <ul className="sub-menu mega-menu collapse" id="submenu-1-4">*/}
+                                            {/*        <li className="single-block">*/}
+                                            {/*            <ul>*/}
+                                            {/*                <li className="mega-menu-title">Essential Pages</li>*/}
+                                            {/*                <li className="nav-item"><a href="about-us.html">About*/}
+                                            {/*                    Us</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Ads*/}
+                                            {/*                    Details</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Ads*/}
+                                            {/*                    Post</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="pricing.html">Pricing*/}
+                                            {/*                    Table</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Sign*/}
+                                            {/*                    Up</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Sign*/}
+                                            {/*                    In</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Contact*/}
+                                            {/*                    Us</a></li>*/}
+                                            {/*                <li className="nav-item"><a*/}
+                                            {/*                    href="javascript:void(0)">FAQ</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="404.html">Error Page</a>*/}
+                                            {/*                </li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Mail*/}
+                                            {/*                    Success</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Coming*/}
+                                            {/*                    Soon</a></li>*/}
+                                            {/*            </ul>*/}
+                                            {/*        </li>*/}
+                                            {/*        <li className="single-block">*/}
+                                            {/*            <ul>*/}
+                                            {/*                <li className="mega-menu-title">Dashboard</li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Account*/}
+                                            {/*                    Overview</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">My*/}
+                                            {/*                    Profile</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">My*/}
+                                            {/*                    Ads</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Favorite*/}
+                                            {/*                    Ads</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Ad*/}
+                                            {/*                    post</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Bookmarked*/}
+                                            {/*                    Ad</a></li>*/}
+                                            {/*                <li className="nav-item"><a*/}
+                                            {/*                    href="javascript:void(0)">Messages</a></li>*/}
+                                            {/*                <li className="nav-item"><a href="javascript:void(0)">Close*/}
+                                            {/*                    account</a></li>*/}
+                                            {/*                <li className="nav-item"><a*/}
+                                            {/*                    href="javascript:void(0)">Invoice</a></li>*/}
+                                            {/*            </ul>*/}
+                                            {/*        </li>*/}
+                                            {/*    </ul>*/}
+                                            {/*</li>*/}
                                         </ul>
                                     </div>
                                     {/* navbar collapse */}
