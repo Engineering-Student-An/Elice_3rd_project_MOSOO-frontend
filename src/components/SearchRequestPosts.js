@@ -12,6 +12,7 @@ const SearchRequestPosts = ({ onClose }) => {
   const [firstCategory, setFirstCategory] = useState(null);
   const [selectedSecondcategory, setSelectedSecondcategory] = useState(null);
   const [thirdCategory, setThirdCategory] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,6 +47,24 @@ const SearchRequestPosts = ({ onClose }) => {
 
   // 다음 단계로 이동하는 함수
   const nextStep = () => {
+
+    if (step === 1 && !selectedAddress) {
+      setErrorMessage("주소를 입력하지 않았습니다.");
+      return;
+    }
+    if (step === 2 && !firstCategory) {
+      setErrorMessage("대분류를 선택하지 않았습니다.");
+      return;
+    }
+    if (step === 3 && !selectedSecondcategory) {
+      setErrorMessage("중분류를 선택하지 않았습니다.");
+      return;
+    }
+    if (step === 4 && !thirdCategory) {
+      setErrorMessage("소분류를 선택하지 않았습니다.");
+      return;
+    }
+
     if (step < 4) {
       setStep(step + 1);
     } else {
@@ -79,6 +98,7 @@ const SearchRequestPosts = ({ onClose }) => {
       <div className={`main-modal-content ${step === 2 ? 'step2' : ''}`}>
         <div className="main-modal-body">
           {renderStepContent()}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
 
         {/* 진행 바 추가 */}

@@ -79,3 +79,7 @@
   max-width: 1000px;
   margin: 0 auto;
 }
+
+.error-message {
+  color: rgba(255, 0, 0, 0.6);
+}

@@ -45,3 +45,7 @@
     background-color: #200080;
   }
   
+  .error-message {
+    color: rgba(255, 0, 0, 0.6);
+    text-align: center;
+  }

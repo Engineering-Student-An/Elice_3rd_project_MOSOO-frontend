@@ -9,6 +9,7 @@ const SearchCategory = ({ onClose, onSelectCategory }) => {
   const [firstCategory, setFirstCategory] = useState(null);
   const [selectedSecondcategory, setSelectedSecondcategory] = useState(null); // 선택된 중분류 상태
   const [thirdCategory, setThirdCategory] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     console.log("step 상태가 변경됨:", step);
@@ -40,6 +41,22 @@ const SearchCategory = ({ onClose, onSelectCategory }) => {
 
   // 다음 단계로 이동하는 함수
   const nextStep = () => {
+
+    if (step === 1 && !firstCategory) {
+      setErrorMessage("대분류를 선택하지 않았습니다.");
+      return;
+    }
+    if (step === 2 && !selectedSecondcategory) {
+      setErrorMessage("중분류를 선택하지 않았습니다.");
+      return;
+    }
+    if (step === 3 && !thirdCategory) {
+      setErrorMessage("소분류를 선택하지 않았습니다.");
+      return;
+    }
+
+    setErrorMessage("");
+
         if (step < 3) {
       setStep(step + 1);
     } else {
@@ -68,6 +85,7 @@ const SearchCategory = ({ onClose, onSelectCategory }) => {
       <div className={`main-modal-content ${step === 1 ? 'step1' : ''}`}>
         <div className="main-modal-body">
           {renderStepContent()}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
 
         {/* 진행 바 추가 */}
