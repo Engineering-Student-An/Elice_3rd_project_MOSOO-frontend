@@ -11,7 +11,6 @@ const StepModal = ({ categoryId, onClose }) => {
   const [selectedSecondcategory, setSelectedSecondcategory] = useState(null); // 선택된 중분류 상태
   const [address, setAddress] = useState(null);
   const [thirdCategory, setThirdCategory] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,19 +45,17 @@ const StepModal = ({ categoryId, onClose }) => {
   const nextStep = () => {
     
     if (step === 1 && !address) {
-      setErrorMessage("주소를 입력하지 않았습니다.");
+      alert("주소를 입력하지 않았습니다.");
       return;
     }
     if (step === 2 && !selectedSecondcategory) {
-      setErrorMessage("중분류를 선택하지 않았습니다.");
+      alert("중분류를 선택하지 않았습니다.");
       return;
     }
     if (step === 3 && !thirdCategory) {
-      setErrorMessage("소분류를 선택하지 않았습니다.");
+      alert("소분류를 선택하지 않았습니다.");
       return;
     }
-
-    setErrorMessage("");
 
     if (step < 3) {
       setStep(step + 1);
@@ -70,6 +67,12 @@ const StepModal = ({ categoryId, onClose }) => {
   // 이전 단계로 이동하는 함수
   const prevStep = () => {
     if (step > 1) {
+      if (step === 2) {
+        setAddress(null);
+      } else if (step === 3) {
+        setSelectedSecondcategory(null);
+      }
+      setThirdCategory(null);
       setStep(step - 1);
     }
   };
@@ -79,10 +82,10 @@ const StepModal = ({ categoryId, onClose }) => {
     console.log("주소 정보:", address || "주소가 설정되지 않았습니다.");
     console.log("ThirdCategory ID:", thirdCategory?.categoryId || "소분류가 설정되지 않았습니다.");
 
-    navigate("/offerPosts", {
+    navigate("/offerPostsFilter", {
       state: {
-        address: address,
-        thirdCategory: thirdCategory?.categoryId
+        selectedAddress: address,
+        selectedCategory: thirdCategory
       },
     });
 
@@ -94,7 +97,6 @@ const StepModal = ({ categoryId, onClose }) => {
       <div className="main-modal-content">
         <div className="main-modal-body">
           {renderStepContent()}
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
 
         {/* 진행 바 추가 */}

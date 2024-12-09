@@ -12,7 +12,6 @@ const SearchRequestPosts = ({ onClose }) => {
   const [firstCategory, setFirstCategory] = useState(null);
   const [selectedSecondcategory, setSelectedSecondcategory] = useState(null);
   const [thirdCategory, setThirdCategory] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,19 +48,19 @@ const SearchRequestPosts = ({ onClose }) => {
   const nextStep = () => {
 
     if (step === 1 && !selectedAddress) {
-      setErrorMessage("주소를 입력하지 않았습니다.");
+      alert("주소를 입력하지 않았습니다.");
       return;
     }
     if (step === 2 && !firstCategory) {
-      setErrorMessage("대분류를 선택하지 않았습니다.");
+      alert("대분류를 선택하지 않았습니다.");
       return;
     }
     if (step === 3 && !selectedSecondcategory) {
-      setErrorMessage("중분류를 선택하지 않았습니다.");
+      alert("중분류를 선택하지 않았습니다.");
       return;
     }
     if (step === 4 && !thirdCategory) {
-      setErrorMessage("소분류를 선택하지 않았습니다.");
+      alert("소분류를 선택하지 않았습니다.");
       return;
     }
 
@@ -75,6 +74,14 @@ const SearchRequestPosts = ({ onClose }) => {
   // 이전 단계로 이동하는 함수
   const prevStep = () => {
     if (step > 1) {
+      if (step === 2) {
+        setSelectedAddress('');
+      } else if (step === 3) {
+        setFirstCategory(null);
+      } else if (step === 4) {
+        setSelectedSecondcategory(null);
+      }
+      setThirdCategory(null);
       setStep(step - 1);
     }
   };
@@ -98,7 +105,6 @@ const SearchRequestPosts = ({ onClose }) => {
       <div className={`main-modal-content ${step === 2 ? 'step2' : ''}`}>
         <div className="main-modal-body">
           {renderStepContent()}
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
 
         {/* 진행 바 추가 */}
