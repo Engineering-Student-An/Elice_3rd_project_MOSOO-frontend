@@ -190,7 +190,7 @@ const CreatePost = () => {
                     >
                         <option value="">대분류 선택</option>
                         {categories.map((category) => (
-                            <option key={category.category_id} value={category.category_id}>
+                            <option key={category.categoryId} value={category.categoryId}>
                                 {category.name}
                             </option>
                         ))}
@@ -203,7 +203,7 @@ const CreatePost = () => {
                     >
                         <option value="">중분류 선택</option>
                         {subCategoriesLevel1.map((subCategory) => (
-                            <option key={subCategory.category_id} value={subCategory.category_id}>
+                            <option key={subCategory.categoryId} value={subCategory.categoryId}>
                                 {subCategory.name}
                             </option>
                         ))}
@@ -216,7 +216,7 @@ const CreatePost = () => {
                     >
                         <option value="">소분류 선택</option>
                         {subCategoriesLevel2.map((subCategory) => (
-                            <option key={subCategory.category_id} value={subCategory.category_id}>
+                            <option key={subCategory.categoryId} value={subCategory.categoryId}>
                                 {subCategory.name}
                             </option>
                         ))}
