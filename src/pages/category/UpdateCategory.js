@@ -24,12 +24,14 @@ const UpdateCategory = () => {
 
     try {
       // 카테고리 수정 API 호출
+      const token = localStorage.getItem('token');
       const response = await axios.put(
         `${process.env.REACT_APP_API_BASE_URL}/api/category/${categoryId}`,
         category,
         {
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           },
           withCredentials: true
         }
