@@ -10,7 +10,7 @@ import "./assets/css/glightbox.min.css";
 import "./assets/css/main.css";
 import {Header, Footer, AdminRoute, AccessDeniedPage, ProtectedRoute} from "./components";
 import {ChatRoomList, ChatRoom} from "./pages/chatting";
-import {CreatePost, CreateReview, OfferPostList, PostDetail, RequestPostList} from "./pages/post";
+import {CreatePost, CreateReview, OfferPostList, PostDetail, RequestPostList, OfferPostFilterList } from "./pages/post";
 import {MainPage} from "./pages";
 import {CategoryList, CreateFirstCategory, CreateSubCategory, UpdateCategory} from "./pages/category";
 import SignUp from './pages/user/login-signup/SignUp';
