@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import {
+    fetchCategories,
+    fetchSubCategoriesLevel1,
+    fetchSubCategoriesLevel2,
+    createPost,
+} from './CreatePostApi';
 
 const CreatePost = () => {
     const [title, setTitle] = useState('');
@@ -22,59 +27,47 @@ const CreatePost = () => {
 
     const navigate = useNavigate();
 
-    // Fetch 대분류
     useEffect(() => {
-        const fetchCategories = async () => {
+        const loadCategories = async () => {
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_API_BASE_URL}/api/category/first_category`
-                );
-                setCategories(response.data);
+                const data = await fetchCategories();
+                setCategories(data);
             } catch (err) {
-                console.error('대분류 불러오기 실패:', err);
-                setError('대분류를 불러오는 데 실패했습니다.');
+                setError(err.message);
             }
         };
-        fetchCategories();
+        loadCategories();
     }, []);
 
-    // Fetch 중분류
     useEffect(() => {
         if (selectedParentCategory) {
-            const fetchSubCategoriesLevel1 = async () => {
+            const loadSubCategoriesLevel1 = async () => {
                 try {
-                    const response = await axios.get(
-                        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedParentCategory}`
-                    );
-                    setSubCategoriesLevel1(response.data);
-                    setSubCategoriesLevel2([]); // 초기화
+                    const data = await fetchSubCategoriesLevel1(selectedParentCategory);
+                    setSubCategoriesLevel1(data);
+                    setSubCategoriesLevel2([]);
                     setSelectedSubCategory1('');
                     setSelectedSubCategory2('');
                 } catch (err) {
-                    console.error('중분류 불러오기 실패:', err);
-                    setError('중분류를 불러오는 데 실패했습니다.');
+                    setError(err.message);
                 }
             };
-            fetchSubCategoriesLevel1();
+            loadSubCategoriesLevel1();
         }
     }, [selectedParentCategory]);
 
-    // Fetch 하분류
     useEffect(() => {
         if (selectedSubCategory1) {
-            const fetchSubCategoriesLevel2 = async () => {
+            const loadSubCategoriesLevel2 = async () => {
                 try {
-                    const response = await axios.get(
-                        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedSubCategory1}`
-                    );
-                    setSubCategoriesLevel2(response.data);
+                    const data = await fetchSubCategoriesLevel2(selectedSubCategory1);
+                    setSubCategoriesLevel2(data);
                     setSelectedSubCategory2('');
                 } catch (err) {
-                    console.error('하분류 불러오기 실패:', err);
-                    setError('하분류를 불러오는 데 실패했습니다.');
+                    setError(err.message);
                 }
             };
-            fetchSubCategoriesLevel2();
+            loadSubCategoriesLevel2();
         }
     }, [selectedSubCategory1]);
 
@@ -108,22 +101,12 @@ const CreatePost = () => {
         }
 
         try {
-            const response = await axios.post(
-                `${process.env.REACT_APP_API_BASE_URL}/api/post`,
-                formData,
-                { headers: { 'Content-Type': 'multipart/form-data' } }
-            );
-            console.log('게시글 생성 성공:', response.data);
+            const data = await createPost(formData);
+            console.log('게시글 생성 성공:', data);
 
-            // isOffer 값에 따라 리다이렉션
-            if (isOffer) {
-                navigate('/offerPosts');
-            } else {
-                navigate('/requestPosts');
-            }
-        } catch (error) {
-            console.error('게시글 생성 실패:', error);
-            setError('게시글 생성에 실패했습니다.');
+            navigate(isOffer ? '/offerPosts' : '/requestPosts');
+        } catch (err) {
+            setError(err.message);
         } finally {
             setLoading(false);
         }
