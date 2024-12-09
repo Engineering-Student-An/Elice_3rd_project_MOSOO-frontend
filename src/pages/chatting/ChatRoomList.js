@@ -17,7 +17,12 @@ const ChatRoomList = () => {
         const fetchChatRooms = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatrooms?page=${currentPage}`,
-                    { withCredentials: true }
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        withCredentials: true
+                    }
                 );
                 setChatRooms(response.data.chatRoomResponseDtoList); // DTO에서 채팅방 목록 가져오기
                 setTotalPages(response.data.totalPages);
@@ -25,7 +30,7 @@ const ChatRoomList = () => {
                 setErrorMessage(err.response ? err.response.data.message : err.message);
                 console.error('Failed to load chat rooms:', err);
             } finally {
-                window.scrollTo({ top: 0, behavior: 'instant' });
+                window.scrollTo({top: 0, behavior: 'instant'});
             }
         };
 
