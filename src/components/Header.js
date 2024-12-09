@@ -32,7 +32,7 @@ const Header = () => {
                                     <div className="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
                                         <ul id="nav" className="navbar-nav d-flex ms-auto">
                                             <li className="nav-item">
-                                                <a href="javascript:void(0)"
+                                                <a href="/"
                                                    aria-label="Toggle navigation">Home</a>
                                             </li>
                                             <li className="nav-item">
@@ -44,7 +44,7 @@ const Header = () => {
                                                    aria-label="Toggle navigation">결제하기</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="javascript:void(0)"
+                                                <a href="/usages"
                                                    aria-label="Toggle navigation">이용내역</a>
                                             </li>
                                             <li className="nav-item ms-auto"> {/* 여기에서 ms-auto 사용 */}
