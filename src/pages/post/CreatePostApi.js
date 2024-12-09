@@ -4,7 +4,7 @@ import axios from 'axios';
 export const fetchCategories = async () => {
     try {
         const response = await axios.get(
-            `${process.env.REACT_APP_API_BASE_URL}/api/category/first_category`
+            `${process.env.REACT_APP_API_BASE_URL}/api/category/firstCategory`
         );
         return response.data;
     } catch (err) {
