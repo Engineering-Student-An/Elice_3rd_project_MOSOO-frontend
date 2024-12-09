@@ -28,7 +28,7 @@ const OrderPage = () => {
 
     if (chatroomId) {
       axios
-        .post(`${process.env.REACT_APP_API_BASE_URL}/api/orders?chatroomId=${chatroomId}`, {Headers: {
+        .post(`${process.env.REACT_APP_API_BASE_URL}/api/orders?chatroomId=${chatroomId}`, {headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },})
         .then((response) => {
@@ -70,9 +70,16 @@ const OrderPage = () => {
             try {
               const backendResponse = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/v1/complete`, {
                 merchantUid: response.merchant_uid,
-                impUid: response.imp_uid,
-               // ? 고정 값이 맞나? Import 의 응답값에서 뽑아와야하는거 아닌가?
-              });
+                impUid: response.imp_uid
+              },
+                {
+                  headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                  'Accept': 'application/json', // JSON 응답 요청
+                  'Content-Type': 'application/json',
+                }, withCredentials: true
+              }
+            );
               navigate('/payment/success', { state: backendResponse.data });
             } catch (error) {
               console.error('Error completing payment on backend:', error);
