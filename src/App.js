@@ -8,6 +8,7 @@ import "./assets/css/animate.css";
 import "./assets/css/tiny-slider.css";
 import "./assets/css/glightbox.min.css";
 import "./assets/css/main.css";
+
 import {Header, Footer, AdminRoute, AccessDeniedPage, ProtectedRoute} from "./components";
 import {ChatRoomList, ChatRoom} from "./pages/chatting";
 import {CreatePost, CreateReview, OfferPostList, PostDetail, RequestPostList, OfferPostFilterList } from "./pages/post";
@@ -51,7 +52,7 @@ const App = () => {
                         <Route path="/chatrooms" element={<ProtectedRoute><ChatRoomList/></ProtectedRoute>}/> {/* 채팅방 목록 화면 */}
                         <Route path="/chatroom/:chatRoomId" element={<ProtectedRoute><ChatRoom/></ProtectedRoute>}/> {/* 채팅방 화면 */}
 
-                        <Route path="/payment" element={<Payment />} />
+                        <Route path="/payment/:chatroomId" element={<Payment />} />
                         <Route path="/payment/success" element={<PaymentComplete/>}/> {/* 결제 완료 화면 */}
 
                         <Route path="/usages" element={<UsageList/>}/> {/* 이용 내역 화면 */}
@@ -66,6 +67,8 @@ const App = () => {
             </div>
         </Router>
     );
+
 };
 
 export default App;
+
