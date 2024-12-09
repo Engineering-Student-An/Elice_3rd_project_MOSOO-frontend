@@ -1,154 +1,149 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Form, Button } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {Navigate, useParams} from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const Payment = () => {
-  const [paymentData, setPaymentData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const { orderId } = useParams(); // URL에서 주문 ID를 가져옴 (필요한 경우)
-  const [redirect, setRedirect] = useState(false);  // 리다이렉트 여부
-  const [responseData, setResponseData] = useState(null);   // 결제 완료 후 응답
-  // 포트원 SDK 로드
+const OrderPage = () => {
+  const { chatroomId } = useParams(); // URL에서 chatroomId 가져오기
+  const [orderDetails, setOrderDetails] = useState(null);
+  const navigate = useNavigate();
+
+  // 아임포트 SDK 로드
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.iamport.kr/v1/iamport.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  // 서버에서 결제 데이터 가져오기
-  useEffect(() => {
-    const fetchPaymentData = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/payments/prepare`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}` // JWT 토큰이 필요한 경우
-          }
-        });
-        setPaymentData(response.data);
-      } catch (error) {
-        console.error('결제 데이터 로딩 실패:', error);
-        alert('결제 정보를 불러오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
+    const loadIamportSDK = () => {
+      if (!window.IMP) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.iamport.kr/js/iamport.payment-1.2.0.js';
+        script.async = true;
+        script.onload = () => {
+          console.log('Iamport SDK loaded successfully.');
+        };
+        script.onerror = () => {
+          console.error('Failed to load Iamport SDK.');
+        };
+        document.body.appendChild(script);
       }
     };
 
-    fetchPaymentData();
-  }, []);
+    loadIamportSDK();
 
-  const onClickPayment = () => {
-    if (!window.IMP) {
-      alert('포트원 SDK가 로드되지 않았습니다.');
-      return;
-    }
-
-    if (!paymentData) {
-      alert('결제 정보가 없습니다.');
-      return;
-    }
-
-    const IMP = window.IMP;
-    IMP.init('imp06015387');
-
-    // 서버에서 받아온 데이터로 결제 요청
-    const requestData = {
-      pg: 'kakaopay',
-      pay_method: 'card',
-      merchant_uid: paymentData.merchantUid,
-      amount: paymentData.amount,
-      name: paymentData.productName,
-      buyer_name: paymentData.buyerName,
-      buyer_tel: paymentData.buyerTel,
-      buyer_email: paymentData.buyerEmail,
-      buyer_addr: paymentData.buyerAddr,
-      buyer_postcode: paymentData.buyerPostcode,
-    };
-
-    IMP.request_pay(requestData, callback);
-  };
-
-  const callback = async (response) => {
-    const {
-      success,
-      error_msg,
-      imp_uid,
-      merchant_uid,
-      paid_amount,
-      status
-    } = response;
-
-    if (success) {
-      try {
-        // 결제 성공 시 서버에 결제 완료 정보 전송
-        //1. response 를 백엔드로 모두 보내자.
-        //2. 돌려보고 어떤 데이터가 넘어오는지 확인 - 사용해야하는 데이터 확인해보기 (cs 대응)
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/payments/complete`, {
-          impUid: imp_uid,
-          merchantUid: merchant_uid,
-          amount: paid_amount,
-          status: status
-        }, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
+    if (chatroomId) {
+      axios
+        .post(`${process.env.REACT_APP_API_BASE_URL}/api/orders?chatroomId=${chatroomId}`, {Headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },})
+        .then((response) => {
+          setOrderDetails(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching order details:', error);
         });
-        setResponseData(response.data);
-        setRedirect(true);
-        alert('결제가 성공적으로 완료되었습니다.');
-        // 결제 완료 후 리다이렉션
-        // window.location.href = '/payment/success';
-      } catch (error) {
-        console.error('결제 완료 처리 실패:', error);
-        alert('결제는 성공했으나 서버 처리에 실패했습니다.');
+    }
+  }, [chatroomId]);
+
+  const handlePayment = async () => {
+    if (!orderDetails) return;
+
+    const { price, merchantUid, postResponseDto, gosuResponseDto } = orderDetails;
+
+    try {
+      if (!window.IMP) {
+        alert('Iamport SDK가 로드되지 않았습니다. 페이지를 새로고침 해주세요.');
+        return;
       }
-    } else {
-      alert(`결제 실패: ${error_msg}`);
+
+      const { IMP } = window;
+      IMP.init('imp06015387'); // Replace with your actual PortOne (Iamport) key
+
+      IMP.request_pay(
+        {
+          pg: 'kakaopay', // Adjust PG provider as needed
+          pay_method: 'card',
+          merchant_uid: merchantUid,
+          name: postResponseDto.title, // 서비스 이름
+          amount: price,
+          buyer_name: gosuResponseDto.businessName, // 고수 이름
+          buyer_addr: gosuResponseDto.gosuInfoAddress, // 고수 주소
+        },
+        async (response) => {
+          console.log("imp 응답값 : " + response)
+          if (response.success) {
+            try {
+              const backendResponse = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/v1/complete`, {
+                merchantUid: response.merchant_uid,
+                impUid: response.imp_uid,
+               // ? 고정 값이 맞나? Import 의 응답값에서 뽑아와야하는거 아닌가?
+              });
+              navigate('/payment/success', { state: backendResponse.data });
+            } catch (error) {
+              console.error('Error completing payment on backend:', error);
+              alert('결제는 성공했지만 서버 처리 중 문제가 발생했습니다. 고객센터에 문의해주세요.');
+            }
+          } else {
+            alert(`결제에 실패했습니다: ${response.error_msg}`);
+          }
+        }
+      );
+    } catch (error) {
+      console.error('Error initializing payment:', error);
+      alert('결제 요청 중 문제가 발생했습니다. 다시 시도해주세요.');
     }
   };
 
-  if(redirect) {
-    return <Navigate to="/payment/success" state={{ responseData }}/>;
-  }
+  if (!orderDetails) return <div>Loading...</div>;
 
-  if (loading) {
-    return <div className="text-center py-5">로딩중...</div>;
-  }
+  const { postResponseDto, bidResponseDto, gosuResponseDto, price } = orderDetails;
 
   return (
-    <div className="container py-5">
-      <Card className="mx-auto" style={{ maxWidth: '500px' }}>
-        <Card.Header>
-          <h4 className="text-center mb-0">상품 결제</h4>
-        </Card.Header>
-        <Card.Body>
-          {paymentData && (
-            <>
-              <div className="text-center mb-4">
-                <p className="h5 mb-2">결제 금액: {paymentData.amount.toLocaleString()}원</p>
-                <p className="mb-2">상품명: {paymentData.productName}</p>
-                <Form.Text className="text-muted">
-                  카카오페이로 안전하게 결제하세요
-                </Form.Text>
-              </div>
-              <Button 
-                variant="warning"
-                className="w-100"
-                onClick={onClickPayment}
-              >
-                카카오페이로 결제하기
-              </Button>
-            </>
-          )}
-        </Card.Body>
-      </Card>
+    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>주문서</h2>
+
+      <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
+        <h3 style={{ borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>결제 정보</h3>
+        <p>주문 날짜: {new Date().toLocaleDateString()}</p>
+        <p>최종 금액: {price.toLocaleString()} 원</p>
+      </div>
+
+      <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
+        <h3 style={{ borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>서비스 정보</h3>
+        <p>{postResponseDto.title}</p>
+        <p>{postResponseDto.address}</p>
+        <p>예상 금액: {postResponseDto.price.toLocaleString()} 원</p>
+      </div>
+
+      <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
+        <h3 style={{ borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>고수 정보</h3>
+        {bidResponseDto ? (
+          <>
+            <p>고수 이름: {bidResponseDto.fullName}</p>
+            <p>진행 가능 날짜: {new Date(bidResponseDto.date).toLocaleDateString()}</p>
+            <p>위치: {gosuResponseDto.gosuInfoAddress}</p>
+          </>
+        ) : (
+          <>
+            <p>고수 이름: {gosuResponseDto.businessName}</p>
+            <p>진행 가능 날짜: {postResponseDto.duration}</p>
+            <p>위치: {gosuResponseDto.gosuInfoAddress}</p>
+          </>
+        )}
+      </div>
+
+      <button
+        onClick={handlePayment}
+        style={{
+          backgroundColor: '#6200ee',
+          color: '#fff',
+          padding: '15px 30px',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          display: 'block',
+          margin: '0 auto',
+        }}
+      >
+        결제하기
+      </button>
     </div>
   );
 };
 
-export default Payment;
+export default OrderPage;
