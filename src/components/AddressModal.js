@@ -10,7 +10,7 @@ const AddressModal = ({ onClose, onSelectAddress }) => {
       onSelectAddress(selectedAddress);
       onClose();
     } else {
-      alert('주소를 선택해 주세요.');
+      alert("주소를 입력하지 않았습니다.");
     }
   };
 

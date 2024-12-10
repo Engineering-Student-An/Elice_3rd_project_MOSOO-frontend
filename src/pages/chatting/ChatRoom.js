@@ -56,7 +56,8 @@ const ChatRoom = () => {
 
         // chatRoomId를 헤더에 추가
         const headers = {
-            chatRoomId: chatRoomId
+            chatRoomId: chatRoomId,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
         };
 
         client.connect(headers, (frame) => {
@@ -117,7 +118,12 @@ const ChatRoom = () => {
                 createdAt: koreanTime
             };
 
-            stompClient.send(`/pub/${chatRoomId}`, {}, JSON.stringify(chatMessage));
+            stompClient.send(`/pub/${chatRoomId}`, {}, JSON.stringify(chatMessage), {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+            });
+
             messageRef.current.value = '';
             setInputMessage('');
             setSelectedFile(null);
@@ -146,6 +152,9 @@ const ChatRoom = () => {
 
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 params: {
                     isInit: true
                 }
@@ -188,6 +197,9 @@ const ChatRoom = () => {
                 url = `${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}?index=${lastIndex}`; // lastIndex가 null이 아닐 경우
             }
             const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 params: {
                     isInit: false
                 }, withCredentials: true
