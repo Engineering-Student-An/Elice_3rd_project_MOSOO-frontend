@@ -21,7 +21,7 @@ const MyPage = () => {
   const [newUser, setNewUser] = useState(user);
   const [error, setError] = useState('');
   const [activeMenu, setActiveMenu] = useState('info');
-  const [userRole, setUserRole] = useState('ROLE_USER'); // 사용자 역할 상태
+  const [userRole, setUserRole] = useState(''); // 사용자 역할 상태
   const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
@@ -36,7 +36,9 @@ const MyPage = () => {
             },
           });
 
-          const { fullName, email, address, role } = response.data; // 역할도 포함
+          const { fullName, email, } = response.data; // 역할도 포함
+          setUserRole(response.data.authority);
+          const address = response.data.userInfoDto.address;
           setUser({
             fullName: fullName || '',
             email: email || '',
@@ -51,7 +53,7 @@ const MyPage = () => {
             password: '',
             currentPassword: '',
           });
-          setUserRole(role); // 사용자 역할 설정
+          console.log(address);
         } catch (error) {
           console.error('사용자 정보를 가져오는 데 오류가 발생했습니다:', error);
           setError('사용자 정보를 가져오는 데 오류가 발생했습니다.');
@@ -79,33 +81,29 @@ const MyPage = () => {
   };
 
   const handleSave = async () => {
-      if (!newUser.fullName || newUser.fullName.length < 2 || newUser.fullName.length > 20) {
-          setError('');
-          return;
-      }
-      setError('');
-
       try {
           const token = localStorage.getItem('token');
           const response = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/user/userinfo`, {
-              address: newUser.address // UserInfo의 address
-
+              email: user.email, // 현재 사용자 이메일
+              newAddress: newUser.address // 새로운 주소
           }, {
               headers: {
                   Authorization: `Bearer ${token}`,
-              },
+              }
           });
 
           if (response.status === 200) {
               alert('프로필이 성공적으로 수정되었습니다.');
-              setUser(newUser); // 상태 업데이트
-              setIsEditing(false); // 편집 모드 종료
+              setUser(newUser);
+              setIsEditing(false);
+              window.location.href = '/mypage';
           }
       } catch (error) {
           console.error('프로필 수정 중 오류가 발생했습니다:', error);
           setError('프로필 수정 중 오류가 발생했습니다.');
       }
   };
+
 
 
 
