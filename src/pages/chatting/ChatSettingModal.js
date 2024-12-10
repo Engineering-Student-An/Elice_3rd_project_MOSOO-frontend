@@ -41,7 +41,7 @@ const ChatSettingModal = ({ isOpen, onRequestClose, chatRoomId, buttonRef }) => 
                     top: buttonRef ? buttonRef.getBoundingClientRect().bottom : 'auto',
                     left: buttonRef ? buttonRef.getBoundingClientRect().right - 200 : 'auto', // 버튼의 오른쪽 끝에서 모달 너비만큼 왼쪽으로 이동
                     width: '200px',
-                    height: '150px',
+                    height: '100px',
                     padding: '0',
                     marginTop: '5px',
                     borderRadius: '10px',
@@ -56,7 +56,6 @@ const ChatSettingModal = ({ isOpen, onRequestClose, chatRoomId, buttonRef }) => 
                 <button className="btn btn-light" style={{width: '100%'}} onClick={handleLeaveChatRoom}>
                     채팅방 나가기
                 </button>
-                <button className="btn btn-light" style={{width: '100%'}}>신고하기</button>
             </div>
         </Modal>
     );

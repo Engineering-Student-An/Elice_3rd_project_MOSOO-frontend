@@ -78,15 +78,36 @@ const MyPage = () => {
     }
   };
 
-  const handleSave = () => {
-    if (!newUser.fullName || newUser.fullName.length < 2 || newUser.fullName.length > 20) {
-      setError('이름은 2글자 이상 20글자 이하로 입력해야 합니다.');
-      return;
-    }
-    setError('');
-    setUser(newUser);
-    setIsEditing(false);
+  const handleSave = async () => {
+      if (!newUser.fullName || newUser.fullName.length < 2 || newUser.fullName.length > 20) {
+          setError('');
+          return;
+      }
+      setError('');
+
+      try {
+          const token = localStorage.getItem('token');
+          const response = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/user/userinfo`, {
+              address: newUser.address // UserInfo의 address
+
+          }, {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          });
+
+          if (response.status === 200) {
+              alert('프로필이 성공적으로 수정되었습니다.');
+              setUser(newUser); // 상태 업데이트
+              setIsEditing(false); // 편집 모드 종료
+          }
+      } catch (error) {
+          console.error('프로필 수정 중 오류가 발생했습니다:', error);
+          setError('프로필 수정 중 오류가 발생했습니다.');
+      }
   };
+
+
 
   const handleMenuClick = (menu) => {
     setActiveMenu(menu);
@@ -98,43 +119,44 @@ const MyPage = () => {
     };
 
   const handlePasswordChange = async () => {
-    setPasswordError('');
-    if (!newUser.currentPassword) {
-      setPasswordError('현재 비밀번호를 입력하세요.');
-      return;
-    }
-
-    if (!newUser.password) {
-      setPasswordError('새 비밀번호를 입력하세요.');
-      return;
-    }
-
-    if (newUser.password !== confirmPassword) {
-      setPasswordError('새 비밀번호가 일치하지 않습니다.');
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/user/password`, {
-        currentPassword: newUser.currentPassword,
-        newPassword: newUser.password,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 200) {
-        alert('비밀번호가 성공적으로 변경되었습니다.');
-        // 비밀번호 변경 후 필드 초기화
-        setNewUser({ ...newUser, currentPassword: '', password: '' });
-        setConfirmPassword('');
+      setPasswordError('');
+      if (!newUser.exPassword) { // 변경된 필드명
+          setPasswordError('현재 비밀번호를 입력하세요.');
+          return;
       }
-    } catch (error) {
-      console.error('비밀번호 변경 중 오류가 발생했습니다:', error);
-      setPasswordError('비밀번호 변경 중 오류가 발생했습니다.');
-    }
+
+      if (!newUser.newPassword) { // 변경된 필드명
+          setPasswordError('새 비밀번호를 입력하세요.');
+          return;
+      }
+
+      if (newUser.newPassword !== confirmPassword) { // 변경된 필드명
+          setPasswordError('새 비밀번호가 일치하지 않습니다.');
+          return;
+      }
+
+      try {
+          const token = localStorage.getItem('token');
+          const response = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/user/password`, {
+              email: user.email, // 이메일 추가
+              exPassword: newUser.exPassword, // 변경된 필드명
+              newPassword: newUser.newPassword, // 변경된 필드명
+          }, {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          });
+
+          if (response.status === 200) {
+              alert('비밀번호가 성공적으로 변경되었습니다.');
+              // 비밀번호 변경 후 필드 초기화
+              setNewUser({ ...newUser, exPassword: '', newPassword: '' }); // 변경된 필드명
+              setConfirmPassword('');
+          }
+      } catch (error) {
+          console.error('비밀번호 변경 중 오류가 발생했습니다:', error);
+          setPasswordError('현재 비밀번호가 일치하지 않습니다.');
+      }
   };
 
 
@@ -215,6 +237,7 @@ const MyPage = () => {
                   name="fullName"
                   value={newUser.fullName}
                   onChange={handleChange}
+                  readOnly
                 />
                 <p className={`my-page-message ${error ? 'my-page-error' : 'my-page-warning'}`}>
                   {error || '이름은 2글자 이상 20글자 이하로 입력해야 합니다.'}
@@ -285,43 +308,43 @@ const MyPage = () => {
         )}
 
         {activeMenu === 'info' && (
-          <div className="my-page-password-section">
-            <h3>비밀번호 수정</h3>
-            <label className="my-page-label">현재 비밀번호</label>
-            <input
-              className="my-page-input"
-              type="password"
-              name="currentPassword"
-              value={newUser.currentPassword}
-              onChange={handleChange}
-            />
-            <label className="my-page-label">새 비밀번호</label>
-            <input
-              className="my-page-input"
-              type="password"
-              name="password"
-              value={newUser.password}
-              onChange={handleChange}
-            />
-            <label className="my-page-label">새 비밀번호 확인</label>
-            <input
-              className="my-page-input"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-            <p className={`my-page-message ${passwordError ? 'my-page-error' : ''}`}>
-              {passwordError}
-            </p>
-            <div className="my-page-button-group">
-              <button className="my-page-action-button" onClick={handlePasswordChange}>
-                비밀번호 수정
-              </button>
+            <div className="my-page-password-section">
+                <h3>비밀번호 수정</h3>
+                <label className="my-page-label">현재 비밀번호</label>
+                <input
+                    className="my-page-input"
+                    type="password"
+                    name="exPassword" // 변경된 필드명
+                    value={newUser.exPassword} // 변경된 필드명
+                    onChange={handleChange}
+                />
+                <label className="my-page-label">새 비밀번호</label>
+                <input
+                    className="my-page-input"
+                    type="password"
+                    name="newPassword" // 변경된 필드명
+                    value={newUser.newPassword} // 변경된 필드명
+                    onChange={handleChange}
+                />
+                <label className="my-page-label">새 비밀번호 확인</label>
+                <input
+                    className="my-page-input"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                <p className={`my-page-message ${passwordError ? 'my-page-error' : ''}`}>
+                    {passwordError}
+                </p>
+                <div className="my-page-button-group">
+                    <button className="my-page-action-button" onClick={handlePasswordChange}>
+                        비밀번호 수정
+                    </button>
+                </div>
             </div>
-          </div>
         )}
 
-        )}
+
 
         {activeMenu === 'userManagement' && (
             <AdminUserLIst></AdminUserLIst>

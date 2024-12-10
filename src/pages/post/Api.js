@@ -69,20 +69,29 @@ export const fetchBids = async (postId) => {
  * 입찰 생성하기
  * @param {string} postId - 게시글 ID
  * @param {Object} requestDto - 입찰 데이터
- * @param {number} userId - 사용자 ID
  * @returns {Promise<Object>} - 생성된 입찰 데이터
  */
-export const createBid = async (postId, requestDto, userId) => {
+export const createBid = async (postId, requestDto) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/api/bid/${postId}`, requestDto, {
-            params: { userId },
-        });
+        const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
+
+        const response = await axios.post(
+            `${process.env.REACT_APP_API_BASE_URL}/api/bid/${postId}`,
+            requestDto,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+                },
+            }
+        );
         return response.data;
     } catch (error) {
         console.error('입찰 생성에 실패했습니다.', error);
         throw new Error('입찰 생성에 실패했습니다.');
     }
 };
+
+
 
 /**
  * 리뷰 목록 가져오기

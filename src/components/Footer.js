@@ -19,8 +19,7 @@ const Footer = () => {
                                         <li><a href="https://kdt-gitlab.elice.io/cloud_track/class_04/web_project3/team02" target="_blank"><i className="lni lni-github-original"></i></a></li>
                                         <li><a href="https://www.figma.com/design/tO8TessD61cVOMxqG1zISC/2%ED%8C%80?node-id=0-1&node-type=canvas&t=uMT6HtyR0lMDuXt8-0" target="_blank"><i className="lni lni-figma"></i></a></li>
                                         <li><a href="https://www.erdcloud.com/d/gcsZ8ddaLww3rdCrt" target="_blank"><i className="lni lni-database"></i></a></li>
-                                        {/*배포 후 swagger url 변경 필요*/}
-                                        <li><a href="http://localhost:8080/swagger-ui.html" target="_blank"><i className="lni lni-shortcode"></i></a></li>
+                                        <li><a href={`${process.env.REACT_APP_API_BASE_URL}/swagger-ui.html`} target="_blank"><i className="lni lni-shortcode"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
