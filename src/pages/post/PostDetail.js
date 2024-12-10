@@ -3,7 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import {fetchPostDetail, fetchBids, createBid, fetchReviews, createChatroom, deletePost} from './Api';
 import { Modal, Button, Carousel } from 'react-bootstrap';
-import './StarRating.css'; // 별표 스타일 추가
+import './StarRating.css';
+import {isGosu} from "../../components/isGosu";
+import {getJwtSubject} from "../../components/getJwtSubject"; // 별표 스타일 추가
 
 const PostDetail = () => {
     const { id } = useParams();
@@ -33,23 +35,30 @@ const PostDetail = () => {
         }
     };
 
-    const handleChat = async (bidId) => {
+    const handleChat = async (isOffer, bid) => {
         try {
             if (!post || !post.userId) {
                 alert('게시글 작성자 정보를 불러올 수 없습니다.');
                 return;
             }
 
-            if (!bidId) {
-                alert('유효한 입찰 ID가 없습니다.');
-                return;
+            if (bid === null) {
+                // createChatroom API 호출
+                const chatroomId = await createChatroom(post.userId, id, null);
+
+                // 요청 성공 시 채팅 페이지로 이동
+                navigate(`/chatroom/${chatroomId}`);
+            } else {
+                if (!bid) {
+                    alert('유효한 입찰 ID가 없습니다.');
+                    return;
+                }
+                // createChatroom API 호출
+                const chatroomId = await createChatroom(bid.userId, id, bid.id);
+                // 요청 성공 시 채팅 페이지로 이동
+                navigate(`/chatroom/${chatroomId}`);
             }
 
-            // createChatroom API 호출
-            const chatroomId = await createChatroom(post.userId, id, bidId);
-
-            // 요청 성공 시 채팅 페이지로 이동
-            navigate(`/chatroom/${chatroomId}`);
         } catch (error) {
             alert(error.message);
         }
@@ -155,29 +164,30 @@ const PostDetail = () => {
                         <div
                             className="card-header d-flex justify-content-between align-items-center purple-bg text-white">
                             <h2 className="card-title mb-0">{post.title}</h2>
-                            <div className="dropdown">
-                                <button
-                                    className="btn btn-light btn-sm dropdown-toggle"
-                                    type="button"
-                                    id="dropdownMenuButton"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    ...
-                                </button>
-                                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <button className="dropdown-item" onClick={handleEdit}>
-                                            게시글 수정
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button className="dropdown-item text-danger" onClick={handleDelete}>
-                                            게시글 삭제
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
+                            {String(getJwtSubject()) === String(post.userId) && ( // 조건부 렌더링
+                                <div className="dropdown">
+                                    <button
+                                        className="btn btn-light btn-sm dropdown-toggle"
+                                        type="button"
+                                        id="dropdownMenuButton"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                    </button>
+                                    <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                        <li>
+                                            <button className="dropdown-item" onClick={handleEdit}>
+                                                게시글 수정
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button className="dropdown-item text-danger" onClick={handleDelete}>
+                                                게시글 삭제
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
                         </div>
 
                         <div className="card-body">
@@ -214,7 +224,18 @@ const PostDetail = () => {
                                         <li className="list-group-item">
                                             <strong>기간:</strong> {post.duration}
                                         </li>
+                                        {post.offer && (
+                                            <Button
+                                                variant="success"
+                                                onClick={() => handleChat(true, null)} // 입찰 ID를 handleChat 함수로 전달
+                                                className="ms-auto mt-4"
+                                                style={{ float: 'right' }}
+                                            >
+                                                채팅하기
+                                            </Button>
+                                        )}
                                     </ul>
+
                                 </div>
                             </div>
 
@@ -224,7 +245,7 @@ const PostDetail = () => {
                             </div>
 
                             <div className="mt-4">
-                                {!post.offer && (
+                                {!post.offer && isGosu() && (
                                     <Button variant="primary" onClick={() => setShowModal(true)}>
                                         입찰하기
                                     </Button>
@@ -301,7 +322,7 @@ const PostDetail = () => {
                                                     <div>
                                                         <Button
                                                             variant="success"
-                                                            onClick={() => handleChat(bid.id)} // 입찰 ID를 handleChat 함수로 전달
+                                                            onClick={() => handleChat(false, bid)} // 입찰 ID를 handleChat 함수로 전달
                                                             className="ms-auto"
                                                             style={{float: 'right'}}
                                                         >
