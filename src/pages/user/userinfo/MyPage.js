@@ -16,6 +16,7 @@ const MyPage = () => {
     password: '',
     currentPassword: '',
      userInfoId: '', // userInfoId 추가
+     authority: ''
   });
 
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const MyPage = () => {
             },
           });
           console.log('User data response:', response.data); // 응답 확인
-          const { fullName, email, userInfoId} = response.data; // 역할도 포함
+          const { fullName, email, userInfoId, authority} = response.data; // 역할도 포함
           setUserRole(response.data.authority);
           const address = response.data.userInfoDto.address;
           setUser({
@@ -47,7 +48,8 @@ const MyPage = () => {
             address: address || '',
             password: '',
             currentPassword: '',
-            userInfoId: userInfoId || '' // userInfoId 설정
+            userInfoId: userInfoId || '', // userInfoId 설정
+            authority: authority || ''
 
           });
           setNewUser({
@@ -55,7 +57,8 @@ const MyPage = () => {
             email: email || '',
             address: address || '',
             password: '',
-            userInfoId: userInfoId || '' // userInfoId 설정
+            userInfoId: userInfoId || '', // userInfoId 설정
+            authority: authority || ''
           });
           console.log(address);
         } catch (error) {
