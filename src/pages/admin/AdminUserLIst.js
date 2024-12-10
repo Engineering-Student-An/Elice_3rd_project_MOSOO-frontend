@@ -9,20 +9,20 @@ const AdminUserList = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        const fetchMembers = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/admin/users?page=${currentPage}`); // API 엔드포인트에 맞게 수정
-                setMembers(response.data.memberList); // 응답 데이터에 맞게 수정
-                setTotalPages(response.data.totalPages);
-            } catch (err) {
-                setError('사용자 목록을 가져오는 데 실패했습니다.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchMembers();
     }, [currentPage]);
+
+    const fetchMembers = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/admin/users?page=${currentPage}`); // API 엔드포인트에 맞게 수정
+            setMembers(response.data.memberList); // 응답 데이터에 맞게 수정
+            setTotalPages(response.data.totalPages);
+        } catch (err) {
+            setError('사용자 목록을 가져오는 데 실패했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     if (error) {
         return <div>{error}</div>;
@@ -56,13 +56,40 @@ const AdminUserList = () => {
         setCurrentPage(pageNumber);
     };
 
+    const handleWithdrawal = async (memberId) => {
+        try {
+            const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/admin/users/${memberId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.status === 200) {
+                // 성공적으로 회원 탈퇴가 완료된 경우 처리
+                alert('회원 탈퇴가 완료되었습니다.');
+                fetchMembers();
+            } else {
+                // 에러 처리
+                alert('회원 탈퇴에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다.');
+        }
+    };
+
     return (
         <div>
-            <h3 className="mb-4">사용자 목록</h3>
+            <div className="d-flex justify-content-between">
+                <h3 className="mb-4">사용자 목록</h3>
+                <a href="/admin/deleted-users" className="me-4">탈퇴 목록</a>
+            </div>
+
             <ul>
-                {members.map((member) => (
-                    <div>
+            {members.map((member) => (
+                    <div className="d-flex justify-content-start mb-3" >
                         <li key={member.id}>{member.fullName} ({member.email})</li>
+                        <button className="btn btn-sm btn-danger" style={{marginLeft: '20px'}} onClick={() => handleWithdrawal(member.id)}>회원 탈퇴</button>
                     </div>
                 ))}
             </ul>
