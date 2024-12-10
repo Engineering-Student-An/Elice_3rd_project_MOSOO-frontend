@@ -169,6 +169,25 @@ const MyPage = () => {
       }
   };
 
+  const handleTechWithdrawal = async () => {
+          const token = localStorage.getItem('token');
+          try {
+              const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/gosu`, {
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                  },
+              });
+
+              if (response.status === 200) {
+                  alert('기술 제공이 성공적으로 탈퇴되었습니다.');
+                  window.location.href = '/mypage'; // 마이 페이지로 이동
+              }
+          } catch (error) {
+              console.error('기술 제공 탈퇴 중 오류가 발생했습니다:', error);
+              alert('기술 제공 탈퇴 중 오류가 발생했습니다.');
+          }
+      };
+
 
   return (
     <div className="my-page">
@@ -278,7 +297,15 @@ const MyPage = () => {
                   <button className="my-page-action-button" onClick={handleEditToggle}>
                     수정
                   </button>
-                  <button className="my-page-request-button" onClick={handleTechProvideTransition}>기술 제공 전환</button>
+                  {userRole === 'ROLE_GOSU' ? (
+                    <button className="my-page-request-button" onClick={handleTechWithdrawal}>
+                      기술 제공 탈퇴
+                    </button>
+                  ) : (
+                    <button className="my-page-request-button" onClick={handleTechProvideTransition}>
+                      기술 제공 전환
+                    </button>
+                  )}
                 </div>
               </div>
             )}
