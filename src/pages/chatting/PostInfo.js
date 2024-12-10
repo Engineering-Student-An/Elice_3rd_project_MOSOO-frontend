@@ -87,12 +87,12 @@ const PostInfo = ({ chatRoomId }) => {
     }
 
     return (
-        <div className="d-flex flex-column align-items-end">
+        <div className="d-flex flex-column align-items-start">
             <div>
                 {/*게시글 관련 정보*/}
                 <div className="mb-30">
                     <h3>
-                        <a href={`/post/${post.id}`}>{post.title}</a>
+                        <a href={`/posts/${post.id}`}>{post.title}</a>
                     </h3>
 
                     <p>{post.description.length > 30
@@ -109,7 +109,7 @@ const PostInfo = ({ chatRoomId }) => {
                     <div className="mb-30">
                         <h3>입찰 정보</h3>
                         {bid.price && (<p>입찰 금액: {new Intl.NumberFormat('ko-KR').format(inputPrice)} 원</p>)}
-                        {bid.date && (<p>진행 날짜: {bid.date}</p>)}
+                        {bid.date && (<p>진행 날짜: {new Date(bid.date).toLocaleDateString("ko-KR")}</p>)}
                     </div>
                 )}
 
