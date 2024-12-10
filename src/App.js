@@ -32,11 +32,15 @@ import {
     CreateSubCategory,
     UpdateCategory,
 } from "./pages/category";
+
 import SignUp from "./pages/user/login-signup/SignUp";
 import Login from "./pages/user/login-signup/Login";
-import AuthHandler from "./pages/user/login-signup/AuthHandler";
+import  AuthHandler from "./pages/user/login-signup/AuthHandler";
+
 import MyPage from "./pages/user/userinfo/MyPage";
 import TechProvide from "./pages/user/userinfo/TechProvide";
+import TechProvideEdit from "./pages/user/userinfo/TechProvideEdit";
+
 import {Payment} from "./pages/payment";
 import PaymentComplete from "./pages/payment/PaymentComplete";
 import UsageList from "./pages/usage/UsageList";
@@ -75,15 +79,10 @@ const App = () => {
                         {/* 유저 마이 페이지*/}
                         <Route path="/tokenCheck" element={<GoogleTokenCheck/>}/>{" "}
                         {/* Google로그인 후 토큰 저장 */}
-                        <Route
-                            path="/TechProvide"
-                            element={
-                                <ProtectedRoute>
-                                    <TechProvide/>
-                                </ProtectedRoute>
-                            }
-                        />{" "}
+                        <Route path="/TechProvide" element={<ProtectedRoute><TechProvide/></ProtectedRoute>}/>{" "}
                         {/* 기술 제공 전환 페이지 */}
+                        <Route path="/TechProvideEdit" element={<ProtectedRoute><TechProvideEdit/></ProtectedRoute>}/>{" "}
+                        {/* 기술 제공 정보 수정 페이지 */}
                         <Route
                             path="/admin/deleted-users"
                             element={
