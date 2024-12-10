@@ -41,8 +41,8 @@ const App = () => {
                         <Route path="/tokenCheck" element={<GoogleTokenCheck />} /> {/* Google로그인 후 토큰 저장 */}
                         <Route path="/TechProvide" element={<TechProvide/>} /> {/* 기술 제공 전환 페이지 */}
 
-                        <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
-                        <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
+                        <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 일반 게시글 목록 화면 */}
+                        <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 고수 게시글 목록 화면 */}
                         <Route path="/offerPostsFilter" element={<OfferPostFilterList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/createPost" element={<CreatePost/>}/> {/* 게시글 작성 화면 */}
                         <Route path="/posts/:id" element={<PostDetail/>}/> {/* 게시글 상세 화면 */}
