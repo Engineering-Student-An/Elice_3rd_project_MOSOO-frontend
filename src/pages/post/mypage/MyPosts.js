@@ -68,9 +68,9 @@ const MyPosts = () => {
                     <button className="btn m-1 btn-primary" onClick={handleCreatePost}>
                         글 생성
                     </button>
-                    <button className="btn m-1 btn-secondary" onClick={() => navigate(-1)}>
-                        뒤로 가기
-                    </button>
+                    {/*<button className="btn m-1 btn-secondary" onClick={() => navigate(-1)}>*/}
+                    {/*    뒤로 가기*/}
+                    {/*</button>*/}
                 </div>
             </div>
 
