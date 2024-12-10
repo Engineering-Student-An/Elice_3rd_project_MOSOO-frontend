@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPostDetail, fetchBids, createBid, fetchReviews } from './Api';
-import { Modal, Button, Carousel } from 'react-bootstrap';
-import './StarRating.css'; // 별표 스타일 추가
+import {useParams, useNavigate} from 'react-router-dom';
+import {fetchPostDetail, fetchBids, createBid, fetchReviews, createChatroom, deletePost} from './Api';
+import {Modal, Button, Carousel} from 'react-bootstrap';
+import './StarRating.css';
+import {isGosu} from "../../components/isGosu";
+import {getJwtSubject} from "../../components/getJwtSubject"; // 별표 스타일 추가
 
 const PostDetail = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const [post, setPost] = useState(null);
     const [bids, setBids] = useState([]);
     const [reviews, setReviews] = useState([]);
@@ -33,6 +35,35 @@ const PostDetail = () => {
         }
     };
 
+    const handleChat = async (isOffer, bid) => {
+        try {
+            if (!post || !post.userId) {
+                alert('게시글 작성자 정보를 불러올 수 없습니다.');
+                return;
+            }
+
+            if (bid === null) {
+                // createChatroom API 호출
+                const chatroomId = await createChatroom(post.userId, id, null);
+
+                // 요청 성공 시 채팅 페이지로 이동
+                navigate(`/chatroom/${chatroomId}`);
+            } else {
+                if (!bid) {
+                    alert('유효한 입찰 ID가 없습니다.');
+                    return;
+                }
+                // createChatroom API 호출
+                const chatroomId = await createChatroom(bid.userId, id, bid.id);
+                // 요청 성공 시 채팅 페이지로 이동
+                navigate(`/chatroom/${chatroomId}`);
+            }
+
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
     const loadBids = async () => {
         try {
             const data = await fetchBids(id);
@@ -46,7 +77,7 @@ const PostDetail = () => {
 
     const loadReviews = async (postId) => {
         try {
-            const reviewsData = await fetchReviews(postId);
+            const reviewsData = await fetchReviews(id);
             setReviews(reviewsData.sort((a, b) => b.id - a.id)); // 최신 순 정렬
         } catch (err) {
             console.error('리뷰 데이터를 불러오는 데 실패했습니다.', err);
@@ -81,15 +112,31 @@ const PostDetail = () => {
 
         return (
             <div className="star-rating">
-                {Array.from({ length: fullStars }).map((_, i) => (
+                {Array.from({length: fullStars}).map((_, i) => (
                     <span key={`full-${i}`} className="star full-star">★</span>
                 ))}
                 {halfStar && <span className="star half-star">★</span>}
-                {Array.from({ length: emptyStars }).map((_, i) => (
+                {Array.from({length: emptyStars}).map((_, i) => (
                     <span key={`empty-${i}`} className="star empty-star">★</span>
                 ))}
             </div>
         );
+    };
+
+    // 게시글 삭제 함수
+    const handleDelete = async () => {
+        try {
+            await deletePost(id); // deletePost 호출하여 게시글 삭제
+            alert('게시글이 삭제되었습니다.');
+            navigate('/posts'); // 게시글 목록 페이지로 리디렉션
+        } catch (err) {
+            setError('게시글 삭제에 실패했습니다.');
+        }
+    };
+
+    // 게시글 수정 함수
+    const handleEdit = () => {
+        navigate(`/edit-post/${id}`); // 수정 페이지로 이동
     };
 
     useEffect(() => {
@@ -113,10 +160,35 @@ const PostDetail = () => {
         <div className="container mt-5">
             <div className="row justify-content-center">
                 <div className="col-lg-10">
-                    <div className="card shadow" style={{ maxWidth: '100%', borderRadius: '15px' }}>
+                    <div className="card shadow" style={{maxWidth: '100%', borderRadius: '15px'}}>
                         <div
                             className="card-header d-flex justify-content-between align-items-center purple-bg text-white">
                             <h2 className="card-title mb-0">{post.title}</h2>
+                            {String(getJwtSubject()) === String(post.userId) && ( // 조건부 렌더링
+                                <div className="dropdown">
+                                    <button
+                                        className="btn btn-light btn-sm dropdown-toggle"
+                                        type="button"
+                                        id="dropdownMenuButton"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                    </button>
+                                    <ul className="dropdown-menu dropdown-menu-end"
+                                        aria-labelledby="dropdownMenuButton">
+                                        <li>
+                                            <button className="dropdown-item" onClick={handleEdit}>
+                                                게시글 수정
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button className="dropdown-item text-danger" onClick={handleDelete}>
+                                                게시글 삭제
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
                         </div>
 
                         <div className="card-body">
@@ -153,7 +225,19 @@ const PostDetail = () => {
                                         <li className="list-group-item">
                                             <strong>기간:</strong> {post.duration}
                                         </li>
+                                        {post.offer && Number(getJwtSubject()) !== post.userId && (
+
+                                            <Button
+                                                variant="success"
+                                                onClick={() => handleChat(true, null)} // 입찰 ID를 handleChat 함수로 전달
+                                                className="ms-auto mt-4"
+                                                style={{float: 'right'}}
+                                            >
+                                                채팅하기
+                                            </Button>
+                                        )}
                                     </ul>
+
                                 </div>
                             </div>
 
@@ -163,7 +247,7 @@ const PostDetail = () => {
                             </div>
 
                             <div className="mt-4">
-                                {!post.offer && (
+                                {!post.offer && isGosu() && (
                                     <Button variant="primary" onClick={() => setShowModal(true)}>
                                         입찰하기
                                     </Button>
@@ -234,7 +318,20 @@ const PostDetail = () => {
                                                         <strong>입찰 금액:</strong> {bid.price.toLocaleString()} 원
                                                     </div>
                                                     <div className="mb-2">
-                                                        <strong>작업 시작 가능일:</strong> {new Date(bid.date).toLocaleDateString()}
+                                                        <strong>작업 시작
+                                                            가능일:</strong> {new Date(bid.date).toLocaleDateString()}
+                                                    </div>
+                                                    <div>
+                                                        {Number(getJwtSubject()) === post.userId && (
+                                                            <Button
+                                                                variant="success"
+                                                                onClick={() => handleChat(false, bid)} // 입찰 ID를 handleChat 함수로 전달
+                                                                className="ms-auto"
+                                                                style={{float: 'right'}}
+                                                            >
+                                                                채팅하기
+                                                            </Button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

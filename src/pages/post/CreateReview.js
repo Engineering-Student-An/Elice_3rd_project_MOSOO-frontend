@@ -29,9 +29,25 @@ const CreateReview = () => {
 
         try {
             setLoading(true);
-            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/review/${id}`, reviewData, {
-                params: { userId },
-            });
+
+            // 로컬 스토리지에서 토큰 가져오기
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            // 요청 보내기
+            await axios.post(
+                `${process.env.REACT_APP_API_BASE_URL}/api/review/${id}`,
+                reviewData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 포함
+                    },
+                }
+            );
+
             alert('리뷰가 성공적으로 등록되었습니다.');
             navigate(`/posts/${id}`); // 리뷰 작성 후 게시글 상세 페이지로 이동
         } catch (err) {
@@ -41,6 +57,7 @@ const CreateReview = () => {
             setLoading(false);
         }
     };
+
 
     const renderStars = () => {
         return (

@@ -5,7 +5,8 @@ import { isAdmin } from '../../../components/IsAdmin'; // isAdmin 함수 import
 import './MyPage.css';
 import UsageList from "../../usage/UsageList";
 import {ChatRoomList} from "../../chatting";
-import AdminUserLIst from "../AdminUserLIst"; // CSS 파일에서 아이콘 스타일 추가
+import AdminUserLIst from "../../admin/AdminUserLIst";
+import {CategoryList} from "../../category"; // CSS 파일에서 아이콘 스타일 추가
 
 const MyPage = () => {
   const [user, setUser] = useState({
@@ -218,12 +219,6 @@ const MyPage = () => {
                     onClick={() => handleMenuClick('postManagement')}>
                   <i className="fas fa-file-alt"></i>(관리자) 게시글 관리
                 </button>
-
-                <button
-                    className={`my-page-menu-button ${activeMenu === 'orderManagement' ? 'active' : ''}`}
-                    onClick={() => handleMenuClick('orderManagement')}>
-                  <i className="fas fa-receipt"></i>(관리자) 주문 내역 관리
-                </button>
               </div>
           )}
 
@@ -357,23 +352,13 @@ const MyPage = () => {
         )}
 
         {activeMenu === 'categoryManagement' && (
-            <div>
-              <h2>카테고리 관리</h2>
-              <p>카테고리 관리 내용 넣어주세요.</p>
-            </div>
+            <CategoryList></CategoryList>
         )}
 
         {activeMenu === 'postManagement' && (
             <div>
-              <h2>게시글 관리</h2>
+              <h3>게시글 관리</h3>
               <p>게시글 관리 넣어주세요.</p>
-            </div>
-        )}
-
-        {activeMenu === 'orderManagement' && (
-            <div>
-              <h2>주문 내역 관리</h2>
-              <p>주문 내역 관리 넣어주세요.</p>
             </div>
         )}
       </div>
