@@ -11,7 +11,7 @@ const AdminUserList = () => {
     useEffect(() => {
         const fetchMembers = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/admin/member?page=${currentPage}`); // API 엔드포인트에 맞게 수정
+                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/admin/users?page=${currentPage}`); // API 엔드포인트에 맞게 수정
                 setMembers(response.data.memberList); // 응답 데이터에 맞게 수정
                 setTotalPages(response.data.totalPages);
             } catch (err) {
