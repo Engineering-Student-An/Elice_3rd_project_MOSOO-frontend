@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 import {fetchPostDetail, fetchBids, createBid, fetchReviews, createChatroom, deletePost} from './Api';
-import { Modal, Button, Carousel } from 'react-bootstrap';
+import {Modal, Button, Carousel} from 'react-bootstrap';
 import './StarRating.css';
 import {isGosu} from "../../components/isGosu";
 import {getJwtSubject} from "../../components/getJwtSubject"; // 별표 스타일 추가
 
 const PostDetail = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const [post, setPost] = useState(null);
     const [bids, setBids] = useState([]);
     const [reviews, setReviews] = useState([]);
@@ -112,11 +112,11 @@ const PostDetail = () => {
 
         return (
             <div className="star-rating">
-                {Array.from({ length: fullStars }).map((_, i) => (
+                {Array.from({length: fullStars}).map((_, i) => (
                     <span key={`full-${i}`} className="star full-star">★</span>
                 ))}
                 {halfStar && <span className="star half-star">★</span>}
-                {Array.from({ length: emptyStars }).map((_, i) => (
+                {Array.from({length: emptyStars}).map((_, i) => (
                     <span key={`empty-${i}`} className="star empty-star">★</span>
                 ))}
             </div>
@@ -160,7 +160,7 @@ const PostDetail = () => {
         <div className="container mt-5">
             <div className="row justify-content-center">
                 <div className="col-lg-10">
-                    <div className="card shadow" style={{ maxWidth: '100%', borderRadius: '15px' }}>
+                    <div className="card shadow" style={{maxWidth: '100%', borderRadius: '15px'}}>
                         <div
                             className="card-header d-flex justify-content-between align-items-center purple-bg text-white">
                             <h2 className="card-title mb-0">{post.title}</h2>
@@ -174,7 +174,8 @@ const PostDetail = () => {
                                         aria-expanded="false"
                                     >
                                     </button>
-                                    <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                    <ul className="dropdown-menu dropdown-menu-end"
+                                        aria-labelledby="dropdownMenuButton">
                                         <li>
                                             <button className="dropdown-item" onClick={handleEdit}>
                                                 게시글 수정
@@ -224,12 +225,13 @@ const PostDetail = () => {
                                         <li className="list-group-item">
                                             <strong>기간:</strong> {post.duration}
                                         </li>
-                                        {post.offer && (
+                                        {post.offer && Number(getJwtSubject()) !== post.userId && (
+
                                             <Button
                                                 variant="success"
                                                 onClick={() => handleChat(true, null)} // 입찰 ID를 handleChat 함수로 전달
                                                 className="ms-auto mt-4"
-                                                style={{ float: 'right' }}
+                                                style={{float: 'right'}}
                                             >
                                                 채팅하기
                                             </Button>
@@ -320,14 +322,16 @@ const PostDetail = () => {
                                                             가능일:</strong> {new Date(bid.date).toLocaleDateString()}
                                                     </div>
                                                     <div>
-                                                        <Button
-                                                            variant="success"
-                                                            onClick={() => handleChat(false, bid)} // 입찰 ID를 handleChat 함수로 전달
-                                                            className="ms-auto"
-                                                            style={{float: 'right'}}
-                                                        >
-                                                            채팅하기
-                                                        </Button>
+                                                        {Number(getJwtSubject()) === post.userId && (
+                                                            <Button
+                                                                variant="success"
+                                                                onClick={() => handleChat(false, bid)} // 입찰 ID를 handleChat 함수로 전달
+                                                                className="ms-auto"
+                                                                style={{float: 'right'}}
+                                                            >
+                                                                채팅하기
+                                                            </Button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
