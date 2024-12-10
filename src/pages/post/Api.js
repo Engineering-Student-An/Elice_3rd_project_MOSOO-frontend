@@ -22,7 +22,7 @@ export const fetchPostList = async (page = 1, isOffer) => {
 
 /**
  * 게시글 상세 가져오기
- * @param {string} postId - 게시글 ID
+ * @param {Long} postId - 게시글 ID
  * @returns {Promise<Object>} - 게시글 데이터
  */
 export const fetchPostDetail = async (postId) => {
@@ -37,7 +37,7 @@ export const fetchPostDetail = async (postId) => {
 
 /**
  * 게시글 삭제
- * @param {string} postId - 삭제할 게시글 ID
+ * @param {Long} postId - 삭제할 게시글 ID
  * @returns {Promise<Object>} - 삭제 결과
  */
 export const deletePost = async (postId) => {
@@ -52,7 +52,7 @@ export const deletePost = async (postId) => {
 
 /**
  * 입찰 목록 가져오기
- * @param {string} postId - 게시글 ID
+ * @param {Long} postId - 게시글 ID
  * @returns {Promise<Array>} - 입찰 목록
  */
 export const fetchBids = async (postId) => {
@@ -144,6 +144,41 @@ export const fetchFilteredPostList = async (page, filters = {}) => {
     } catch (error) {
         console.error('필터링된 게시물 목록을 가져오는 중 오류 발생:', error);
         throw new Error('필터링된 게시물 데이터를 가져오는 데 실패했습니다.');
+    }
+};
+
+/**
+ * 채팅방 생성 API 호출
+ * @param {number} gosuId - 게시글 작성자 ID
+ * @param {string} postId - 게시글 ID
+ * @param {string} bidId - 입찰 ID
+ * @returns {Promise<string>} - 생성된 채팅방 ID
+ */
+export const createChatroom = async (gosuId, postId, bidId) => {
+    try {
+        const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
+
+        console.log(gosuId, postId, bidId);
+
+        const response = await axios.post(
+            `${process.env.REACT_APP_API_BASE_URL}/api/chatroom`,
+            JSON.stringify({
+                gosuId,
+                postId,
+                bidId,
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/json', // JSON 형식으로 전송
+                    Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+                },
+            }
+        );
+        console.log(response.data);
+        return response.data.chatRoomId; // 서버에서 반환된 chatroomId
+    } catch (error) {
+        console.error('채팅방 생성에 실패했습니다:', error);
+        throw new Error('채팅방 생성에 실패했습니다.');
     }
 };
 

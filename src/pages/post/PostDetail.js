@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPostDetail, fetchBids, createBid, fetchReviews } from './Api';
+import {fetchPostDetail, fetchBids, createBid, fetchReviews, createChatroom} from './Api';
 import { Modal, Button, Carousel } from 'react-bootstrap';
 import './StarRating.css'; // 별표 스타일 추가
 
@@ -33,6 +33,28 @@ const PostDetail = () => {
         }
     };
 
+    const handleChat = async (bidId) => {
+        try {
+            if (!post || !post.userId) {
+                alert('게시글 작성자 정보를 불러올 수 없습니다.');
+                return;
+            }
+
+            if (!bidId) {
+                alert('유효한 입찰 ID가 없습니다.');
+                return;
+            }
+
+            // createChatroom API 호출
+            const chatroomId = await createChatroom(post.userId, id, bidId);
+
+            // 요청 성공 시 채팅 페이지로 이동
+            navigate(`/chatroom/${chatroomId}`);
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
     const loadBids = async () => {
         try {
             const data = await fetchBids(id);
@@ -46,7 +68,7 @@ const PostDetail = () => {
 
     const loadReviews = async (postId) => {
         try {
-            const reviewsData = await fetchReviews(postId);
+            const reviewsData = await fetchReviews(id);
             setReviews(reviewsData.sort((a, b) => b.id - a.id)); // 최신 순 정렬
         } catch (err) {
             console.error('리뷰 데이터를 불러오는 데 실패했습니다.', err);
@@ -234,7 +256,18 @@ const PostDetail = () => {
                                                         <strong>입찰 금액:</strong> {bid.price.toLocaleString()} 원
                                                     </div>
                                                     <div className="mb-2">
-                                                        <strong>작업 시작 가능일:</strong> {new Date(bid.date).toLocaleDateString()}
+                                                        <strong>작업 시작
+                                                            가능일:</strong> {new Date(bid.date).toLocaleDateString()}
+                                                    </div>
+                                                    <div>
+                                                        <Button
+                                                            variant="success"
+                                                            onClick={() => handleChat(bid.id)} // 입찰 ID를 handleChat 함수로 전달
+                                                            className="ms-auto"
+                                                            style={{float: 'right'}}
+                                                        >
+                                                            채팅하기
+                                                        </Button>
                                                     </div>
                                                 </div>
                                             </div>
