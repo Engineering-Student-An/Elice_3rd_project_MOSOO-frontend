@@ -67,7 +67,15 @@ const OfferPostFilterList = () => {
     return (
         <div className="container mt-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="purple-text">필터링된 글 목록</h2>
+                <div>
+                    <h2 className="purple-text">필터링된 글 목록</h2>
+                    {/* 필터 조건 표시 */}
+                    <p className="text-muted" style={{fontSize: '0.9rem', marginTop: '-10px'}}>
+                        {keyword && `키워드: "${keyword}"`}
+                        {selectedCategory && ` | 카테고리: "${selectedCategory.name}"`}
+                        {selectedAddress && ` | 지역: "${selectedAddress}"`}
+                    </p>
+                </div>
                 <div>
                     <button className="btn m-1 btn-primary" onClick={handleCreatePost}>
                         글 생성
@@ -84,7 +92,7 @@ const OfferPostFilterList = () => {
             <div className="row">
                 {posts.map((post) => (
                     <div className="col-md-4 mb-3" key={post.id}>
-                        <div className="card" style={{ fontSize: '0.9rem' }}>
+                        <div className="card" style={{fontSize: '0.9rem'}}>
                             {post.imgUrls && post.imgUrls.length > 0 && (
                                 <img
                                     src={post.imgUrls[0]}
