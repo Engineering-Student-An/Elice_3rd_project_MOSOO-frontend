@@ -50,9 +50,8 @@ const OrderPage = () => {
         alert('Iamport SDK가 로드되지 않았습니다. 페이지를 새로고침 해주세요.');
         return;
       }
-
       const { IMP } = window;
-      IMP.init('imp06015387'); // Replace with your actual PortOne (Iamport) key
+      IMP.init(process.env.REACT_APP_IMP_KEY); // Replace with your actual PortOne (Iamport) key
 
       IMP.request_pay(
         {
