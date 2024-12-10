@@ -23,6 +23,7 @@ import { Payment } from "./pages/payment";
 import PaymentComplete from "./pages/payment/PaymentComplete";
 import UsageList from "./pages/usage/UsageList";
 import GoogleTokenCheck from "./pages/user/login-signup/GoogleTokenCheck";
+import AdminDeleteUserList from "./pages/admin/AdminDeleteUserList";
 
 const App = () => {
     return (
@@ -40,6 +41,8 @@ const App = () => {
                         <Route path="/MyPage" element={<MyPage/>}/> {/* 유저 마이 페이지*/}
                         <Route path="/tokenCheck" element={<GoogleTokenCheck />} /> {/* Google로그인 후 토큰 저장 */}
                         <Route path="/TechProvide" element={<TechProvide/>} /> {/* 기술 제공 전환 페이지 */}
+
+                        <Route path="/admin/deleted-users" element={<AdminRoute> <AdminDeleteUserList/> </AdminRoute>} />
 
                         <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
