@@ -1,0 +1,20 @@
+/* 리뷰 작성 별표 스타일 */
+.create-star-rating {
+    display: flex;
+    gap: 5px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.create-star {
+    color: #ddd; /* 기본 색상 */
+    transition: color 0.2s;
+}
+
+.create-star.selected {
+    color: gold; /* 선택된 별 */
+}
+
+.create-star:hover ~ .create-star {
+    color: #ddd; /* 선택된 별 이후는 회색 */
+}

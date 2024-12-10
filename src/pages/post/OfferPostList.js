@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './PostList.css';
 import { fetchPostList } from './Api'; // API 호출 함수
-import { Link } from 'react-router-dom'; // Link 컴포넌트 import
+import {Link, useNavigate} from 'react-router-dom'; // Link 컴포넌트 import
 
 const OfferPostList = () => {
     const [posts, setPosts] = useState([]);
@@ -10,6 +10,7 @@ const OfferPostList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const loadPosts = async (page) => {
         setLoading(true);
@@ -23,6 +24,10 @@ const OfferPostList = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleCreatePost = () => {
+        navigate('/createPost');
     };
 
     const handlePageClick = (page) => {
@@ -57,7 +62,17 @@ const OfferPostList = () => {
 
     return (
         <div className="container mt-4">
-            <h2 className="text-left mb-4 purple-text">고수 글 목록</h2>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2 className="purple-text">고수 글 목록</h2>
+                <div>
+                    <button className="btn m-1 btn-primary" onClick={handleCreatePost}>
+                        글 생성
+                    </button>
+                    <button className="btn m-1 btn-secondary" onClick={() => navigate(-1)}>
+                        뒤로 가기
+                    </button>
+                </div>
+            </div>
 
             {loading && <p>로딩 중...</p>}
             {error && <p className="text-danger">{error}</p>}
@@ -65,13 +80,13 @@ const OfferPostList = () => {
             <div className="row">
                 {posts.map((post) => (
                     <div className="col-md-4 mb-3" key={post.id}>
-                        <div className="card" style={{ fontSize: '0.9rem' }}>
-                            {post.imgUrls && post.imgUrls.length > 0 && (
+                        <div className="card" style={{fontSize: '0.9rem'}}>
+                        {post.imgUrls && post.imgUrls.length > 0 && (
                                 <img
                                     src={post.imgUrls[0]}
                                     alt={post.title}
                                     className="card-img-top"
-                                    style={{ height: '200px', objectFit: 'cover' }}
+                                    style={{height: '200px', objectFit: 'cover'}}
                                 />
                             )}
                             <div className="card-header purple-bg text-white">{post.title}</div>
@@ -96,7 +111,7 @@ const OfferPostList = () => {
                 marginBottom: '50px'
             }}>
                 <nav aria-label="Page navigation example">
-                    <ul className="pagination justify-content-center" style={{ display: 'flex', flexDirection: 'row' }}>
+                    <ul className="pagination justify-content-center" style={{display: 'flex', flexDirection: 'row'}}>
                         <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                             <button className="page-link" onClick={handleFirstPage} aria-label="First">
                                 <span aria-hidden="true">&laquo;</span>
@@ -107,7 +122,7 @@ const OfferPostList = () => {
                                 <span aria-hidden="true">&#8249;</span>
                             </button>
                         </li>
-                        {Array.from({ length: 5 }, (_, index) => {
+                        {Array.from({length: 5}, (_, index) => {
                             const pageNum = currentPage - 2 + index;
                             if (pageNum < 1 || pageNum > totalPages) return null;
                             return (

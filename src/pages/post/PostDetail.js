@@ -1,26 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPostDetail, deletePost, fetchBids, createBid } from './Api';
-import { Modal, Button } from 'react-bootstrap';
+import {fetchPostDetail, fetchBids, createBid, fetchReviews, createChatroom, deletePost} from './Api';
+import { Modal, Button, Carousel } from 'react-bootstrap';
+import './StarRating.css'; // 별표 스타일 추가
 
 const PostDetail = () => {
-    const { id } = useParams(); // URL에서 게시글 ID 추출
-    const [post, setPost] = useState(null); // 게시글 데이터 상태
-    const [bids, setBids] = useState([]); // 입찰 데이터 상태
-    const [loading, setLoading] = useState(false); // 로딩 상태
-    const [error, setError] = useState(null); // 에러 상태
-    const [showModal, setShowModal] = useState(false); // 모달 표시 상태
-    const [bidPrice, setBidPrice] = useState(0); // 입찰 금액 상태
-    const [bidDate, setBidDate] = useState(''); // 입찰 날짜 상태
-    const navigate = useNavigate(); // 페이지 리디렉션을 위한 navigate 객체
+    const { id } = useParams();
+    const [post, setPost] = useState(null);
+    const [bids, setBids] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [bidPrice, setBidPrice] = useState(0);
+    const [bidDate, setBidDate] = useState('');
+    const navigate = useNavigate();
 
     const loadPostDetail = async () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchPostDetail(id); // 게시글 ID로 API 호출
+            const data = await fetchPostDetail(id);
             setPost(data);
+            if (data.offer) {
+                loadReviews(data.id);
+            }
         } catch (err) {
             setError('게시글을 불러오는 데 실패했습니다.');
         } finally {
@@ -28,13 +33,46 @@ const PostDetail = () => {
         }
     };
 
+    const handleChat = async (bidId) => {
+        try {
+            if (!post || !post.userId) {
+                alert('게시글 작성자 정보를 불러올 수 없습니다.');
+                return;
+            }
+
+            if (!bidId) {
+                alert('유효한 입찰 ID가 없습니다.');
+                return;
+            }
+
+            // createChatroom API 호출
+            const chatroomId = await createChatroom(post.userId, id, bidId);
+
+            // 요청 성공 시 채팅 페이지로 이동
+            navigate(`/chatroom/${chatroomId}`);
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
     const loadBids = async () => {
         try {
-            const data = await fetchBids(id); // 게시글 ID로 입찰 데이터 호출
-            setBids(data.bids); // BidListResponseDto의 bids 배열 저장
+            const data = await fetchBids(id);
+            console.log(data);
+            setBids(data);
         } catch (err) {
             console.error('입찰 데이터를 불러오는 데 실패했습니다.', err);
             setError('입찰 데이터를 불러오는 데 실패했습니다.');
+        }
+    };
+
+    const loadReviews = async (postId) => {
+        try {
+            const reviewsData = await fetchReviews(id);
+            setReviews(reviewsData.sort((a, b) => b.id - a.id)); // 최신 순 정렬
+        } catch (err) {
+            console.error('리뷰 데이터를 불러오는 데 실패했습니다.', err);
+            setError('리뷰 데이터를 불러오는 데 실패했습니다.');
         }
     };
 
@@ -48,7 +86,7 @@ const PostDetail = () => {
                 price: bidPrice,
                 date: new Date(bidDate).toISOString(),
             };
-            await createBid(id, requestDto, 1); // userId=1과 함께 요청 전송
+            await createBid(id, requestDto); // userId=1과 함께 요청 전송
             alert('입찰이 성공적으로 등록되었습니다.');
             setShowModal(false); // 모달 닫기
             loadBids(); // 입찰 데이터 새로고침
@@ -56,6 +94,40 @@ const PostDetail = () => {
             console.error('입찰 등록에 실패했습니다.', err);
             alert('입찰 등록에 실패했습니다.');
         }
+    };
+
+    const renderStars = (rating) => {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating - fullStars >= 0.5;
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+        return (
+            <div className="star-rating">
+                {Array.from({ length: fullStars }).map((_, i) => (
+                    <span key={`full-${i}`} className="star full-star">★</span>
+                ))}
+                {halfStar && <span className="star half-star">★</span>}
+                {Array.from({ length: emptyStars }).map((_, i) => (
+                    <span key={`empty-${i}`} className="star empty-star">★</span>
+                ))}
+            </div>
+        );
+    };
+
+    // 게시글 삭제 함수
+    const handleDelete = async () => {
+        try {
+            await deletePost(id); // deletePost 호출하여 게시글 삭제
+            alert('게시글이 삭제되었습니다.');
+            navigate('/posts'); // 게시글 목록 페이지로 리디렉션
+        } catch (err) {
+            setError('게시글 삭제에 실패했습니다.');
+        }
+    };
+
+    // 게시글 수정 함수
+    const handleEdit = () => {
+        navigate(`/edit-post/${id}`); // 수정 페이지로 이동
     };
 
     useEffect(() => {
@@ -80,28 +152,62 @@ const PostDetail = () => {
             <div className="row justify-content-center">
                 <div className="col-lg-10">
                     <div className="card shadow" style={{ maxWidth: '100%', borderRadius: '15px' }}>
-                        <div className="card-header d-flex justify-content-between align-items-center purple-bg text-white">
+                        <div
+                            className="card-header d-flex justify-content-between align-items-center purple-bg text-white">
                             <h2 className="card-title mb-0">{post.title}</h2>
+                            <div className="dropdown">
+                                <button
+                                    className="btn btn-light btn-sm dropdown-toggle"
+                                    type="button"
+                                    id="dropdownMenuButton"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    ...
+                                </button>
+                                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <button className="dropdown-item" onClick={handleEdit}>
+                                            게시글 수정
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button className="dropdown-item text-danger" onClick={handleDelete}>
+                                            게시글 삭제
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
 
                         <div className="card-body">
                             <div className="row mb-4">
                                 <div className="col-md-6">
-                                    {post.imgUrls && post.imgUrls.length > 0 && (
-                                        <img
-                                            src={post.imgUrls[0]}
-                                            alt={post.title}
-                                            className="img-fluid rounded"
-                                            style={{
-                                                objectFit: 'contain',
-                                                maxHeight: '350px',
-                                                width: '100%',
-                                            }}
-                                        />
+                                    {post.imgUrls && post.imgUrls.length > 0 ? (
+                                        <Carousel>
+                                            {post.imgUrls.map((imgUrl, index) => (
+                                                <Carousel.Item key={index}>
+                                                    <img
+                                                        src={imgUrl}
+                                                        alt={`Slide ${index}`}
+                                                        className="d-block w-100 rounded"
+                                                        style={{
+                                                            objectFit: 'contain',
+                                                            maxHeight: '350px',
+                                                        }}
+                                                    />
+                                                </Carousel.Item>
+                                            ))}
+                                        </Carousel>
+                                    ) : (
+                                        <p>이미지가 없습니다.</p>
                                     )}
                                 </div>
                                 <div className="col-md-6 d-flex align-items-center">
                                     <ul className="list-group w-100">
+                                        <li className="list-group-item">
+                                            <strong>주소:</strong> <small>{post.address}</small>
+                                        </li>
                                         <li className="list-group-item">
                                             <strong>가격:</strong> {post.price.toLocaleString()} 원
                                         </li>
@@ -117,11 +223,12 @@ const PostDetail = () => {
                                 <p className="card-text">{post.description}</p>
                             </div>
 
-                            {/* 입찰하기 버튼 */}
                             <div className="mt-4">
-                                <Button variant="primary" onClick={() => setShowModal(true)}>
-                                    입찰하기
-                                </Button>
+                                {!post.offer && (
+                                    <Button variant="primary" onClick={() => setShowModal(true)}>
+                                        입찰하기
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -138,7 +245,11 @@ const PostDetail = () => {
                                     type="number"
                                     className="form-control"
                                     value={bidPrice}
-                                    onChange={(e) => setBidPrice(Number(e.target.value))}
+                                    onChange={(e) => {
+                                        const value = Number(e.target.value);
+                                        if (value > 0) setBidPrice(value);
+                                    }}
+                                    min="1" // HTML5 속성을 통해 양수만 허용
                                 />
                             </div>
                             <div className="mb-3">
@@ -148,6 +259,7 @@ const PostDetail = () => {
                                     className="form-control"
                                     value={bidDate}
                                     onChange={(e) => setBidDate(e.target.value)}
+                                    min={new Date().toISOString().split('T')[0]} // 오늘 날짜 이후로 제한
                                 />
                             </div>
                         </Modal.Body>
@@ -162,37 +274,78 @@ const PostDetail = () => {
                     </Modal>
 
                     {/* 입찰(BID) 데이터 섹션 */}
-                    <div className="card mt-4 shadow">
-                        <div className="card-header">
-                            <h5>입찰 현황</h5>
-                        </div>
-                        <div className="card-body">
-                            <div className="d-flex flex-column">
-                                {bids.length > 0 ? (
-                                    bids.map((bid, index) => (
-                                        <div
-                                            key={index}
-                                            className="d-flex justify-content-between align-items-start mb-3 p-3 border rounded"
-                                        >
-                                            <div className="d-flex flex-column w-75">
-                                                <div className="mb-2">
-                                                    <strong>입찰자:</strong> {bid.bidderName}
-                                                </div>
-                                                <div className="mb-2">
-                                                    <strong>입찰 금액:</strong> {bid.price.toLocaleString()} 원
-                                                </div>
-                                                <div className="mb-2">
-                                                    <strong>작업 시작 가능일:</strong> {new Date(bid.date).toLocaleDateString()}
+                    {!post.offer && (
+                        <div className="card mt-4 mb-4 shadow">
+                            <div className="card-header">
+                                <h5>입찰 현황</h5>
+                            </div>
+                            <div className="card-body">
+                                <div className="d-flex flex-column">
+                                    {Array.isArray(bids) && bids.length > 0 ? ( // bids가 배열인지 확인
+                                        bids.map((bid, index) => (
+                                            <div
+                                                key={index}
+                                                className="d-flex justify-content-between align-items-start mb-3 p-3 border rounded"
+                                            >
+                                                <div className="d-flex flex-column w-75">
+                                                    <div className="mb-2">
+                                                        <strong>입찰자:</strong> {bid.fullName}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <strong>입찰 금액:</strong> {bid.price.toLocaleString()} 원
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <strong>작업 시작
+                                                            가능일:</strong> {new Date(bid.date).toLocaleDateString()}
+                                                    </div>
+                                                    <div>
+                                                        <Button
+                                                            variant="success"
+                                                            onClick={() => handleChat(bid.id)} // 입찰 ID를 handleChat 함수로 전달
+                                                            className="ms-auto"
+                                                            style={{float: 'right'}}
+                                                        >
+                                                            채팅하기
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p>입찰 데이터가 없습니다.</p>
-                                )}
+                                        ))
+                                    ) : (
+                                        <p>입찰 데이터가 없습니다.</p>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
+
+                    {/* 리뷰 데이터 섹션 */}
+                    {post.offer && (
+                        <div className="card mt-4 mb-4 shadow">
+                            <div className="card-header">
+                                <h5>리뷰</h5>
+                            </div>
+                            <div className="card-body">
+                                <div className="d-flex flex-column">
+                                    {reviews.length > 0 ? (
+                                        reviews.map((review, index) => (
+                                            <div
+                                                key={index}
+                                                className="d-flex flex-column mb-3 p-3 border rounded"
+                                            >
+                                                <p><strong>작성자:</strong> {review.fullName}</p>
+                                                <div>{renderStars(review.rating)}</div>
+                                                <p><strong>리뷰 내용:</strong> {review.content}</p>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p>리뷰가 없습니다.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </div>
         </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ThirdCategory.css";
 
-const ThirdCategory = ({ selectedSubcategory }) => {
+const ThirdCategory = ({ selectedSubcategory, onSelectThirdCategory }) => {
   const [thirdcategories, setThirdcategories] = useState([]);
   const [error, setError] = useState(null);
   const [selectedThirdcategory, setSelectedThirdcategory] = useState(null);
@@ -11,7 +11,7 @@ const ThirdCategory = ({ selectedSubcategory }) => {
     const fetchThirdcategories = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedSubcategory.category_id}`
+          `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedSubcategory.categoryId}`
         );
         setThirdcategories(response.data);
       } catch (error) {
@@ -27,6 +27,7 @@ const ThirdCategory = ({ selectedSubcategory }) => {
 
   const handleThirdcategorySelect = (thirdcategory) => {
     setSelectedThirdcategory(thirdcategory);
+    onSelectThirdCategory(thirdcategory);
   };
 
   return (

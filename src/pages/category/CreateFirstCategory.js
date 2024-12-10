@@ -27,12 +27,14 @@ const CreateFirstCategory = () => {
 
     try {
       // 카테고리 생성 API 호출
+      const token = localStorage.getItem('token');
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/category`,
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`
           },
           withCredentials: true
         }
