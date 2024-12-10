@@ -8,6 +8,7 @@ import '../../components/button.css';
 import PostInfo from "./PostInfo";
 import OpponentInfo from "./OpponentInfo";
 import ChatSettingModal from "./ChatSettingModal";
+import {getJwtSubject} from "../../components/getJwtSubject";
 
 const ChatRoom = () => {
     const {chatRoomId} = useParams();
@@ -20,8 +21,7 @@ const ChatRoom = () => {
     const [hasMore, setHasMore] = useState(true);   // 로드할 메시지가 더 있는지 여부
     const [lastIndex, setLastIndex] = useState(null);   // 불러온 채팅의 마지막 인덱스 (id)
 
-    // TODO: 실제 로그인한 유저의 id 반영할 것
-    const [loginUserId] = useState(1);
+    const [loginUserId] = useState(Number(getJwtSubject()));
 
     // 채팅 전송 관련 (stomp)
     const [stompClient, setStompClient] = useState(null);
@@ -37,7 +37,7 @@ const ChatRoom = () => {
         connect();
         fetchInitialMessages();
         return () => disconnect();
-    }, [chatRoomId]);
+    }, []);
 
     // 컴포넌트가 처음 마운트될 때 일정 시간(ms) 후에 scrollToBottom 호출
     useEffect(() => {
