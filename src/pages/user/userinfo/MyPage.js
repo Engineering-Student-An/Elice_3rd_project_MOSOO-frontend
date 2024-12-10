@@ -28,7 +28,7 @@ const MyPage = () => {
   const [activeMenu, setActiveMenu] = useState('info');
   const [userRole, setUserRole] = useState(''); // 사용자 역할 상태
   const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -41,7 +41,8 @@ const MyPage = () => {
             },
           });
           console.log('User data response:', response.data); // 응답 확인
-          const { fullName, email, userInfoId, authority} = response.data; // 역할도 포함
+          const { fullName, email, authority} = response.data; // 역할도 포함
+          const userInfoId = response.data.userInfoDto.id;
           setUserRole(response.data.authority);
           const address = response.data.userInfoDto.address;
           setUser({
@@ -126,6 +127,29 @@ const MyPage = () => {
     };
 
   const handlePasswordChange = async () => {
+      // 비밀번호 유효성 검사 함수
+            const validatePassword = (password) => {
+                     const minLength = 8;
+                     const hasUpperCase = /[A-Z]/.test(password);
+                     const hasLowerCase = /[a-z]/.test(password);
+                     const hasNumber = /\d/.test(password);
+                     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+                     if (password.length < minLength) {
+                         return '비밀번호는 8자 이상이어야 합니다.';
+                     }
+
+                     if (!hasLowerCase && !hasUpperCase) {
+                         return '비밀번호에는 최소 하나의 소문자 또는 대문자를 포함해야 합니다.';
+                     }
+                     if (!hasNumber) {
+                         return '비밀번호에는 최소 하나의 숫자를 포함해야 합니다.';
+                     }
+
+
+                     return ''; // 유효성 검사를 통과할 경우 빈 문자열 반환
+                     }
+
       setPasswordError('');
       if (!newUser.exPassword) { // 변경된 필드명
           setPasswordError('현재 비밀번호를 입력하세요.');
@@ -140,12 +164,17 @@ const MyPage = () => {
       if (newUser.newPassword !== confirmPassword) { // 변경된 필드명
           setPasswordError('새 비밀번호가 일치하지 않습니다.');
           return;
-      } else {
+      }
         if (newUser.newPassword == newUser.exPassword) {
         setPasswordError('기존 비밀번호와 똑같은 비밀번호 입니다.')
         return;
         }
-      }
+       // 비밀번호 유효성 검사
+          const passwordValidationError = validatePassword(newUser.newPassword);
+          if (passwordValidationError) {
+              setPasswordError(passwordValidationError);
+              return;
+          }
 
       try {
           const token = localStorage.getItem('token');
@@ -169,7 +198,31 @@ const MyPage = () => {
           console.error('비밀번호 변경 중 오류가 발생했습니다:', error);
           setPasswordError('현재 비밀번호가 일치하지 않습니다.');
       }
+
+
   };
+
+  const handleTechWithdrawal = async () => {
+          const token = localStorage.getItem('token');
+          const userInfoId = user.userInfoId;
+          try {
+              const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/gosu/deleted/${userInfoId}`, {
+
+
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                  },
+              });
+
+              if (response.status === 200) {
+                  alert('기술 제공이 성공적으로 탈퇴되었습니다.');
+                  window.location.reload();
+              }
+          } catch (error) {
+              console.error('기술 제공 탈퇴 중 오류가 발생했습니다:', error);
+              alert('기술 제공 탈퇴 중 오류가 발생했습니다.');
+          }
+      };
 
 
   return (
@@ -211,7 +264,7 @@ const MyPage = () => {
                   onClick={() => handleMenuClick('techInfo')}
                   disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
                   style={{opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1}}>
-                  <i className="fas fa-laptop-code"></i> 기술 제공 정보
+                  <i className="fas fa-laptop-code"></i> 기술 제공 정보 수정
               </button>
               <button
                   className={`my-page-menu-button ${activeMenu === 'techHistory' ? 'active' : ''}`}
@@ -297,7 +350,15 @@ const MyPage = () => {
                   <button className="my-page-action-button" onClick={handleEditToggle}>
                     수정
                   </button>
-                  <button className="my-page-request-button" onClick={handleTechProvideTransition}>기술 제공 전환</button>
+                  {userRole === 'ROLE_GOSU' ? (
+                    <button className="my-page-request-button" onClick={handleTechWithdrawal}>
+                      기술 제공 탈퇴
+                    </button>
+                  ) : (
+                    <button className="my-page-request-button" onClick={handleTechProvideTransition}>
+                      기술 제공 전환
+                    </button>
+                  )}
                 </div>
               </div>
             )}
