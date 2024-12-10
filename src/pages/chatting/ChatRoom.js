@@ -289,17 +289,26 @@ const ChatRoom = () => {
         // 오늘 날짜와 입력 날짜 비교
         const isToday = inputDate.toDateString() === today.toDateString();
 
+        const hours = inputDate.getHours();
+        const minutes = inputDate.getMinutes();
+
+        // 시간을 12시간 형식으로 포맷
+        const formattedHours = hours % 12 === 0 ? 12 : hours % 12; // 12시 변환
+        const formattedMinutes = minutes < 10 ? '0' + minutes : minutes; // 분 포맷
+        const period = hours >= 12 ? '오후' : '오전'; // AM/PM 포맷
+
+        const formattedTime = `${period} ${formattedHours}:${formattedMinutes}`; // 최종 시간 포맷
+
         if (isToday) {
-            const options = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
-            return inputDate.toLocaleTimeString('ko-KR', options);
+            return formattedTime; // 오늘의 경우 시간만 반환
         } else {
-            const dateOptions = {month: 'numeric', day: 'numeric'}; // 몇 월 몇 일 형식
-            const timeOptions = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
-            const dateString = inputDate.toLocaleDateString('ko-KR', dateOptions);
-            const timeString = inputDate.toLocaleTimeString('ko-KR', timeOptions);
-            return `${dateString} ${timeString}`; // 날짜와 시간 결합
+            const month = inputDate.getMonth() + 1; // 월은 0부터 시작하므로 +1
+            const day = inputDate.getDate();
+            return `${month}/${day} ${formattedTime}`; // 날짜와 시간 결합
         }
     };
+
+
 
 
     const handleOpenModal = (index) => {
