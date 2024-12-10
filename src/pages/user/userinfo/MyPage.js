@@ -9,6 +9,7 @@ import AdminUserLIst from "../../admin/AdminUserLIst";
 import {CategoryList} from "../../category";
 import {MyPosts} from "../../post/mypage";
 import MyReviews from "../../post/mypage/MyReviews"; // CSS 파일에서 아이콘 스타일 추가
+import AddressModal from '../../../components/AddressModal';
 
 const MyPage = () => {
   const [user, setUser] = useState({
@@ -29,6 +30,8 @@ const MyPage = () => {
   const [userRole, setUserRole] = useState(''); // 사용자 역할 상태
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -95,7 +98,7 @@ const MyPage = () => {
           const token = localStorage.getItem('token');
           const response = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/user/userinfo`, {
               email: user.email, // 현재 사용자 이메일
-              newAddress: newUser.address // 새로운 주소
+              newAddress: selectedAddress // 새로운 주소
           }, {
               headers: {
                   Authorization: `Bearer ${token}`,
@@ -224,6 +227,19 @@ const MyPage = () => {
           }
       };
 
+      const handleSelectAddress = (address) => {
+          setSelectedAddress(address);
+          setShowAddressModal(false);
+        };
+
+      const openAddressModal = () => {
+          setShowAddressModal(true);
+        };
+
+        const closeAddressModal = () => {
+          setShowAddressModal(false);
+        };
+
 
   return (
     <div className="my-page">
@@ -327,14 +343,20 @@ const MyPage = () => {
                   onChange={handleChange}
                   readOnly
                 />
-                <label className = "my-page-label">사용자 주소</label>
-                <input
-                  className = "my-page-input"
-                  type="text"
-                  name="address"
-                  value={newUser.address}
-                  onChange={handleChange}
-                />
+                <div className="search-input">
+                              <label className = "my-page-label">사용자 주소</label>
+                                <i className="lni lni-map-marker theme-color"></i>
+                              <button
+                                type="button"
+                                id="location"
+                                className="btn location-btn"
+                                onClick={openAddressModal}
+
+                              >
+                                {selectedAddress ? selectedAddress : newUser.address || '지역 선택'}
+                              </button>
+                            </div>
+
                 <div className="my-page-button-group">
                   <button className="my-page-action-button" onClick={handleSave}>
                     프로필 수정
@@ -457,6 +479,7 @@ const MyPage = () => {
             </div>
         )}
       </div>
+      {showAddressModal && <AddressModal onClose={closeAddressModal} onSelectAddress={handleSelectAddress} />}
     </div>
   );
 };
