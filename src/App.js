@@ -43,6 +43,7 @@ import UsageList from "./pages/usage/UsageList";
 import GoogleTokenCheck from "./pages/user/login-signup/GoogleTokenCheck";
 import AdminDeleteUserList from "./pages/admin/AdminDeleteUserList";
 import MyPosts from "./pages/post/mypage/MyPosts";
+import {MyBids} from "./pages/post/mypage";
 
 const App = () => {
     return (
@@ -134,6 +135,15 @@ const App = () => {
                             element={
                                 <ProtectedRoute>
                                     <MyPosts/>
+                                </ProtectedRoute>
+                            }
+                        />{" "}
+                        {/* 본인 게시글 조회 화면 */}
+                        <Route
+                            path="/myBids"
+                            element={
+                                <ProtectedRoute>
+                                    <MyBids/>
                                 </ProtectedRoute>
                             }
                         />{" "}
