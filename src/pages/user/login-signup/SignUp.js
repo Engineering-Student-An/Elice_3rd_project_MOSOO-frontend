@@ -48,6 +48,8 @@ const SignUp = () => {
                 // 오류 메시지 처리
                 if (error.response.data.code === 'INVALID_PASSWORD') {
                     setErrors({ password: '비밀번호는 반드시 문자와 숫자로 8자 이상이어야 합니다.' });
+                }else if (error.response.data.code === 'DUPLICATE_RESOURCE') {
+                setErrors({email: '중복된 이메일입니다. 다시 입력해주세요.'});
                 } else {
                     setErrors(error.response.data); // 서버에서 반환된 오류 메시지를 상태에 설정
                 }
