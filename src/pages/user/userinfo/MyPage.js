@@ -6,7 +6,9 @@ import './MyPage.css';
 import UsageList from "../../usage/UsageList";
 import {ChatRoomList} from "../../chatting";
 import AdminUserLIst from "../../admin/AdminUserLIst";
-import {CategoryList} from "../../category"; // CSS 파일에서 아이콘 스타일 추가
+import {CategoryList} from "../../category";
+import {MyPosts} from "../../post/mypage";
+import MyReviews from "../../post/mypage/MyReviews"; // CSS 파일에서 아이콘 스타일 추가
 
 const MyPage = () => {
   const [user, setUser] = useState({
@@ -196,63 +198,80 @@ const MyPage = () => {
           <p>{user.fullName}</p>
           <p>@{user.email.split('@')[0]}</p>
         </div>
-        <div className="my-page-menu">
-          <button className={`my-page-menu-button ${activeMenu === 'info' ? 'active' : ''}`} onClick={() => handleMenuClick('info')}>
-            <i className="fas fa-user-edit"></i> 내정보 수정
-          </button>
-          <button className={`my-page-menu-button ${activeMenu === 'history' ? 'active' : ''}`} onClick={() => handleMenuClick('history')}>
-            <i className="fas fa-bookmark"></i> 이용 내역
-          </button>
-          <button className={`my-page-menu-button ${activeMenu === 'chat' ? 'active' : ''}`} onClick={() => handleMenuClick('chat')}>
-            <i className="fas fa-comments"></i> 채팅 내역
-          </button>
-          <button
-            className={`my-page-menu-button ${activeMenu === 'techInfo' ? 'active' : ''}`}
-            onClick={() => handleMenuClick('techInfo')}
-            disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
-            style={{ opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1 }}>
-            <i className="fas fa-laptop-code"></i> 기술 제공 정보
-          </button>
-          <button
-            className={`my-page-menu-button ${activeMenu === 'techHistory' ? 'active' : ''}`}
-            onClick={() => handleMenuClick('techHistory')}
-            disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
-            style={{ opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1 }}>
-            <i className="fas fa-history"></i> 기술 제공 기록
-          </button>
-          {/* Admin 버튼 추가 */}
-          {isAdmin() && (
-              <div className="my-page-menu">
+          <div className="my-page-menu">
+              <button className={`my-page-menu-button ${activeMenu === 'info' ? 'active' : ''}`}
+                      onClick={() => handleMenuClick('info')}>
+                  <i className="fas fa-user-edit"></i> 내정보 수정
+              </button>
+              <button className={`my-page-menu-button ${activeMenu === 'post' ? 'active' : ''}`}
+                      onClick={() => handleMenuClick('post')}>
+                  <i className="fas fa-user-edit"></i> 게시글 내역
+              </button>
+              <button className={`my-page-menu-button ${activeMenu === 'review' ? 'active' : ''}`}
+                      onClick={() => handleMenuClick('review')}>
+                  <i className="fas fa-user-edit"></i> 리뷰 내역
+              </button>
+              <button className={`my-page-menu-button ${activeMenu === 'history' ? 'active' : ''}`}
+                      onClick={() => handleMenuClick('history')}>
+                  <i className="fas fa-bookmark"></i> 이용 내역
+              </button>
+              <button className={`my-page-menu-button ${activeMenu === 'chat' ? 'active' : ''}`}
+                      onClick={() => handleMenuClick('chat')}>
+                  <i className="fas fa-comments"></i> 채팅 내역
+              </button>
+              <button className={`my-page-menu-button ${activeMenu === 'bid' ? 'active' : ''}`}
+                      onClick={() => handleMenuClick('bid')}
+                      disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
+                      style={{opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1}}>
+                  <i className="fas fa-user-edit"></i> 입찰 내역
+              </button>
+              <button
+                  className={`my-page-menu-button ${activeMenu === 'techInfo' ? 'active' : ''}`}
+                  onClick={() => handleMenuClick('techInfo')}
+                  disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
+                  style={{opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1}}>
+                  <i className="fas fa-laptop-code"></i> 기술 제공 정보
+              </button>
+              <button
+                  className={`my-page-menu-button ${activeMenu === 'techHistory' ? 'active' : ''}`}
+                  onClick={() => handleMenuClick('techHistory')}
+                  disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
+                  style={{opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1}}>
+                  <i className="fas fa-history"></i> 기술 제공 기록
+              </button>
+              {/* Admin 버튼 추가 */}
+              {isAdmin() && (
+                  <div className="my-page-menu">
 
-                <button
-                    className={`my-page-menu-button ${activeMenu === 'userManagement' ? 'active' : ''}`}
-                    onClick={() => handleMenuClick('userManagement')}>
-                  <i className="fas fa-users"></i>(관리자) 회원 관리
-                </button>
+                      <button
+                          className={`my-page-menu-button ${activeMenu === 'userManagement' ? 'active' : ''}`}
+                          onClick={() => handleMenuClick('userManagement')}>
+                          <i className="fas fa-users"></i>(관리자) 회원 관리
+                      </button>
 
-                <button
-                    className={`my-page-menu-button ${activeMenu === 'categoryManagement' ? 'active' : ''}`}
-                    onClick={() => handleMenuClick('categoryManagement')}>
-                  <i className="fas fa-tags"></i>(관리자) 카테고리 관리
-                </button>
+                      <button
+                          className={`my-page-menu-button ${activeMenu === 'categoryManagement' ? 'active' : ''}`}
+                          onClick={() => handleMenuClick('categoryManagement')}>
+                          <i className="fas fa-tags"></i>(관리자) 카테고리 관리
+                      </button>
 
-                <button
-                    className={`my-page-menu-button ${activeMenu === 'postManagement' ? 'active' : ''}`}
-                    onClick={() => handleMenuClick('postManagement')}>
-                  <i className="fas fa-file-alt"></i>(관리자) 게시글 관리
-                </button>
-              </div>
-          )}
+                      <button
+                          className={`my-page-menu-button ${activeMenu === 'postManagement' ? 'active' : ''}`}
+                          onClick={() => handleMenuClick('postManagement')}>
+                          <i className="fas fa-file-alt"></i>(관리자) 게시글 관리
+                      </button>
+                  </div>
+              )}
 
-        </div>
+          </div>
       </div>
 
-      <div className="my-page-content">
-        {activeMenu === 'info' && (
-          <div className="my-page-info-section">
-            <h2>내정보 수정</h2>
-            {isEditing ? (
-              <div>
+        <div className="my-page-content">
+            {activeMenu === 'info' && (
+                <div className="my-page-info-section">
+                    <h2>내정보 수정</h2>
+                    {isEditing ? (
+                        <div>
                 <label className = "my-page-label">이름 *</label>
                 <input
                   className = "my-page-input"
@@ -310,6 +329,18 @@ const MyPage = () => {
               </div>
             )}
           </div>
+        )}
+
+        {activeMenu === 'post' && (
+            <div>
+                <MyPosts></MyPosts>
+            </div>
+        )}
+
+        {activeMenu === 'review' && (
+            <div>
+                <MyReviews></MyReviews>
+            </div>
         )}
 
         {activeMenu === 'history' && (

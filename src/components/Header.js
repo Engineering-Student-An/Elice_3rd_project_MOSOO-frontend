@@ -65,12 +65,12 @@ const Header = () => {
                     <ul id="nav" className="navbar-nav d-flex ms-auto">
                       <li className="nav-item">
                         <a href="/offerPosts" aria-label="Toggle navigation">
-                          고수 제공 목록
+                          고수 찾기
                         </a>
                       </li>
                       <li className="nav-item">
                         <a href="/requestPosts" aria-label="Toggle navigation">
-                          도움 요청 목록
+                          도움 요청
                         </a>
                       </li>
                       <li className="nav-item">
