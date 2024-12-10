@@ -105,30 +105,32 @@ const OrderPage = () => {
 
       <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
         <h3 style={{ borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>결제 정보</h3>
-        <p>주문 날짜: {new Date().toLocaleDateString()}</p>
-        <p>최종 금액: {price.toLocaleString()} 원</p>
+        <p>주문 날짜 : {new Date().toLocaleDateString('ko-KR')}</p>
+        <p>
+    최종 결제 금액 : <span style={{ fontWeight: 'bold', color: 'black' }}>{price.toLocaleString()} 원</span>
+  </p>
       </div>
 
       <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
         <h3 style={{ borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>서비스 정보</h3>
         <p>{postResponseDto.title}</p>
         <p>{postResponseDto.address}</p>
-        <p>예상 금액: {postResponseDto.price.toLocaleString()} 원</p>
+        <p>예상 금액 : {postResponseDto.price.toLocaleString()} 원</p>
       </div>
 
       <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
-        <h3 style={{ borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>고수 정보</h3>
+        <h3 style={{ borderBottom: '1px solid #ccc ', paddingBottom: '10px' }}>고수 정보</h3>
         {bidResponseDto ? (
           <>
-            <p>고수 이름: {bidResponseDto.fullName}</p>
-            <p>진행 가능 날짜: {new Date(bidResponseDto.date).toLocaleDateString()}</p>
-            <p>위치: {gosuResponseDto.gosuInfoAddress}</p>
+            <p>고수 이름 : {gosuResponseDto.businessName}</p>
+            <p>진행 가능 날짜 : {new Date(bidResponseDto.date).toLocaleDateString()}</p>
+            <p>위치 : {gosuResponseDto.gosuInfoAddress}</p>
           </>
         ) : (
           <>
-            <p>고수 이름: {gosuResponseDto.businessName}</p>
-            <p>진행 가능 날짜: {postResponseDto.duration}</p>
-            <p>위치: {gosuResponseDto.gosuInfoAddress}</p>
+            <p>고수 이름 : {gosuResponseDto.businessName}</p>
+            <p>진행 가능 날짜 : {postResponseDto.duration}</p>
+            <p>위치 : {gosuResponseDto.gosuInfoAddress}</p>
           </>
         )}
       </div>
