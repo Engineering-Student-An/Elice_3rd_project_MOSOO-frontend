@@ -19,7 +19,12 @@ const PostInfo = ({ chatRoomId }) => {
     const fetchInfos = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}/info`,
-                { withCredentials: true }
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    withCredentials: true
+                }
             );
             setPost(response.data.postResponseDto);
             setBid(response.data.bidResponseDto);
@@ -43,6 +48,7 @@ const PostInfo = ({ chatRoomId }) => {
                 price: inputPrice
             }, {
                 headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json',
                 }
                 , withCredentials: true
@@ -142,8 +148,7 @@ const PostInfo = ({ chatRoomId }) => {
             </div>
 
             {!isGosu && (
-                //TODO: 주문서 페이지로 이동
-                <a href="/" className="purple-button">주문하기</a>
+                <a href={`/payment/${chatRoomId}`} className="purple-button">주문하기</a>
             )}
 
         </div>

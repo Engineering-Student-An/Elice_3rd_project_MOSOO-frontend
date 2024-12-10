@@ -9,7 +9,7 @@ const CreateSubCategory = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
-  const { category_id } = useParams();
+  const { categoryId } = useParams();
 
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ const CreateSubCategory = () => {
     const category = {
       name: name,
       description: description,
-      parent_id: category_id
+      parentId: categoryId
     };
 
     // FormData 생성
@@ -28,12 +28,14 @@ const CreateSubCategory = () => {
 
     try {
       // 서브카테고리 생성 API 호출
+      const token = localStorage.getItem('token');
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/category`,
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`
           },
           withCredentials: true
         }

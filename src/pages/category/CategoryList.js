@@ -31,9 +31,9 @@ const CategoryList = () => {
   const navigate = useNavigate();
 
   // 이벤트 핸들러
-  const handleCreate = (category_id) => {
+  const handleCreate = (categoryId) => {
     console.log("생성 버튼 클릭");
-    navigate(`/categories/createsub/${category_id}`)
+    navigate(`/categories/createsub/${categoryId}`)
   };
 
   const handleCreateFirst = () => {
@@ -41,26 +41,36 @@ const CategoryList = () => {
     navigate('/categories/createfirst');
   };
 
-  const handleUpdate = (category_id) => {
+  const handleUpdate = (categoryId) => {
     console.log("수정 버튼 클릭");
-    navigate(`/categories/update/${category_id}`);
+    navigate(`/categories/update/${categoryId}`);
   };
 
-  const handleDelete = (category_id) => {
-    setSelectedCategoryId(category_id);
+  const handleDelete = (categoryId) => {
+    setSelectedCategoryId(categoryId);
     setShowModal(true);
   };
 
   const handleDeleteConfirm = async () => {
     try {
+      const token = localStorage.getItem('token');
+  
+      // 카테고리 삭제 API 호출
       await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedCategoryId}`,
-        {withCredentials: true}
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
+  
       alert("카테고리가 삭제되었습니다.");
+      window.location.reload();
       setCategories(
         categories.filter(
-          (category) => category.category_id !== selectedCategoryId
+          (category) => category.categoryId !== selectedCategoryId
         )
       );
     } catch (error) {
@@ -72,19 +82,19 @@ const CategoryList = () => {
   };
 
   // 토글 카테고리
-  const toggleCategory = (category_id) => {
+  const toggleCategory = (categoryId) => {
     setExpandedCategories((prevState) =>
-      prevState.includes(category_id)
-        ? prevState.filter((id) => id !== category_id)
-        : [...prevState, category_id]
+      prevState.includes(categoryId)
+        ? prevState.filter((id) => id !== categoryId)
+        : [...prevState, categoryId]
     );
   };
 
   // 재귀 카테고리 렌더링
   const renderCategories = (categories, level = 1) => {
     return categories.map((category) => (
-      <div key={category.category_id} className={`category-item level-${level}`}>
-        <div className="category-header" onClick={() => toggleCategory(category.category_id)}>
+      <div key={category.categoryId} className={`category-item level-${level}`}>
+        <div className="category-header" onClick={() => toggleCategory(category.categoryId)}>
           {level === 1 && (
             <img src={category.icon} alt={category.name} className="category-icon" />
           )}
@@ -103,7 +113,7 @@ const CategoryList = () => {
               className="btn-create"
               onClick={(e) => {
                 e.stopPropagation();
-                handleCreate(category.category_id);
+                handleCreate(category.categoryId);
               }}
             >
               생성
@@ -113,7 +123,7 @@ const CategoryList = () => {
             className="btn-update"
             onClick={(e) => {
               e.stopPropagation();
-              handleUpdate(category.category_id);
+              handleUpdate(category.categoryId);
             }}
           >
             수정
@@ -122,13 +132,13 @@ const CategoryList = () => {
             className="btn-delete"
             onClick={(e) => {
               e.stopPropagation();
-              handleDelete(category.category_id);
+              handleDelete(category.categoryId);
             }}
           >
             삭제
           </button>
         </div>
-        {expandedCategories.includes(category.category_id) &&
+        {expandedCategories.includes(category.categoryId) &&
           category.children && category.children.length > 0 && (
             <div className="subcategory-list">
               {renderCategories(category.children, level + 1)}

@@ -12,7 +12,7 @@ const Category = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/category/first_category`,
+          `${process.env.REACT_APP_API_BASE_URL}/api/category/firstCategory`,
           { withCredentials: true }
         );
         setCategories(response.data);
@@ -58,7 +58,7 @@ const Category = () => {
 
       {isModalOpen && (
         <StepModal
-          category_id={selectedCategory.category_id}
+          categoryId={selectedCategory.categoryId}
           onClose={closeModal}
         />
       )}

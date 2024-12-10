@@ -47,7 +47,7 @@ const Search = () => {
     console.log('선택된 카테고리:', selectedCategory);
     console.log('선택된 주소:', selectedAddress);
     
-    navigate('/offerPosts', {
+    navigate('/offerPostsFilter', {
       state: {
         keyword,
         selectedCategory,
@@ -71,7 +71,7 @@ const Search = () => {
               type="text"
               name="keyword"
               id="keyword"
-              placeholder="제품 키워드"
+              placeholder="주문 키워드"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
             />
