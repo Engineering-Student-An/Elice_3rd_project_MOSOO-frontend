@@ -14,6 +14,7 @@ const MyPage = () => {
     address: '',
     password: '',
     currentPassword: '',
+     userInfoId: '', // userInfoId 추가
   });
 
   const navigate = useNavigate();
@@ -35,8 +36,8 @@ const MyPage = () => {
               Authorization: `Bearer ${token}`,
             },
           });
-
-          const { fullName, email, } = response.data; // 역할도 포함
+          console.log('User data response:', response.data); // 응답 확인
+          const { fullName, email, userInfoId} = response.data; // 역할도 포함
           setUserRole(response.data.authority);
           const address = response.data.userInfoDto.address;
           setUser({
@@ -45,13 +46,15 @@ const MyPage = () => {
             address: address || '',
             password: '',
             currentPassword: '',
+            userInfoId: userInfoId || '' // userInfoId 설정
+
           });
           setNewUser({
             fullName: fullName || '',
             email: email || '',
             address: address || '',
             password: '',
-            currentPassword: '',
+            userInfoId: userInfoId || '' // userInfoId 설정
           });
           console.log(address);
         } catch (error) {
@@ -131,6 +134,11 @@ const MyPage = () => {
       if (newUser.newPassword !== confirmPassword) { // 변경된 필드명
           setPasswordError('새 비밀번호가 일치하지 않습니다.');
           return;
+      } else {
+        if (newUser.newPassword == newUser.exPassword) {
+        setPasswordError('기존 비밀번호와 똑같은 비밀번호 입니다.')
+        return;
+        }
       }
 
       try {
