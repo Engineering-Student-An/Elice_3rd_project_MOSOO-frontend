@@ -151,7 +151,7 @@ const CategoryList = () => {
   return (
     <div className="container">
       <div className="category-header">
-        <h1>카테고리 관리</h1>
+        <h3>카테고리 관리</h3>
         <button className="btn-create" onClick={handleCreateFirst}>
           대분류 생성
         </button>

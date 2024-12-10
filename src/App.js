@@ -23,6 +23,7 @@ import { Payment } from "./pages/payment";
 import PaymentComplete from "./pages/payment/PaymentComplete";
 import UsageList from "./pages/usage/UsageList";
 import GoogleTokenCheck from "./pages/user/login-signup/GoogleTokenCheck";
+import AdminDeleteUserList from "./pages/admin/AdminDeleteUserList";
 
 const App = () => {
     return (
@@ -41,8 +42,10 @@ const App = () => {
                         <Route path="/tokenCheck" element={<GoogleTokenCheck />} /> {/* Google로그인 후 토큰 저장 */}
                         <Route path="/TechProvide" element={<TechProvide/>} /> {/* 기술 제공 전환 페이지 */}
 
-                        <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 일반 게시글 목록 화면 */}
-                        <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 고수 게시글 목록 화면 */}
+                        <Route path="/admin/deleted-users" element={<AdminRoute> <AdminDeleteUserList/> </AdminRoute>} />
+
+                        <Route path="/requestPosts" element={<RequestPostList/>}/> {/* 게시글 목록 화면 */}
+                        <Route path="/offerPosts" element={<OfferPostList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/offerPostsFilter" element={<OfferPostFilterList/>}/> {/* 게시글 목록 화면 */}
                         <Route path="/createPost" element={<CreatePost/>}/> {/* 게시글 작성 화면 */}
                         <Route path="/posts/:id" element={<PostDetail/>}/> {/* 게시글 상세 화면 */}
