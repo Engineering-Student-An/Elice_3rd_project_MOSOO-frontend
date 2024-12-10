@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Banner.css";
-import image1 from "../assets/images/banner/banner1.jpg";
-import image2 from "../assets/images/banner/banner2.jpg";
-import image3 from "../assets/images/banner/banner3_elice.png";
-import image4 from "../assets/images/banner/banner4_eliceCode.png";
-import image5 from "../assets/images/logo/logo.png";
+import image1 from "../assets/images/banner/siteimage.png";
+import image2 from "../assets/images/banner/siteImage2.png";
+import image3 from "../assets/images/banner/siteImage3.png";
+import image4 from "../assets/images/banner/siteImage4.png";
+
 import buttonImage1 from "../assets/images/banner/button/button1.png";
 import buttonImage2 from "../assets/images/banner/button/button2.png";
 import SearchRequestPostsModal from "./SearchRequestPosts";
 
 function Banner() {
-  const imageUrls = [image5, image3, image4];
+  const imageUrls = [image1, image2, image3, image4];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ function Banner() {
       setCurrentIndex((prevIndex) =>
         prevIndex === imageUrls.length - 1 ? 0 : prevIndex + 1
       );
-    }, 4000); // 5초마다 슬라이드 전환
+    }, 4000); // 4초마다 슬라이드 전환
 
     return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 제거
   }, [imageUrls.length]);
