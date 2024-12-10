@@ -87,11 +87,24 @@ const AdminUserList = () => {
 
             <ul>
             {members.map((member) => (
-                    <div className="d-flex justify-content-start mb-3" >
-                        <li key={member.id}>{member.fullName} ({member.email})</li>
-                        <button className="btn btn-sm btn-danger" style={{marginLeft: '20px'}} onClick={() => handleWithdrawal(member.id)}>회원 탈퇴</button>
-                    </div>
-                ))}
+                <div className="d-flex justify-content-start mb-3">
+                    <button
+                        style={{
+                            marginRight: '20px',
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                            color: 'red'
+                        }}
+                        onClick={() => handleWithdrawal(member.id)}
+                    >
+                        <span className="material-icons">delete</span>
+                    </button>
+                    <li key={member.id}>{member.fullName} ({member.email})</li>
+
+                </div>
+            ))}
             </ul>
 
             {/* 페이징 버튼 */}
