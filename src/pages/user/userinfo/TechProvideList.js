@@ -44,7 +44,7 @@ const MyBids = () => {
                 <table className="table table-bordered">
                     <thead className="thead-dark">
                     <tr>
-                        <th>#</th>
+                        <th>번호</th>
                         <th>회원 정보</th>
                         <th>진행 날짜</th>
                         <th>가격</th>
