@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { isAdmin } from '../../../components/IsAdmin'; // isAdmin 함수 import
 import './MyPage.css';
 import UsageList from "../../usage/UsageList";
 import {ChatRoomList} from "../../chatting";
 import AdminUserLIst from "../../admin/AdminUserLIst";
 import {CategoryList} from "../../category";
-import {MyPosts} from "../../post/mypage";
+import {MyBids, MyPosts} from "../../post/mypage";
 import MyReviews from "../../post/mypage/MyReviews"; // CSS 파일에서 아이콘 스타일 추가
 import AddressModal from '../../../components/AddressModal';
-import TechProvideEdit from './TechProvideEdit';
+import TechProvideList from "./TechProvideList";
 
-const MyPage = () => {
+const MyPage = ( ) => {
   const [user, setUser] = useState({
     fullName: '',
     email: '',
@@ -33,6 +33,14 @@ const MyPage = () => {
   const [passwordError, setPasswordError] = useState('');
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState('');
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.activeMenu) {
+        setActiveMenu(location.state.activeMenu);
+    }
+}, [location.state, setActiveMenu]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -416,6 +424,12 @@ const MyPage = () => {
           </div>
         )}
 
+        {activeMenu === 'bid' && (
+            <div>
+                <MyBids></MyBids>
+            </div>
+        )}
+
         {activeMenu === 'chat' && (
           <div>
             <ChatRoomList></ChatRoomList>
@@ -431,8 +445,7 @@ const MyPage = () => {
 
         {activeMenu === 'techHistory' && (
           <div>
-            <h2>기술 제공 기록</h2>
-            <p>기술 제공 기록 내용이 여기에 표시됩니다.</p>
+            <TechProvideList></TechProvideList>
           </div>
         )}
 

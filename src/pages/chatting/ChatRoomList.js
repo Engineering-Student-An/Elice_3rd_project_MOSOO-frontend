@@ -11,10 +11,11 @@ const ChatRoomList = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [modalOpenIndex, setModalOpenIndex] = useState(null); // 모달이 열려 있는 인덱스
     const buttonRefs = useRef([]); // 버튼 참조를 위한 배열
-
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchChatRooms = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatrooms?page=${currentPage}`,
                     {
@@ -30,6 +31,7 @@ const ChatRoomList = () => {
                 setErrorMessage(err.response ? err.response.data.message : err.message);
                 console.error('Failed to load chat rooms:', err);
             } finally {
+                setLoading(false);
                 window.scrollTo({top: 0, behavior: 'instant'});
             }
         };
@@ -40,6 +42,7 @@ const ChatRoomList = () => {
     if (errorMessage) {
         return <div> {errorMessage} </div>;
     }
+
 
     // const formatDate = (date) => {
     //     const options = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
@@ -113,8 +116,11 @@ const ChatRoomList = () => {
                     <h2>채팅</h2>
                 </div>
 
+                {loading && chatRooms.length === 0 && (
+                    <p>로딩중...</p>
+                )}
                 <ul>
-                    {chatRooms.length === 0 ? ( // 채팅방이 없을 경우
+                    {!loading && chatRooms.length === 0 ? ( // 채팅방이 없을 경우
                         <div style={{textAlign: 'center', margin: '200px 0'}}>
                             생성된 채팅방이 없습니다.
                         </div>
@@ -126,7 +132,8 @@ const ChatRoomList = () => {
                                         <div className="d-flex flex-row justify-content-start align-items-center mb-2">
                                             <h3>{chatRoom.opponentFullName}</h3>
                                             <p style={{marginLeft: '20px'}}>게시글 | </p>
-                                            <a style={{marginLeft: '10px', color: 'purple'}} href={`/posts/${chatRoom.postId}`}>{chatRoom.postTitle}</a>
+                                            <a style={{marginLeft: '10px', color: 'purple'}}
+                                               href={`/posts/${chatRoom.postId}`}>{chatRoom.postTitle}</a>
                                             {chatRoom.existUnchecked && (
                                                 <span style={{
                                                     display: 'inline-block',
