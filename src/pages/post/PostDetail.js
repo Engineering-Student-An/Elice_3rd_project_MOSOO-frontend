@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {useParams, useNavigate} from 'react-router-dom';
-import {fetchPostDetail, fetchBids, createBid, fetchReviews, createChatroom, deletePost} from './Api';
+import {fetchPostDetail, fetchBids, createBid, fetchReviews, createChatroom, deletePost, updatePost} from './Api';
 import {Modal, Button, Carousel} from 'react-bootstrap';
 import './StarRating.css';
 import {isGosu} from "../../components/isGosu";
@@ -17,6 +17,11 @@ const PostDetail = () => {
     const [showModal, setShowModal] = useState(false);
     const [bidPrice, setBidPrice] = useState(0);
     const [bidDate, setBidDate] = useState('');
+    const [editModal, setEditModal] = useState(false); // 수정 모달 상태
+    const [editTitle, setEditTitle] = useState(post?.title || ''); // 수정 제목
+    const [editDescription, setEditDescription] = useState(post?.description || ''); // 수정 설명
+    const [editPrice, setEditPrice] = useState(post?.price || 0); // 수정 금액
+    const [editDuration, setEditDuration] = useState(post?.duration || ''); // 수정 기간
     const navigate = useNavigate();
 
     const loadPostDetail = async () => {
@@ -123,21 +128,51 @@ const PostDetail = () => {
         );
     };
 
-    // 게시글 삭제 함수
     const handleDelete = async () => {
         try {
             await deletePost(id); // deletePost 호출하여 게시글 삭제
             alert('게시글이 삭제되었습니다.');
-            navigate('/posts'); // 게시글 목록 페이지로 리디렉션
+            navigate(-1); // 이전 페이지로 이동
         } catch (err) {
             setError('게시글 삭제에 실패했습니다.');
         }
     };
 
-    // 게시글 수정 함수
-    const handleEdit = () => {
-        navigate(`/edit-post/${id}`); // 수정 페이지로 이동
+    // 수정 모달 열기
+    const openEditModal = () => {
+        setEditTitle(post.title); // 기존 값으로 초기화
+        setEditDescription(post.description);
+        setEditPrice(post.price);
+        setEditDuration(post.duration);
+        setEditModal(true);
     };
+
+    // 수정 모달 닫기
+    const closeEditModal = () => setEditModal(false);
+
+    const handleSaveEdit = async () => {
+        try {
+            const updatedPost = {
+                id: id,
+                title: editTitle,
+                description: editDescription,
+                price: editPrice,
+                duration: editDuration,
+            };
+
+            // API 호출
+            const updatedData = await updatePost(updatedPost);
+
+            // 로컬 상태 업데이트
+            setPost((prev) => ({ ...prev, ...updatedData }));
+            alert('게시글이 수정되었습니다.');
+            closeEditModal();
+        } catch (err) {
+            console.error('게시글 수정 실패', err);
+            alert('게시글 수정에 실패했습니다.');
+        }
+    };
+
 
     useEffect(() => {
         loadPostDetail();
@@ -177,7 +212,7 @@ const PostDetail = () => {
                                     <ul className="dropdown-menu dropdown-menu-end"
                                         aria-labelledby="dropdownMenuButton">
                                         <li>
-                                            <button className="dropdown-item" onClick={handleEdit}>
+                                            <button className="dropdown-item" onClick={openEditModal}>
                                                 게시글 수정
                                             </button>
                                         </li>
@@ -373,6 +408,59 @@ const PostDetail = () => {
 
                 </div>
             </div>
+
+            {/* 수정 모달 */}
+            <Modal show={editModal} onHide={closeEditModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>게시글 수정</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="mb-3">
+                        <label className="form-label">제목</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">설명</label>
+                        <textarea
+                            className="form-control"
+                            value={editDescription}
+                            onChange={(e) => setEditDescription(e.target.value)}
+                        ></textarea>
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">가격 (원)</label>
+                        <input
+                            type="number"
+                            className="form-control"
+                            value={editPrice}
+                            onChange={(e) => setEditPrice(Number(e.target.value))}
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">기간</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={editDuration}
+                            onChange={(e) => setEditDuration(e.target.value)}
+                        />
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={closeEditModal}>
+                        닫기
+                    </Button>
+                    <Button variant="primary" onClick={handleSaveEdit}>
+                        저장
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
         </div>
     );
 };

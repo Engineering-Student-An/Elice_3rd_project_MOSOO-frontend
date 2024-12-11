@@ -37,13 +37,20 @@ export const fetchPostDetail = async (postId) => {
 
 /**
  * 게시글 삭제
- * @param {Long} postId - 삭제할 게시글 ID
+ * @param {number} postId - 삭제할 게시글 ID
  * @returns {Promise<Object>} - 삭제 결과
  */
 export const deletePost = async (postId) => {
     try {
-        const response = await axios.delete(`${API_BASE_URL}/api/post/${postId}`);
-        return response.data;
+        const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
+
+        const response = await axios.delete(`${API_BASE_URL}/api/post/${postId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+            },
+        });
+
+        return response.data; // 서버에서 반환된 데이터
     } catch (error) {
         console.error('게시글 삭제에 실패했습니다.', error);
         throw new Error('게시글 삭제에 실패했습니다.');
@@ -161,7 +168,7 @@ export const createChatroom = async (gosuId, postId, bidId) => {
         console.log(gosuId, postId, bidId);
 
         const response = await axios.post(
-            `${process.env.REACT_APP_API_BASE_URL}/api/chatroom`,
+            `${API_BASE_URL}/api/chatroom`,
             JSON.stringify({
                 gosuId,
                 postId,
@@ -179,6 +186,33 @@ export const createChatroom = async (gosuId, postId, bidId) => {
     } catch (error) {
         console.error('채팅방 생성에 실패했습니다:', error);
         throw new Error('채팅방 생성에 실패했습니다.');
+    }
+};
+
+/**
+ * 게시글 수정 API 호출
+ * @param {Object} updatedPost - 수정할 게시글 데이터 (title, description, price, duration 포함)
+ * @returns {Promise<Object>} - 수정된 게시글 데이터 반환
+ */
+export const updatePost = async (updatedPost) => {
+    try {
+        const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
+
+        const response = await axios.put(
+            `${API_BASE_URL}/api/post`,
+            JSON.stringify(updatedPost),
+            {
+                headers: {
+                    'Content-Type': 'application/json', // JSON 형식으로 전송
+                    Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+                },
+            }
+        );
+        console.log(response.data);
+        return response.data; // 서버에서 반환된 데이터
+    } catch (error) {
+        console.error('게시글 수정에 실패했습니다:', error);
+        throw new Error('게시글 수정에 실패했습니다.');
     }
 };
 
