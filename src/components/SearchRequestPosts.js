@@ -91,11 +91,12 @@ const SearchRequestPosts = ({ onClose }) => {
     console.log("address:", selectedAddress || "주소가 설정되지 않았습니다.");
     console.log("ThirdCategory ID:", thirdCategory?.categoryId || "소분류가 설정되지 않았습니다.");
 
-    navigate('/requestPosts', 
+    navigate('/offerPostsFilter',
         { state: 
             { 
             address: selectedAddress, 
-            categoryId: thirdCategory.categoryId 
+            categoryId: thirdCategory.categoryId,
+            isOffer: false
         } });
 
   };
