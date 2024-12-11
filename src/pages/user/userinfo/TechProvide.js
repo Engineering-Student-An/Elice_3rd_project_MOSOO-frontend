@@ -86,9 +86,27 @@ const TechProvide = () => {
               Authorization: `Bearer ${token}`,
             },
           });
+        try{
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/token`, {
+            headers: {
+                          Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.status === 201) {
+            alert('test');
+                localStorage.removeItem("token");
+                localStorage.setItem('token', response.data.accessToken);
+            }
+        }  catch (err) {
+                       console.error('토큰 재발급 실패:', err);
+                       setError(err.response?.data?.message || '토큰 재발급에 실패했습니다.');
+
+        }
+
+
 
       alert('기술 제공 정보가 성공적으로 저장되었습니다.');
-      navigate('/mypage');
+      window.location.href = '/mypage';
     } catch (error) {
       console.error('기술 제공 정보 저장 오류:', error);
       setError('기술 제공 정보 저장 중 오류가 발생했습니다.');
