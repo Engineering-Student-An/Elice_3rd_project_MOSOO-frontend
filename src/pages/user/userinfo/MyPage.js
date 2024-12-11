@@ -7,7 +7,7 @@ import UsageList from "../../usage/UsageList";
 import {ChatRoomList} from "../../chatting";
 import AdminUserLIst from "../../admin/AdminUserLIst";
 import {CategoryList} from "../../category";
-import {MyPosts} from "../../post/mypage";
+import {MyBids, MyPosts} from "../../post/mypage";
 import MyReviews from "../../post/mypage/MyReviews"; // CSS 파일에서 아이콘 스타일 추가
 import AddressModal from '../../../components/AddressModal';
 
@@ -403,6 +403,12 @@ const MyPage = () => {
           <div>
             <UsageList></UsageList>
           </div>
+        )}
+
+        {activeMenu === 'bid' && (
+            <div>
+                <MyBids></MyBids>
+            </div>
         )}
 
         {activeMenu === 'chat' && (
