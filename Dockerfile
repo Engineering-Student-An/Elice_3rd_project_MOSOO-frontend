@@ -10,7 +10,7 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY build /usr/share/nginx/html
 
 # 4. Nginx 설정 파일 복사 (필요 시 설정 변경 가능)
-COPY etc/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY etc/nginx/nginx.conf /etc/nginx/conf.d/mosoo.conf
 
 # 5. 컨테이너의 80 포트 노출
 EXPOSE 80
