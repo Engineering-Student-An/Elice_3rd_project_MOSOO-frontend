@@ -92,8 +92,12 @@ const PaymentComplete = () => {
                             <h5 style={{textAlign: 'center'}}>{order.gosuName}</h5>
                             <hr/>
                             <p>
-                                진행날짜: {new Date(order.workDate).toLocaleDateString("ko-KR")}
+                                {isNaN(Date.parse(order.workDate))
+                                    ? `진행기간: ${order.workDate}`
+                                    : `진행날짜: ${new Date(order.workDate).toLocaleDateString("ko-KR")}`}
                             </p>
+
+
                             <p>금액: {order.price.toLocaleString()} 원</p>
                             <p>
                                 결제완료일자: {new Date(order.paidAt).toLocaleDateString("ko-KR")}
