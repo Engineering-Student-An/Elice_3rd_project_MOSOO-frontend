@@ -13,7 +13,8 @@ const TechProvideEdit = () => {
     businessNumber: '',
     phoneNumber: '',
     gosuInfoAddress: '',
-    category: ''
+    category: '',
+    gosuId: ''
   });
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState('');
@@ -50,6 +51,7 @@ const TechProvideEdit = () => {
                     const category = response.data.categoryId;
             setTechInfo({
               userInfoId: data.userInfoId,
+              gosuId: data.id,
               gender: data.gender,
               businessName: data.businessName,
               businessNumber: data.businessNumber,
@@ -57,7 +59,7 @@ const TechProvideEdit = () => {
               gosuInfoAddress: data.gosuInfoAddress,
             });
             setSelectedAddress(data.gosuInfoAddress);
-            category(data.categoryId);
+            setSelectedCategory(data.category);
           } catch (error) {
             console.error('사용자 정보를 가져오는 데 오류가 발생했습니다:', error);
             setError('사용자 정보를 가져오는 데 오류가 발생했습니다.');
@@ -86,8 +88,7 @@ const TechProvideEdit = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/gosu`, {
-        userInfoId: techInfo.userInfoId,
+      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/gosu/${techInfo.gosuId}`, {
         gender: techInfo.gender,
         businessName: techInfo.businessName,
         businessNumber: techInfo.businessNumber,
