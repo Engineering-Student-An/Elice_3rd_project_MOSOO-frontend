@@ -19,7 +19,8 @@ const CategoryList = () => {
           `${process.env.REACT_APP_API_BASE_URL}/api/category`,
           {withCredentials: true}
         );
-        setCategories(response.data);
+        const sortedCategories = response.data.sort((a, b) => a.categoryId - b.categoryId); // 카테고리Id 순으로 정렬
+        setCategories(sortedCategories);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -33,7 +34,7 @@ const CategoryList = () => {
   // 이벤트 핸들러
   const handleCreate = (categoryId) => {
     console.log("생성 버튼 클릭");
-    navigate(`/categories/createsub/${categoryId}`)
+    navigate(`/categories/createsub/${categoryId}`);
   };
 
   const handleCreateFirst = () => {
