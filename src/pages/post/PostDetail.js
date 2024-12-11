@@ -229,6 +229,9 @@ const PostDetail = () => {
                         <div className="card-body">
                             <div className="row mb-4">
                                 <div className="col-md-6">
+                                    <div className="mb-2 text-muted small">
+                                        <strong>작성자:</strong> {post.fullName}
+                                    </div>
                                     {post.imgUrls && post.imgUrls.length > 0 ? (
                                         <Carousel>
                                             {post.imgUrls.map((imgUrl, index) => (
@@ -250,10 +253,10 @@ const PostDetail = () => {
                                     )}
                                 </div>
                                 <div className="col-md-6 d-flex align-items-center">
-                                    <ul className="list-group w-100">
-                                        <li className="list-group-item">
-                                            <strong>고수:</strong> <small>{post.businessName}</small>
-                                        </li>
+                                <ul className="list-group w-100">
+                                    {post.offer && (<li className="list-group-item">
+                                        <strong>고수:</strong> <small>{post.businessName}</small>
+                                    </li>)}
                                         <li className="list-group-item">
                                             <strong>주소:</strong> <small>{post.address}</small>
                                         </li>
