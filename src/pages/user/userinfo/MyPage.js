@@ -255,7 +255,7 @@ const MyPage = ( ) => {
                   },
               });
 
-              if (response.status === 200) {
+              if (response.status === 204) {
                   alert('기술 제공이 성공적으로 탈퇴되었습니다.');
                   window.location.href = '/mypage';
               }
