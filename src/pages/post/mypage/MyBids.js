@@ -37,9 +37,8 @@ const MyBids = () => {
                     <tr>
                         <th>ID</th>
                         <th>가격</th>
-                        <th>날짜</th>
-                        <th>회원 이름</th>
-                        <th>회원 ID</th>
+                        <th>진행 날짜</th>
+                        <th>게시글</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -47,9 +46,14 @@ const MyBids = () => {
                         <tr key={bid.id}>
                             <td>{bid.id}</td>
                             <td>{bid.price.toLocaleString()} 원</td>
-                            <td>{new Date(bid.date).toLocaleString()}</td>
-                            <td>{bid.fullName}</td>
-                            <td>{bid.userId}</td>
+                            <td>{new Date(bid.date).toLocaleDateString("ko-KR")}</td>
+                            <td>
+                                {bid.postTitle ? (
+                                    <a href={`/posts/${bid.postId}`}>{bid.postTitle}</a>
+                                ) : (
+                                    <span>찾을 수 없는 게시글</span> // 링크 대신 메시지 출력
+                                )}
+                            </td>
                         </tr>
                     ))}
                     </tbody>
