@@ -11,6 +11,7 @@ import {MyBids, MyPosts} from "../../post/mypage";
 import MyReviews from "../../post/mypage/MyReviews"; // CSS 파일에서 아이콘 스타일 추가
 import AddressModal from '../../../components/AddressModal';
 import TechProvideList from "./TechProvideList";
+import TechProvideEdit from "./TechProvideEdit";
 
 const MyPage = ( ) => {
   const [user, setUser] = useState({
@@ -445,7 +446,8 @@ const MyPage = ( ) => {
 
         {activeMenu === 'techHistory' && (
           <div>
-            <TechProvideList></TechProvideList>
+            <h2>기술 제공 기록</h2>
+            <p>기술 제공 기록 내용이 여기에 표시됩니다.</p>
           </div>
         )}
 
