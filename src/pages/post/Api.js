@@ -124,8 +124,7 @@ export const fetchReviews = async (postId) => {
 export const fetchFilteredPostList = async (page, filters = {}) => {
     try {
         const params = {
-            page,
-            isOffer: true, // Offer 조건은 항상 true로 설정
+            page
         };
 
         // 선택적으로 파라미터 추가
@@ -138,6 +137,7 @@ export const fetchFilteredPostList = async (page, filters = {}) => {
         if (filters.selectedAddress) {
             params.address = filters.selectedAddress;
         }
+        params.isOffer = filters.isOffer;
 
         const response = await axios.get(`${API_BASE_URL}/api/post/filterPosts`, { params });
 

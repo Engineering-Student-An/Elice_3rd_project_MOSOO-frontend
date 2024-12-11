@@ -14,13 +14,13 @@ const OfferPostFilterList = () => {
     const location = useLocation();
 
     // 필터 데이터 가져오기
-    const { keyword, selectedCategory, selectedAddress } = location.state || {};
+    const { keyword, selectedCategory, selectedAddress, isOffer } = location.state || {};
 
     const loadFilteredPosts = async (page) => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchFilteredPostList(page, { keyword, selectedCategory, selectedAddress });
+            const data = await fetchFilteredPostList(page, { keyword, selectedCategory, selectedAddress, isOffer });
             setPosts(data.postList);
             setTotalPages(data.totalPages);
         } catch (err) {
