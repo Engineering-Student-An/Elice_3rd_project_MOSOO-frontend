@@ -8,14 +8,6 @@ const Header = () => {
     localStorage.removeItem("token"); // 토큰 삭제
     setToken(null); // 상태 업데이트
 
-    // 쿠키 삭제 함수
-        const deleteCookie = (name) => {
-            document.cookie = `${name}=; Max-Age=0; path=/;`;
-        };
-
-        // 쿠키 이름에 맞게 삭제
-        deleteCookie("oauth2_auth_request"); // 여기서 "yourCookieName"을 실제 쿠키 이름으로 변경
-        deleteCookie("refreshToken");
     window.location.href = "/"; // 메인 페이지로 이동
   };
 
