@@ -83,15 +83,13 @@ const PaymentComplete = () => {
                 </button>
             </div>
 
-            {error && <p style={{color: "red"}}>{error}</p>}
-
             <div className="usage-card-container">
                 {orders.length === 0 ? (
                     <p>아직 이용내역이 없습니다.</p>
                 ) : (
                     orders.map((order, index) => (
                         <div className="usage-card" key={index}>
-                            <h5>{order.gosuName}</h5>
+                            <h5 style={{textAlign: 'center'}}>{order.gosuName}</h5>
                             <hr/>
                             <p>
                                 진행날짜: {new Date(order.workDate).toLocaleDateString("ko-KR")}
@@ -101,21 +99,24 @@ const PaymentComplete = () => {
                                 결제완료일자: {new Date(order.paidAt).toLocaleDateString("ko-KR")}
                             </p>
 
-                            {ongoing ? (
-                                <button
-                                    className="purple-button mt-10"
-                                    onClick={() => handleCompleteService(order.orderId)}
-                                >
-                                    서비스 완료
-                                </button>
-                            ) : (
-                                <a
-                                    href={`/review/${order.postId}`}
-                                    className="purple-button mt-10"
-                                >
-                                    리뷰쓰기
-                                </a>
-                            )}
+                            <div className="button-container">
+
+                                {ongoing ? (
+                                    <button
+                                        className="purple-button mt-10"
+                                        onClick={() => handleCompleteService(order.orderId)}
+                                    >
+                                        서비스 완료
+                                    </button>
+                                ) : (
+                                    <a
+                                        href={`/review/${order.postId}`}
+                                        className="purple-button mt-10"
+                                    >
+                                        리뷰쓰기
+                                    </a>
+                                )}
+                            </div>
                         </div>
                     ))
                 )}
