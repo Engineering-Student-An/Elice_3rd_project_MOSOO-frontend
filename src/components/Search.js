@@ -51,7 +51,8 @@ const Search = () => {
       state: {
         keyword,
         selectedCategory,
-        selectedAddress
+        selectedAddress,
+        isOffer: true
       }
     });
   };
