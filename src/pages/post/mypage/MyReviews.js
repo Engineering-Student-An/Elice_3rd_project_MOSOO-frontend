@@ -59,7 +59,10 @@ const MyReviews = () => {
             {error && <p className="text-danger">{error}</p>}
 
             <div className="row">
-                {reviews.map((review) => (
+                {reviews.length === 0 ? (
+                    <p>내 리뷰 목록이 없습니다.</p> // posts가 비어 있을 때 출력
+                ) : (
+                reviews.map((review) => (
                     <div className="col-md-4 mb-3" key={review.id}>
                         <div className="card" style={{ fontSize: '0.9rem' }}>
 
@@ -74,7 +77,7 @@ const MyReviews = () => {
                             </div>
                         </div>
                     </div>
-                ))}
+                )))}
             </div>
         </div>
     );
