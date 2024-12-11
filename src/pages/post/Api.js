@@ -216,3 +216,25 @@ export const updatePost = async (updatedPost) => {
     }
 };
 
+
+
+// 게시글 상태 변경 API 호출
+export const updatePostStatusApi = async (postId, status) => {
+    try {
+        const token = localStorage.getItem('token'); // 로컬스토리지에서 토큰 가져오기
+        const response = await axios.put(
+            `${API_BASE_URL}/api/post/${postId}?status=${status}`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // 토큰을 Authorization 헤더에 포함
+                },
+            }
+        );
+        return response.data; // 서버로부터의 응답 데이터 반환
+    } catch (error) {
+        console.error("상태 변경 요청 실패", error);
+        throw error; // 에러를 호출한 쪽으로 전달
+    }
+};
+

@@ -1,7 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {useParams, useNavigate} from 'react-router-dom';
-import {fetchPostDetail, fetchBids, createBid, fetchReviews, createChatroom, deletePost, updatePost} from './Api';
+import {
+    fetchPostDetail,
+    fetchBids,
+    createBid,
+    fetchReviews,
+    createChatroom,
+    deletePost,
+    updatePost,
+    updatePostStatus, updatePostStatusApi
+} from './Api';
 import {Modal, Button, Carousel} from 'react-bootstrap';
 import './StarRating.css';
 import {isGosu} from "../../components/isGosu";
@@ -22,6 +31,10 @@ const PostDetail = () => {
     const [editDescription, setEditDescription] = useState(post?.description || ''); // 수정 설명
     const [editPrice, setEditPrice] = useState(post?.price || 0); // 수정 금액
     const [editDuration, setEditDuration] = useState(post?.duration || ''); // 수정 기간
+    const [isStatusModalOpen, setStatusModalOpen] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState("");
+    const openStatusModal = () => setStatusModalOpen(true);
+    const closeStatusModal = () => setStatusModalOpen(false);
     const navigate = useNavigate();
 
     const loadPostDetail = async () => {
@@ -39,6 +52,25 @@ const PostDetail = () => {
             setLoading(false);
         }
     };
+
+    // 상태 변경 처리
+    const handleStatusChange = (status) => {
+        setSelectedStatus(status);
+        updatePostStatus(status);
+        closeStatusModal();
+    };
+
+    const updatePostStatus = async (status) => {
+        try {
+            const result = await updatePostStatusApi(post.id, status);
+            setPost((prev) => ({...prev, status})); // 로컬 상태 업데이트
+            alert(`상태가 ${status}로 변경되었습니다.`);
+        } catch (err) {
+            console.error("상태 변경 실패:", err);
+            alert("상태 변경에 실패했습니다.");
+        }
+    };
+
 
     const handleChat = async (isOffer, bid) => {
         try {
@@ -164,7 +196,7 @@ const PostDetail = () => {
             const updatedData = await updatePost(updatedPost);
 
             // 로컬 상태 업데이트
-            setPost((prev) => ({ ...prev, ...updatedData }));
+            setPost((prev) => ({...prev, ...updatedData}));
             alert('게시글이 수정되었습니다.');
             closeEditModal();
         } catch (err) {
@@ -198,7 +230,9 @@ const PostDetail = () => {
                     <div className="card shadow" style={{maxWidth: '100%', borderRadius: '15px'}}>
                         <div
                             className="card-header d-flex justify-content-between align-items-center purple-bg text-white">
-                            <h2 className="card-title mb-0">{post.title}</h2>
+                            <h2 className="card-title mb-0">
+                                {post.title}
+                            </h2>
                             {String(getJwtSubject()) === String(post.userId) && ( // 조건부 렌더링
                                 <div className="dropdown">
                                     <button
@@ -211,6 +245,11 @@ const PostDetail = () => {
                                     </button>
                                     <ul className="dropdown-menu dropdown-menu-end"
                                         aria-labelledby="dropdownMenuButton">
+                                        <li>
+                                            <button className="dropdown-item" onClick={openStatusModal}>
+                                                상태 전환
+                                            </button>
+                                        </li>
                                         <li>
                                             <button className="dropdown-item" onClick={openEditModal}>
                                                 게시글 수정
@@ -253,10 +292,10 @@ const PostDetail = () => {
                                     )}
                                 </div>
                                 <div className="col-md-6 d-flex align-items-center">
-                                <ul className="list-group w-100">
-                                    {post.offer && (<li className="list-group-item">
-                                        <strong>고수:</strong> <small>{post.businessName}</small>
-                                    </li>)}
+                                    <ul className="list-group w-100">
+                                        {post.offer && (<li className="list-group-item">
+                                            <strong>고수:</strong> <small>{post.businessName}</small>
+                                        </li>)}
                                         <li className="list-group-item">
                                             <strong>주소:</strong> <small>{post.address}</small>
                                         </li>
@@ -267,12 +306,12 @@ const PostDetail = () => {
                                             <strong>기간:</strong> {post.duration}
                                         </li>
                                         {post.offer && Number(getJwtSubject()) !== post.userId && (
-
                                             <Button
                                                 variant="success"
-                                                onClick={() => handleChat(true, null)} // 입찰 ID를 handleChat 함수로 전달
+                                                onClick={() => handleChat(true, null)}
                                                 className="ms-auto mt-4"
-                                                style={{float: 'right'}}
+                                                style={{ float: 'right' }}
+                                                disabled={post.status === "CLOSED"}
                                             >
                                                 채팅하기
                                             </Button>
@@ -289,7 +328,11 @@ const PostDetail = () => {
 
                             <div className="mt-4">
                                 {!post.offer && isGosu() && (
-                                    <Button variant="primary" onClick={() => setShowModal(true)}>
+                                    <Button
+                                        variant="primary"
+                                        onClick={() => setShowModal(true)}
+                                        disabled={post.status === "CLOSED"}
+                                    >
                                         입찰하기
                                     </Button>
                                 )}
@@ -466,6 +509,36 @@ const PostDetail = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            {/* 상태 전환 모달 */}
+            <Modal show={isStatusModalOpen} onHide={closeStatusModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>상태 전환</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>상태를 선택하세요:</p>
+                    <div className="d-flex justify-content-around">
+                        <Button
+                            variant={post.status === "OPEN" ? "primary" : "outline-primary"}
+                            onClick={() => handleStatusChange("OPEN")}
+                        >
+                            OPEN
+                        </Button>
+                        <Button
+                            variant={post.status === "CLOSED" ? "danger" : "outline-danger"}
+                            onClick={() => handleStatusChange("CLOSED")}
+                        >
+                            CLOSED
+                        </Button>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={closeStatusModal}>
+                        닫기
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
 
         </div>
     );
