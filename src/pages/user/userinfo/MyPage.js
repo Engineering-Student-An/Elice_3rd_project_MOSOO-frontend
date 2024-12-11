@@ -138,6 +138,10 @@ const MyPage = ( ) => {
       navigate('/TechProvide'); // 기술 제공 페이지로 이동
     };
 
+    const handleTechProvideEdit = () => {
+        setActiveMenu('techInfo'); // activeMenu를 'techInfo'로 설정
+    };
+
   const handlePasswordChange = async () => {
       // 비밀번호 유효성 검사 함수
             const validatePassword = (password) => {
@@ -228,7 +232,7 @@ const MyPage = ( ) => {
 
               if (response.status === 200) {
                   alert('기술 제공이 성공적으로 탈퇴되었습니다.');
-                  window.location.reload();
+                  window.location.reload(true);
               }
           } catch (error) {
               console.error('기술 제공 탈퇴 중 오류가 발생했습니다:', error);
@@ -370,6 +374,12 @@ const MyPage = ( ) => {
                   <button className="my-page-action-button" onClick={handleSave}>
                     프로필 수정
                   </button>
+                   <button className={`my-page-menu-button ${activeMenu === 'techInfo' ? 'active' : ''}`}
+                           onClick={handleTechProvideEdit} // 기술 제공 정보 수정 버튼 클릭 시
+                           disabled={userRole !== 'ROLE_GOSU'} // ROLE_GOSU일 경우만 활성화
+                           style={{ opacity: userRole !== 'ROLE_GOSU' ? 0.5 : 1 }}>
+                       <i className="fas fa-laptop-code"></i> 기술 제공 정보 수정
+                   </button>
                 </div>
               </div>
             ) : (
@@ -429,7 +439,7 @@ const MyPage = ( ) => {
         {activeMenu === 'techInfo' && (
           <div>
             <h2>기술 제공 정보</h2>
-            <p>기술 제공 정보 내용이 여기에 표시됩니다.</p>
+            <TechProvideEdit />
           </div>
         )}
 

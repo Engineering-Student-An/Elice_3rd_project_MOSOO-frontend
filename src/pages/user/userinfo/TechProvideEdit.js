@@ -13,6 +13,7 @@ const TechProvideEdit = () => {
     businessNumber: '',
     phoneNumber: '',
     gosuInfoAddress: '',
+    category: ''
   });
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState('');
@@ -27,12 +28,26 @@ const TechProvideEdit = () => {
         const token = localStorage.getItem('token');
         if (token) {
           try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/gosu/${userInfoId}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+            const userResponse = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/me`, {
+               headers: {
+                 Authorization: `Bearer ${token}`,
+               },
             });
-            const data = response.data;
+            console.log('User data response:', userResponse.data.userInfoDto.id); // 응답 확인
+
+            const userInfoId = userResponse.data.userInfoDto.id; // userInfoId 추출
+            setUserInfoId(userInfoId); // userInfoId 상태에 저장
+
+            // 고수 데이터를 가져오는 API 호출
+                    const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/gosu/${userInfoId}`, {
+
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    });
+                    console.log('Gosu data response:', response.data); // 응답 확인
+                    const data = response.data;
+                    const category = response.data.categoryId;
             setTechInfo({
               userInfoId: data.userInfoId,
               gender: data.gender,
@@ -42,7 +57,7 @@ const TechProvideEdit = () => {
               gosuInfoAddress: data.gosuInfoAddress,
             });
             setSelectedAddress(data.gosuInfoAddress);
-            setSelectedCategory({ categoryId: data.categoryId, name: data.categoryName });
+            category(data.categoryId);
           } catch (error) {
             console.error('사용자 정보를 가져오는 데 오류가 발생했습니다:', error);
             setError('사용자 정보를 가져오는 데 오류가 발생했습니다.');
