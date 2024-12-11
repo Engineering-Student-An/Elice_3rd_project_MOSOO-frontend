@@ -40,7 +40,7 @@ const CreateFirstCategory = () => {
         }
       );
       alert('대분류가 생성되었습니다!');
-      navigate('/categories');
+      navigate('/mypage', { state: { activeMenu: 'categoryManagement' } })
     } catch (error) {
       console.error('대분류 생성 실패:', error);
       alert('대분류 생성 중 오류가 발생했습니다.');
