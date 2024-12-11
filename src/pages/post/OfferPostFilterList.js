@@ -20,6 +20,8 @@ const OfferPostFilterList = () => {
         setLoading(true);
         setError(null);
         try {
+            console.log(selectedAddress);
+            console.log(selectedCategory);
             const data = await fetchFilteredPostList(page, { keyword, selectedCategory, selectedAddress, isOffer });
             setPosts(data.postList);
             setTotalPages(data.totalPages);
