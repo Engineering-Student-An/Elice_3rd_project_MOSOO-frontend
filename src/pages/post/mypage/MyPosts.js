@@ -78,28 +78,32 @@ const MyPosts = () => {
             {error && <p className="text-danger">{error}</p>}
 
             <div className="row">
-                {posts.map((post) => (
-                    <div className="col-md-4 mb-3" key={post.id}>
-                        <div className="card" style={{ fontSize: '0.9rem' }}>
-                            {post.imgUrls && post.imgUrls.length > 0 && (
-                                <img
-                                    src={post.imgUrls[0]}
-                                    alt={post.title}
-                                    className="card-img-top"
-                                    style={{ height: '200px', objectFit: 'cover' }}
-                                />
-                            )}
-                            <div className="card-header purple-bg text-white">{post.title}</div>
-                            <div className="card-body">
-                                <ul className="list-unstyled">
-                                    <li><strong>가격:</strong> {post.price.toLocaleString()} 원</li>
-                                    <li><strong>기간:</strong> {post.duration}</li>
-                                </ul>
-                                <Link to={`/posts/${post.id}`} className="btn m-2 btn-primary">상세 보기</Link>
+                {posts.length === 0 ? (
+                    <p>내 글 목록이 없습니다.</p> // posts가 비어 있을 때 출력
+                ) : (
+                    posts.map((post) => (
+                        <div className="col-md-4 mb-3" key={post.id}>
+                            <div className="card" style={{fontSize: '0.9rem'}}>
+                                {post.imgUrls && post.imgUrls.length > 0 && (
+                                    <img
+                                        src={post.imgUrls[0]}
+                                        alt={post.title}
+                                        className="card-img-top"
+                                        style={{height: '200px', objectFit: 'cover'}}
+                                    />
+                                )}
+                                <div className="card-header purple-bg text-white">{post.title}</div>
+                                <div className="card-body">
+                                    <ul className="list-unstyled">
+                                        <li><strong>가격:</strong> {post.price.toLocaleString()} 원</li>
+                                        <li><strong>기간:</strong> {post.duration}</li>
+                                    </ul>
+                                    <Link to={`/posts/${post.id}`} className="btn m-2 btn-primary">상세 보기</Link>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
 
             <div style={{
@@ -111,7 +115,7 @@ const MyPosts = () => {
                 marginBottom: '50px'
             }}>
                 <nav aria-label="Page navigation example">
-                    <ul className="pagination justify-content-center" style={{ display: 'flex', flexDirection: 'row' }}>
+                    <ul className="pagination justify-content-center" style={{display: 'flex', flexDirection: 'row'}}>
                         <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                             <button className="page-link" onClick={handleFirstPage} aria-label="First">
                                 <span aria-hidden="true">&laquo;</span>
@@ -122,7 +126,7 @@ const MyPosts = () => {
                                 <span aria-hidden="true">&#8249;</span>
                             </button>
                         </li>
-                        {Array.from({ length: 5 }, (_, index) => {
+                        {Array.from({length: 5}, (_, index) => {
                             const pageNum = currentPage - 2 + index;
                             if (pageNum < 1 || pageNum > totalPages) return null;
                             return (
