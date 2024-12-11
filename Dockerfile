@@ -12,8 +12,11 @@ COPY build /usr/share/nginx/html
 # 4. Nginx 설정 파일 복사 (필요 시 설정 변경 가능)
 COPY etc/nginx/nginx.conf /etc/nginx/conf.d/mosoo.conf
 
-# 5. 컨테이너의 80 포트 노출
+# 5. 쉘 추가: 쉘 스크립트를 실행하기 위해 쉘을 컨테이너에 추가
+RUN apk update && apk add --no-cache bash
+
+# 6. 컨테이너의 80 포트 노출
 EXPOSE 80
 
-# 6. Nginx 실행
+# 7. Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]
