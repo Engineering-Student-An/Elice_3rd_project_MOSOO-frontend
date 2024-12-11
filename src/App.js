@@ -191,16 +191,7 @@ const App = () => {
                                 </ProtectedRoute>
                             }
                         />{" "}
-                        {/* 이용 내역 화면 */}
-                        <Route
-                            path="/categories"
-                            element={
-                                <AdminRoute>
-                                    <CategoryList/>
-                                </AdminRoute>
-                            }
-                        />{" "}
-                        {/* 카테고리 관리 화면 */}
+                        {/* 카테고리 대분류 생성 화면 */}
                         <Route
                             path="/categories/createfirst"
                             element={
@@ -209,7 +200,7 @@ const App = () => {
                                 </AdminRoute>
                             }
                         />{" "}
-                        {/* 카테고리 대분류 생성 화면 */}
+                        {/* 카테고리 하위 카테고리 생성 화면 */}
                         <Route
                             path="/categories/createsub/:categoryId"
                             element={
@@ -218,7 +209,7 @@ const App = () => {
                                 </AdminRoute>
                             }
                         />{" "}
-                        {/* 카테고리 하위 분류 생성 화면 */}
+                        {/* 카테고리 수정 화면 */}
                         <Route
                             path="/categories/update/:categoryId"
                             element={
@@ -227,7 +218,6 @@ const App = () => {
                                 </AdminRoute>
                             }
                         />{" "}
-                        {/* 카테고리 수정 화면 */}
                     </Routes>
                 </main>
                 <Footer/>
