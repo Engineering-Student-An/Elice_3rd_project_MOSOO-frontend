@@ -12,6 +12,7 @@ import MyReviews from "../../post/mypage/MyReviews"; // CSS 파일에서 아이�
 import AddressModal from '../../../components/AddressModal';
 import TechProvideList from "./TechProvideList";
 import TechProvideEdit from "./TechProvideEdit";
+import AllPostList from "../../post/admin/AllPostList";
 
 const MyPage = ( ) => {
   const [user, setUser] = useState({
@@ -498,10 +499,7 @@ const MyPage = ( ) => {
         )}
 
         {activeMenu === 'postManagement' && (
-            <div>
-              <h3>게시글 관리</h3>
-              <p>게시글 관리 넣어주세요.</p>
-            </div>
+            <AllPostList></AllPostList>
         )}
       </div>
       {showAddressModal && <AddressModal onClose={closeAddressModal} onSelectAddress={handleSelectAddress} />}
