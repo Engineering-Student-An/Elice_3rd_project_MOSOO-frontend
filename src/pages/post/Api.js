@@ -128,9 +128,10 @@ export const fetchFilteredPostList = async (page, filters = {}) => {
         };
 
         // 선택적으로 파라미터 추가
-        if (filters.selectedCategory?.category_id) {
-            params.categoryId = filters.selectedCategory.category_id;
+        if (filters.selectedCategory?.categoryId) {
+            params.categoryId = filters.selectedCategory.categoryId;
         }
+        console.log(params.categoryId);
         if (filters.keyword) {
             params.keyword = filters.keyword;
         }
