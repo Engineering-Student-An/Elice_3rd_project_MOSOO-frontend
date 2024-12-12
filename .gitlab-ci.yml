@@ -46,25 +46,27 @@ deploy:
     - echo "SUBDOMAIN=$SUBDOMAIN" >> .env
     # GCP VM에 전송 및 NGINX 설정 파일 전송
     - echo "events {worker_connections  1024;}
-    http {
-    include       mime.types;
-    default_type  application/octet-stream;
+      http {
+        include       mime.types;
+        default_type  application/octet-stream;
 
-    server {
-        listen 80;
-        listen 443 ssl;
+        server {
+          listen 80;
+          listen 443 ssl;
 
-        server_name ${SUBDOMAIN};
+          server_name ${SUBDOMAIN};
 
-        ssl_certificate /etc/letsencrypt/live/${SUBDOMAIN}/cert.pem;
-        ssl_certificate_key /etc/letsencrypt/live/${SUBDOMAIN}/privkey.pem;
+          ssl_certificate /etc/letsencrypt/live/${SUBDOMAIN}/cert.pem;
+          ssl_certificate_key /etc/letsencrypt/live/${SUBDOMAIN}/privkey.pem;
 
-        root /usr/share/nginx/html;
-        index index.html;
+          root /usr/share/nginx/html;
+          index index.html;
 
-        location / {try_files $uri /index.html;}
+          location / {try_files $uri /index.html;}
 
-        error_page 404 /index.html;} } > nginx.conf
+          error_page 404 /index.html;
+        }
+      }" > nginx.conf
     - scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa nginx.conf $GCP_USER@$GCP_VM_IP:/path/to/your/project/react/
     - scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa .env $GCP_USER@$GCP_VM_IP:/path/to/your/project/react/
     - scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa docker-compose.yml $GCP_USER@$GCP_VM_IP:/path/to/your/project/react/
