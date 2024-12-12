@@ -143,7 +143,7 @@ const MyPage = ( ) => {
               alert('프로필이 성공적으로 수정되었습니다.');
               setUser(newUser);
               setIsEditing(false);
-              window.location.href = '/mypage';
+              window.location.href = '/MyPage';
           }
       } catch (error) {
           console.error('프로필 수정 중 오류가 발생했습니다:', error);
@@ -234,7 +234,7 @@ const MyPage = ( ) => {
               // 비밀번호 변경 후 필드 초기화
               setNewUser({ ...newUser, exPassword: '', newPassword: '' }); // 변경된 필드명
               setConfirmPassword('');
-              window.location.href = '/mypage';
+              window.location.href = '/MyPage';
           }
       } catch (error) {
           console.error('비밀번호 변경 중 오류가 발생했습니다:', error);
@@ -258,7 +258,7 @@ const MyPage = ( ) => {
 
               if (response.status === 204) {
                   alert('기술 제공이 성공적으로 탈퇴되었습니다.');
-                  window.location.href = '/mypage';
+                  window.location.href = '/MyPage';
               }
           } catch (error) {
               console.error('기술 제공 탈퇴 중 오류가 발생했습니다:', error);
@@ -277,6 +277,28 @@ const MyPage = ( ) => {
 
         const closeAddressModal = () => {
           setShowAddressModal(false);
+        };
+
+
+        const handleUserWithdrawal = async () => {
+            const token = localStorage.getItem('token');
+            const userInfoId = user.userInfoId;
+            try {
+                const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/user/deleted`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                console.log(response.status);
+                if (response.status === 200) {
+                    alert('회원탈퇴가 성공적으로 완료되었습니다.');
+                    localStorage.removeItem('token'); // 토큰 삭제
+                    window.location.href = '/'; // 홈 페이지로 이동
+                }
+            } catch (error) {
+                console.error('회원탈퇴 중 오류가 발생했습니다:', error);
+                alert('회원탈퇴 중 오류가 발생했습니다.');
+            }
         };
 
 
@@ -425,7 +447,11 @@ const MyPage = ( ) => {
                     <button className="my-page-request-button" onClick={handleTechProvideTransition}>
                       기술 제공 전환
                     </button>
+
                   )}
+                  <button className="my-page-request-button" onClick={handleUserWithdrawal}>
+                                          유저 탈퇴
+                                      </button>
                 </div>
               </div>
             )}
