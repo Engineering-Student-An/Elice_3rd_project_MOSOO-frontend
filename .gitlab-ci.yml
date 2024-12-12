@@ -46,7 +46,6 @@ deploy:
     - echo "SUBDOMAIN=$SUBDOMAIN" >> .env
     # GCP VM에 전송 및 NGINX 설정 파일 전송
     - echo "events {worker_connections  1024;}
-
     http {
     include       mime.types;
     default_type  application/octet-stream;
