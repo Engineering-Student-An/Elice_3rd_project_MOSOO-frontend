@@ -43,8 +43,13 @@ const Login = () => {
             <h2>로그인</h2>
             <form onSubmit={handleSubmit} style={styles.form}>
                 <div style={styles.inputGroup}>
-                    <button type="button" onClick={handleGoogleLogin} style={styles.button}>
-                        구글로 로그인
+                    <button type="button" onClick={handleGoogleLogin} style={styles.googleButton}>
+                        <img
+                            src="https://developers.google.com/identity/images/g-logo.png" // 구글 로고 이미지
+                            alt="Google Logo"
+                            style={styles.googleLogo}
+                        />
+                        Login in with Google
                     </button>
                 </div>
                 <hr style={styles.divider} />
@@ -122,6 +127,26 @@ const styles = {
         color: '#fff',
         cursor: 'pointer',
         fontSize: '16px',
+    },
+    googleButton: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        padding: '12px',
+        borderRadius: '4px',
+        border: '2px solid #4285F4', // 구글 브랜드 색상
+        backgroundColor: 'white',
+        color: '#4285F4',
+        cursor: 'pointer',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        transition: 'background-color 0.3s, color 0.3s',
+    },
+    googleLogo: {
+        width: '20px',
+        height: '20px',
+        marginRight: '10px',
     },
     redirect: {
         marginTop: '20px',
