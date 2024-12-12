@@ -9,8 +9,6 @@ services:
       - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
     networks:
       - app-network
-    volumes:
-      -/path/to/your/project/react/etc/nginx/mosoo.conf:/etc/nginx/mosoo.conf
 
 networks:
   app-network:
