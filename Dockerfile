@@ -15,5 +15,5 @@ COPY etc/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 # 5. 컨테이너의 80 포트 노출
 EXPOSE 80
 
-# 6. Nginx 실행
+# 7. Nginx
 CMD ["nginx", "-g", "daemon off;"]
