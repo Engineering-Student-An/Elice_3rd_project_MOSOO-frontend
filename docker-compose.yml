@@ -3,13 +3,13 @@ services:
   frontend:
     image: ${DOCKER_USER}/mosoo_react:latest
     container_name: mosoo_react
-    ports:
-      - "80:80"
+    expose:
+      - "3000"
     environment:
       - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
     networks:
       - app-network
-      
+
   nginx:
     image: nginx:latest
     container_name: mosoo_nginx
