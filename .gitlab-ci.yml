@@ -43,7 +43,30 @@ deploy:
     # .env 파일 생성
     - echo "DOCKER_USER=$DOCKER_USER" > .env
     - echo "REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL" >> .env
-    # GCP VM에 전송 및 SSH 접속 후 Docker-compose
+    - echo "SUBDOMAIN=$SUBDOMAIN" >> .env
+    # GCP VM에 전송 및 NGINX 설정 파일 전송
+    - echo "events {worker_connections  1024;}
+
+    http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    server {
+        listen 80;
+        listen 443 ssl;
+
+        server_name ${SUBDOMAIN};
+
+        ssl_certificate /etc/letsencrypt/live/${SUBDOMAIN}/cert.pem;
+        ssl_certificate_key /etc/letsencrypt/live/${SUBDOMAIN}/privkey.pem;
+
+        root /usr/share/nginx/html;
+        index index.html;
+
+        location / {try_files $uri /index.html;}
+
+        error_page 404 /index.html;} } > nginx.conf
+    - scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa nginx.conf $GCP_USER@$GCP_VM_IP:/path/to/your/project/react/
     - scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa .env $GCP_USER@$GCP_VM_IP:/path/to/your/project/react/
     - scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa docker-compose.yml $GCP_USER@$GCP_VM_IP:/path/to/your/project/react/
     - ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $GCP_USER@$GCP_VM_IP "cd /path/to/your/project/react/ && docker pull $DOCKER_USER/mosoo_react:latest && docker-compose down || echo 'Containers were not running or failed to stop.' && docker image prune -f"
