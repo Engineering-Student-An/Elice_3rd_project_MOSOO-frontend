@@ -84,7 +84,7 @@ const Header = () => {
                           이용내역
                         </a>
                       </li>
-                      <li className="nav-item ms-auto">
+                      <li className="nav-item">
                         <a href="/chatrooms" aria-label="Toggle navigation">
                           채팅
                         </a>
