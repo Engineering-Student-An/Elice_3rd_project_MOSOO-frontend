@@ -35,7 +35,7 @@ const Category = () => {
   };
 
   return (
-    <div className="main-category-container">
+    <div className="main-category-container mb-200">
       <h2>어떤 분야의 전문가를 찾으시나요?</h2>
       <div className="main-category-grid">
         {categories.map((category) => (
