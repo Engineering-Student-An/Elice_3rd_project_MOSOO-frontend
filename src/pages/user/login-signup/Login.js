@@ -35,7 +35,7 @@ const Login = () => {
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = `${process.env.REACT_APP_API_BASE_URL}:8080/oauth2/authorization/google`; // 구글 로그인 URL
+        window.location.href = `${process.env.REACT_APP_API_BASE_URL}/oauth2/authorization/google`; // 구글 로그인 URL
     };
 
     return (
