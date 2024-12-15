@@ -9,7 +9,7 @@ const UpdateCategory = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
-  const { category_id } = useParams();
+  const { categoryId } = useParams();
 
   const navigate = useNavigate();
 
@@ -19,23 +19,25 @@ const UpdateCategory = () => {
     const category = {
       name: name,
       description: description,
-      parent_id: category_id
+      parentId: categoryId
     };
 
     try {
       // 카테고리 수정 API 호출
+      const token = localStorage.getItem('token');
       const response = await axios.put(
-        `${process.env.REACT_APP_API_BASE_URL}/api/category/${category_id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/category/${categoryId}`,
         category,
         {
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           },
           withCredentials: true
         }
       );
       alert('카테고리가 수정되었습니다!');
-      navigate('/categories');
+      navigate('/mypage', { state: { activeMenu: 'categoryManagement' } })
     } catch (error) {
       console.error('카테고리 수정 실패:', error);
       alert('카테고리 수정 중 오류가 발생했습니다.');

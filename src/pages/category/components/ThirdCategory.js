@@ -11,7 +11,7 @@ const ThirdCategory = ({ selectedSubcategory, onSelectThirdCategory }) => {
     const fetchThirdcategories = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedSubcategory.category_id}`
+          `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedSubcategory.categoryId}`
         );
         setThirdcategories(response.data);
       } catch (error) {
