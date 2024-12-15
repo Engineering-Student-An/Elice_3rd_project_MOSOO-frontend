@@ -37,7 +37,7 @@ const UpdateCategory = () => {
         }
       );
       alert('카테고리가 수정되었습니다!');
-      navigate('/categories');
+      navigate('/mypage', { state: { activeMenu: 'categoryManagement' } })
     } catch (error) {
       console.error('카테고리 수정 실패:', error);
       alert('카테고리 수정 중 오류가 발생했습니다.');
