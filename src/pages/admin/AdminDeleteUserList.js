@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const AdminUserList = () => {
+const AdminDeleteUserList = () => {
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -11,7 +11,7 @@ const AdminUserList = () => {
     useEffect(() => {
         const fetchMembers = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/admin/member?page=${currentPage}`); // API 엔드포인트에 맞게 수정
+                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/admin/users/delete?page=${currentPage}`); // API 엔드포인트에 맞게 수정
                 setMembers(response.data.memberList); // 응답 데이터에 맞게 수정
                 setTotalPages(response.data.totalPages);
             } catch (err) {
@@ -58,11 +58,13 @@ const AdminUserList = () => {
 
     return (
         <div>
-            <h3 className="mb-4">사용자 목록</h3>
+            <h3 className="m-4">탈퇴 사용자 목록</h3>
             <ul>
                 {members.map((member) => (
-                    <div>
+                    <div className="m-4">
                         <li key={member.id}>{member.fullName} ({member.email})</li>
+                        <p>{member.deleteAt}</p>
+                        <p>{member.deleteReason}</p>
                     </div>
                 ))}
             </ul>
@@ -123,4 +125,4 @@ const AdminUserList = () => {
     );
 };
 
-export default AdminUserList;
+export default AdminDeleteUserList;

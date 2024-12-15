@@ -15,7 +15,7 @@ build:
   only:
     - review
 
-# Deploy Stage: 프론트엔드 배포
+# Deploy Stage: 프론트엔드
 deploy:
   stage: deploy
   image: nginx:alpine

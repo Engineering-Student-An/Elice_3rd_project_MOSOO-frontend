@@ -12,4 +12,4 @@ services:
 
 networks:
   app-network:
-    external: true  # 외부 네트워크를 사용
+    external: true  # 외부 네트워크

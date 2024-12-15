@@ -13,7 +13,7 @@ const GoogleTokenCheck = () => {
             // accessToken이 있으면 로컬 스토리지에 저장
             localStorage.setItem('token', accessToken);
             // 필요한 경우 특정 페이지로 리다이렉트
-            navigate('/');
+           window.location.href = '/';
         }
     }, [navigate]);
 };

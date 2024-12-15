@@ -7,6 +7,7 @@ import {
     fetchSubCategoriesLevel2,
     createPost,
 } from './CreatePostApi';
+import {isGosu} from "../../components/isGosu";
 
 const CreatePost = () => {
     const [title, setTitle] = useState('');
@@ -235,15 +236,17 @@ const CreatePost = () => {
                 </div>
 
                 {/* 고수 글 체크 */}
-                <div className="form-check mb-5">
-                    <input
-                        type="checkbox"
-                        className="form-check-input"
-                        checked={isOffer}
-                        onChange={() => setIsOffer(!isOffer)}
-                    />
-                    <label className="form-check-label">고수 글 게시</label>
-                </div>
+                {isGosu() && (
+                    <div className="form-check mb-5">
+                        <input
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={isOffer}
+                            onChange={() => setIsOffer(!isOffer)}
+                        />
+                        <label className="form-check-label">고수 글 게시</label>
+                    </div>
+                )}
 
                 <button type="submit" className="btn btn-primary m-3" disabled={loading}>
                     {loading ? '게시글 생성 중...' : '게시글 작성'}
