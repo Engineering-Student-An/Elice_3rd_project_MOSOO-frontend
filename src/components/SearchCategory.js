@@ -27,7 +27,7 @@ const SearchCategory = ({ onClose, onSelectCategory }) => {
       case 1:
         return <Step1 onSelectFirstcategory={setFirstCategory} />;
       case 2:
-        return <Step2 category_id={firstCategory.category_id} onSelectSecondcategory={setSelectedSecondcategory} />;
+        return <Step2 categoryId={firstCategory.categoryId} onSelectSecondcategory={setSelectedSecondcategory} />;
       case 3:
         return <Step3 selectedSubcategory={selectedSecondcategory} onSelectThirdCategory={setThirdCategory} />;
       default:
@@ -40,7 +40,21 @@ const SearchCategory = ({ onClose, onSelectCategory }) => {
 
   // 다음 단계로 이동하는 함수
   const nextStep = () => {
-        if (step < 3) {
+
+    if (step === 1 && !firstCategory) {
+      alert("대분류를 선택하지 않았습니다.");
+      return;
+    }
+    if (step === 2 && !selectedSecondcategory) {
+      alert("중분류를 선택하지 않았습니다.");
+      return;
+    }
+    if (step === 3 && !thirdCategory) {
+      alert("소분류를 선택하지 않았습니다.");
+      return;
+    }
+
+    if (step < 3) {
       setStep(step + 1);
     } else {
       handleSearch();
@@ -50,13 +64,19 @@ const SearchCategory = ({ onClose, onSelectCategory }) => {
   // 이전 단계로 이동하는 함수
   const prevStep = () => {
     if (step > 1) {
+      if (step === 2) {
+        setFirstCategory(null);
+      } else if (step === 3) {
+        setSelectedSecondcategory(null);
+      }
+      setThirdCategory(null);
       setStep(step - 1);
     }
   };
 
   const handleSearch = () => {
     console.log("검색 버튼 클릭됨");
-    console.log("ThirdCategory ID:", thirdCategory?.category_id || "소분류가 설정되지 않았습니다.");
+    console.log("ThirdCategory ID:", thirdCategory?.categoryId || "소분류가 설정되지 않았습니다.");
 
     onSelectCategory(thirdCategory);
 

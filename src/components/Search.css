@@ -1,6 +1,39 @@
-.search-form h2 {
+  .search-form {
+    width: 100%;
+    padding: 10px;
+    max-width: 1200px;
+    margin: auto;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    padding: 20px;
+  }
+  
+  .search-form h2 {
     font-size: 24px;
     margin-bottom: 20px;
     color: #333;
     text-align: center;
+  }
+
+  .search-input .btn {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    color: #000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-input .btn:hover {
+    border-color: #6c5ce7;
+  }
+  
+  .search-input .btn:active {
+    background-color: #e8eaf6;
+  }
+
+  .search-input input::placeholder {
+    color: #000;
   }

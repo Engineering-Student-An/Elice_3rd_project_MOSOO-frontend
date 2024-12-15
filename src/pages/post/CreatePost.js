@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import {
+    fetchCategories,
+    fetchSubCategoriesLevel1,
+    fetchSubCategoriesLevel2,
+    createPost,
+} from './CreatePostApi';
+import {isGosu} from "../../components/isGosu";
 
 const CreatePost = () => {
     const [title, setTitle] = useState('');
@@ -22,59 +28,47 @@ const CreatePost = () => {
 
     const navigate = useNavigate();
 
-    // Fetch 대분류
     useEffect(() => {
-        const fetchCategories = async () => {
+        const loadCategories = async () => {
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_API_BASE_URL}/api/category/first_category`
-                );
-                setCategories(response.data);
+                const data = await fetchCategories();
+                setCategories(data);
             } catch (err) {
-                console.error('대분류 불러오기 실패:', err);
-                setError('대분류를 불러오는 데 실패했습니다.');
+                setError(err.message);
             }
         };
-        fetchCategories();
+        loadCategories();
     }, []);
 
-    // Fetch 중분류
     useEffect(() => {
         if (selectedParentCategory) {
-            const fetchSubCategoriesLevel1 = async () => {
+            const loadSubCategoriesLevel1 = async () => {
                 try {
-                    const response = await axios.get(
-                        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedParentCategory}`
-                    );
-                    setSubCategoriesLevel1(response.data);
-                    setSubCategoriesLevel2([]); // 초기화
+                    const data = await fetchSubCategoriesLevel1(selectedParentCategory);
+                    setSubCategoriesLevel1(data);
+                    setSubCategoriesLevel2([]);
                     setSelectedSubCategory1('');
                     setSelectedSubCategory2('');
                 } catch (err) {
-                    console.error('중분류 불러오기 실패:', err);
-                    setError('중분류를 불러오는 데 실패했습니다.');
+                    setError(err.message);
                 }
             };
-            fetchSubCategoriesLevel1();
+            loadSubCategoriesLevel1();
         }
     }, [selectedParentCategory]);
 
-    // Fetch 하분류
     useEffect(() => {
         if (selectedSubCategory1) {
-            const fetchSubCategoriesLevel2 = async () => {
+            const loadSubCategoriesLevel2 = async () => {
                 try {
-                    const response = await axios.get(
-                        `${process.env.REACT_APP_API_BASE_URL}/api/category/${selectedSubCategory1}`
-                    );
-                    setSubCategoriesLevel2(response.data);
+                    const data = await fetchSubCategoriesLevel2(selectedSubCategory1);
+                    setSubCategoriesLevel2(data);
                     setSelectedSubCategory2('');
                 } catch (err) {
-                    console.error('하분류 불러오기 실패:', err);
-                    setError('하분류를 불러오는 데 실패했습니다.');
+                    setError(err.message);
                 }
             };
-            fetchSubCategoriesLevel2();
+            loadSubCategoriesLevel2();
         }
     }, [selectedSubCategory1]);
 
@@ -108,22 +102,12 @@ const CreatePost = () => {
         }
 
         try {
-            const response = await axios.post(
-                `${process.env.REACT_APP_API_BASE_URL}/api/post`,
-                formData,
-                { headers: { 'Content-Type': 'multipart/form-data' } }
-            );
-            console.log('게시글 생성 성공:', response.data);
+            const data = await createPost(formData);
+            console.log('게시글 생성 성공:', data);
 
-            // isOffer 값에 따라 리다이렉션
-            if (isOffer) {
-                navigate('/offerPosts');
-            } else {
-                navigate('/requestPosts');
-            }
-        } catch (error) {
-            console.error('게시글 생성 실패:', error);
-            setError('게시글 생성에 실패했습니다.');
+            navigate(isOffer ? '/offerPosts' : '/requestPosts');
+        } catch (err) {
+            setError(err.message);
         } finally {
             setLoading(false);
         }
@@ -207,7 +191,7 @@ const CreatePost = () => {
                     >
                         <option value="">대분류 선택</option>
                         {categories.map((category) => (
-                            <option key={category.category_id} value={category.category_id}>
+                            <option key={category.categoryId} value={category.categoryId}>
                                 {category.name}
                             </option>
                         ))}
@@ -220,7 +204,7 @@ const CreatePost = () => {
                     >
                         <option value="">중분류 선택</option>
                         {subCategoriesLevel1.map((subCategory) => (
-                            <option key={subCategory.category_id} value={subCategory.category_id}>
+                            <option key={subCategory.categoryId} value={subCategory.categoryId}>
                                 {subCategory.name}
                             </option>
                         ))}
@@ -233,7 +217,7 @@ const CreatePost = () => {
                     >
                         <option value="">소분류 선택</option>
                         {subCategoriesLevel2.map((subCategory) => (
-                            <option key={subCategory.category_id} value={subCategory.category_id}>
+                            <option key={subCategory.categoryId} value={subCategory.categoryId}>
                                 {subCategory.name}
                             </option>
                         ))}
@@ -252,15 +236,17 @@ const CreatePost = () => {
                 </div>
 
                 {/* 고수 글 체크 */}
-                <div className="form-check mb-5">
-                    <input
-                        type="checkbox"
-                        className="form-check-input"
-                        checked={isOffer}
-                        onChange={() => setIsOffer(!isOffer)}
-                    />
-                    <label className="form-check-label">고수 글 게시</label>
-                </div>
+                {isGosu() && (
+                    <div className="form-check mb-5">
+                        <input
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={isOffer}
+                            onChange={() => setIsOffer(!isOffer)}
+                        />
+                        <label className="form-check-label">고수 글 게시</label>
+                    </div>
+                )}
 
                 <button type="submit" className="btn btn-primary m-3" disabled={loading}>
                     {loading ? '게시글 생성 중...' : '게시글 작성'}

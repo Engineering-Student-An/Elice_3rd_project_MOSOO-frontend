@@ -8,6 +8,7 @@ import '../../components/button.css';
 import PostInfo from "./PostInfo";
 import OpponentInfo from "./OpponentInfo";
 import ChatSettingModal from "./ChatSettingModal";
+import {getJwtSubject} from "../../components/getJwtSubject";
 
 const ChatRoom = () => {
     const {chatRoomId} = useParams();
@@ -20,8 +21,7 @@ const ChatRoom = () => {
     const [hasMore, setHasMore] = useState(true);   // 로드할 메시지가 더 있는지 여부
     const [lastIndex, setLastIndex] = useState(null);   // 불러온 채팅의 마지막 인덱스 (id)
 
-    // TODO: 실제 로그인한 유저의 id 반영할 것
-    const [loginUserId] = useState(1);
+    const [loginUserId] = useState(Number(getJwtSubject()));
 
     // 채팅 전송 관련 (stomp)
     const [stompClient, setStompClient] = useState(null);
@@ -37,7 +37,7 @@ const ChatRoom = () => {
         connect();
         fetchInitialMessages();
         return () => disconnect();
-    }, [chatRoomId]);
+    }, []);
 
     // 컴포넌트가 처음 마운트될 때 일정 시간(ms) 후에 scrollToBottom 호출
     useEffect(() => {
@@ -56,7 +56,8 @@ const ChatRoom = () => {
 
         // chatRoomId를 헤더에 추가
         const headers = {
-            chatRoomId: chatRoomId
+            chatRoomId: chatRoomId,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
         };
 
         client.connect(headers, (frame) => {
@@ -117,7 +118,12 @@ const ChatRoom = () => {
                 createdAt: koreanTime
             };
 
-            stompClient.send(`/pub/${chatRoomId}`, {}, JSON.stringify(chatMessage));
+            stompClient.send(`/pub/${chatRoomId}`, {}, JSON.stringify(chatMessage), {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+            });
+
             messageRef.current.value = '';
             setInputMessage('');
             setSelectedFile(null);
@@ -146,6 +152,9 @@ const ChatRoom = () => {
 
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 params: {
                     isInit: true
                 }
@@ -188,6 +197,9 @@ const ChatRoom = () => {
                 url = `${process.env.REACT_APP_API_BASE_URL}/api/chatroom/${chatRoomId}?index=${lastIndex}`; // lastIndex가 null이 아닐 경우
             }
             const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 params: {
                     isInit: false
                 }, withCredentials: true
@@ -277,17 +289,26 @@ const ChatRoom = () => {
         // 오늘 날짜와 입력 날짜 비교
         const isToday = inputDate.toDateString() === today.toDateString();
 
+        const hours = inputDate.getHours();
+        const minutes = inputDate.getMinutes();
+
+        // 시간을 12시간 형식으로 포맷
+        const formattedHours = hours % 12 === 0 ? 12 : hours % 12; // 12시 변환
+        const formattedMinutes = minutes < 10 ? '0' + minutes : minutes; // 분 포맷
+        const period = hours >= 12 ? '오후' : '오전'; // AM/PM 포맷
+
+        const formattedTime = `${period} ${formattedHours}:${formattedMinutes}`; // 최종 시간 포맷
+
         if (isToday) {
-            const options = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
-            return inputDate.toLocaleTimeString('ko-KR', options);
+            return formattedTime; // 오늘의 경우 시간만 반환
         } else {
-            const dateOptions = {month: 'numeric', day: 'numeric'}; // 몇 월 몇 일 형식
-            const timeOptions = {hour: '2-digit', minute: '2-digit', hour12: true}; // 12시간 형식
-            const dateString = inputDate.toLocaleDateString('ko-KR', dateOptions);
-            const timeString = inputDate.toLocaleTimeString('ko-KR', timeOptions);
-            return `${dateString} ${timeString}`; // 날짜와 시간 결합
+            const month = inputDate.getMonth() + 1; // 월은 0부터 시작하므로 +1
+            const day = inputDate.getDate();
+            return `${month}/${day} ${formattedTime}`; // 날짜와 시간 결합
         }
     };
+
+
 
 
     const handleOpenModal = (index) => {

@@ -12,7 +12,7 @@ const Category = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/category/first_category`,
+          `${process.env.REACT_APP_API_BASE_URL}/api/category/firstCategory`,
           { withCredentials: true }
         );
         setCategories(response.data);
@@ -35,7 +35,7 @@ const Category = () => {
   };
 
   return (
-    <div className="main-category-container">
+    <div className="main-category-container mb-200">
       <h2>어떤 분야의 전문가를 찾으시나요?</h2>
       <div className="main-category-grid">
         {categories.map((category) => (
@@ -58,7 +58,7 @@ const Category = () => {
 
       {isModalOpen && (
         <StepModal
-          category_id={selectedCategory.category_id}
+          categoryId={selectedCategory.categoryId}
           onClose={closeModal}
         />
       )}

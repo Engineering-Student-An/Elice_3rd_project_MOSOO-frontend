@@ -27,18 +27,20 @@ const CreateFirstCategory = () => {
 
     try {
       // 카테고리 생성 API 호출
+      const token = localStorage.getItem('token');
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/category`,
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`
           },
           withCredentials: true
         }
       );
       alert('대분류가 생성되었습니다!');
-      navigate('/categories');
+      navigate('/mypage', { state: { activeMenu: 'categoryManagement' } })
     } catch (error) {
       console.error('대분류 생성 실패:', error);
       alert('대분류 생성 중 오류가 발생했습니다.');
