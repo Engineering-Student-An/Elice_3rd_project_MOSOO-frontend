@@ -14,6 +14,8 @@ import TechProvideList from "./TechProvideList";
 import TechProvideEdit from "./TechProvideEdit";
 import AllPostList from "../../post/admin/AllPostList";
 
+axios.defaults.withCredentials = true;
+
 const MyPage = ( ) => {
   const [user, setUser] = useState({
     fullName: '',
@@ -43,29 +45,6 @@ const MyPage = ( ) => {
         setActiveMenu(location.state.activeMenu);
     }
 }, [location.state, setActiveMenu]);
-
-    useEffect(() => {
-        const fetchToken = async () => {
-            try {
-                const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/token`, {}, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                if (response.status === 201) {
-                    localStorage.removeItem('token');
-                    localStorage.setItem('token', response.data.accessToken);
-                }
-            } catch (err) {
-                console.error('토큰 재발급 실패:', err);
-                setError(err.response?.data?.message || '토큰 재발급에 실패했습니다.');
-            }
-        };
-
-        fetchToken(); // async 함수 호출
-
-    }, []);
-
 
     useEffect(() => {
     const fetchUserData = async () => {
