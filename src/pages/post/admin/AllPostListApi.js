@@ -10,7 +10,7 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 export const getAllPosts = async (page) => {
     try {
         const token = localStorage.getItem('token'); // 토큰 가져오기
-        const response = await axios.get(`${API_BASE_URL}/api/post/admin/posts`, {
+        const response = await axios.get(`${API_BASE_URL}/api/posts`, {
             params: { page },
             headers: {
                 Authorization: `Bearer ${token}`, // 인증 헤더 추가
