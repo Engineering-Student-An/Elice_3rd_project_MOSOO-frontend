@@ -16,10 +16,10 @@ const Footer = () => {
                                                                      target="_blank">MOSOO</a>
                                     </p>
                                     <ul className="footer-social">
-                                        <li><a href="https://kdt-gitlab.elice.io/cloud_track/class_04/web_project3/team02" target="_blank"><i className="lni lni-github-original"></i></a></li>
+                                        <li><a href="https://github.com/orgs/MOSOO-team/repositories" target="_blank"><i className="lni lni-github-original"></i></a></li>
                                         <li><a href="https://www.figma.com/design/tO8TessD61cVOMxqG1zISC/2%ED%8C%80?node-id=0-1&node-type=canvas&t=uMT6HtyR0lMDuXt8-0" target="_blank"><i className="lni lni-figma"></i></a></li>
                                         <li><a href="https://www.erdcloud.com/d/gcsZ8ddaLww3rdCrt" target="_blank"><i className="lni lni-database"></i></a></li>
-                                        <li><a href={`http://mosoo.duckdns.org:8080/swagger-ui.html`} target="_blank"><i className="lni lni-shortcode"></i></a></li>
+                                        <li><a href={`https://5p3xdi7420.execute-api.ap-northeast-2.amazonaws.com/swagger-ui/index.html`} target="_blank"><i className="lni lni-shortcode"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
