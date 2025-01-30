@@ -3,7 +3,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1280px;
+  width: 100%; /* 100%로 설정하여 브라우저에 맞게 조정 */
+  max-width: 1280px; /* 최대 너비를 1280px로 설정 */
   height: 480px;
   background-color: #f0f0f0;
   margin: 10px auto;
